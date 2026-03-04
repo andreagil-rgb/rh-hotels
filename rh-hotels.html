@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RH Hotels · Tracker Nóminas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0f13; --surface:#16161d; --surface2:#1e1e28; --border:#2a2a38;
+  --accent:#e8ff47; --accent2:#47b4ff; --accent3:#ff6b6b;
+  --text:#f0f0f5; --muted:#6b6b80; --green:#4fffb0; --orange:#ffaa47;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:800;font-size:16px;letter-spacing:.08em;display:flex;align-items:center;gap:10px;}
+.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.semana-badge{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+
+/* TABS */
+.tabs{display:flex;padding:24px 32px 0;border-bottom:1px solid var(--border);}
+.tab{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 22px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;}
+.tab.active{color:var(--accent);border-bottom:2px solid var(--accent);}
+.tab:hover:not(.active){color:var(--text);}
+
+/* MAIN */
+.main{padding:32px;max-width:1200px;}
+.panel{display:none;}
+.panel.active{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION TITLE */
+.section-title{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+
+/* HOTELS GRID */
+.hotels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:28px;}
+.hotel-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.hotel-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.hotel-card.selected{border-color:var(--accent);background:#1a1a10;}
+.hotel-card.selected::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
+.hotel-name{font-size:13px;font-weight:700;margin-bottom:6px;}
+.hotel-status{font-family:'DM Mono',monospace;font-size:10px;display:flex;align-items:center;gap:6px;}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.status-dot.pendiente{background:var(--orange);}
+.status-dot.enviado{background:var(--accent2);}
+.status-dot.verificado{background:var(--green);}
+.status-dot.sin{background:var(--muted);}
+
+/* FORM BLOCK */
+.form-block{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;}
+.form-block h3{font-size:15px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.form-block h3 span{font-size:11px;font-weight:600;background:var(--surface2);border:1px solid var(--border);padding:2px 10px;border-radius:20px;color:var(--muted);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.triple{grid-template-columns:1fr 1fr 1fr;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.field input,.field select,.field textarea{font-family:'DM Mono',monospace;font-size:13px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:80px;}
+.field select option{background:var(--surface2);}
+
+/* INCIDENCIAS LIST */
+.incidencias-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.incidencia-item{display:grid;grid-template-columns:1fr 140px 120px 40px;gap:10px;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;animation:slideIn .2s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.incidencia-empleado{font-size:13px;font-weight:600;}
+.incidencia-tipo{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);background:rgba(71,180,255,.1);padding:3px 8px;border-radius:6px;text-align:center;}
+.incidencia-valor{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:center;}
+
+/* BUTTONS */
+.btn{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;padding:11px 22px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#0f0f13;}
+.btn-primary:hover{background:#d4eb2a;transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent2);color:var(--accent2);}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;transition:color .2s;padding:4px;}
+.btn-del:hover{color:var(--accent3);}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* CORREO */
+.correo-preview{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.correo-header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;gap:24px;}
+.correo-meta{display:flex;flex-direction:column;gap:4px;font-family:'DM Mono',monospace;font-size:12px;}
+.correo-meta label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;}
+.correo-body{padding:20px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;min-height:200px;}
+.correo-actions{border-top:1px solid var(--border);padding:16px 20px;display:flex;gap:10px;justify-content:flex-end;}
+
+/* VERIFICACION MANUAL TABLE */
+.tabla-verificacion{width:100%;border-collapse:collapse;font-size:13px;}
+.tabla-verificacion th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.tabla-verificacion td{padding:12px 14px;border-bottom:1px solid rgba(42,42,56,.5);font-family:'DM Mono',monospace;font-size:12px;}
+.tabla-verificacion tr:hover td{background:var(--surface2);}
+.check-cell{display:flex;gap:8px;align-items:center;}
+.check-btn{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;transition:all .15s;}
+.check-btn.ok{background:rgba(79,255,176,.15);color:var(--green);border:1px solid rgba(79,255,176,.3);}
+.check-btn.ok:hover,.check-btn.ok.active{background:var(--green);color:#0f0f13;}
+.check-btn.error{background:rgba(255,107,107,.1);color:var(--accent3);border:1px solid rgba(255,107,107,.3);}
+.check-btn.error:hover,.check-btn.error.active{background:var(--accent3);color:white;}
+
+/* KPIs */
+.resumen-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.kpi-val{font-size:36px;font-weight:800;line-height:1;margin-bottom:6px;}
+.kpi-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.kpi.accent .kpi-val{color:var(--accent);}
+.kpi.blue .kpi-val{color:var(--accent2);}
+.kpi.green .kpi-val{color:var(--green);}
+.kpi.orange .kpi-val{color:var(--orange);}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;}
+.timeline-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(42,42,56,.5);align-items:flex-start;}
+.timeline-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.timeline-content .hotel{font-size:13px;font-weight:700;}
+.timeline-content .action{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;}
+.timeline-time{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex-shrink:0;}
+
+/* TAGS */
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.05em;}
+.tag.pendiente{background:rgba(255,170,71,.15);color:var(--orange);}
+.tag.enviado{background:rgba(71,180,255,.15);color:var(--accent2);}
+.tag.verificado{background:rgba(79,255,176,.15);color:var(--green);}
+.tag.sin{background:rgba(107,107,128,.15);color:var(--muted);}
+.tag-blue{background:rgba(71,180,255,.15);color:var(--accent2);}
+
+/* HELPERS */
+.flex-between{display:flex;justify-content:space-between;align-items:center;}
+.mt16{margin-top:16px;} .mt24{margin-top:24px;}
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+.divider{height:1px;background:var(--border);margin:24px 0;}
+
+/* ============ VERIFICADOR IA ============ */
+.vsteps{display:flex;margin-bottom:32px;}
+.vstep{flex:1;padding:12px 16px;background:var(--surface);border:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;transition:all .3s;}
+.vstep:first-child{border-radius:10px 0 0 10px;}
+.vstep:last-child{border-radius:0 10px 10px 0;}
+.vstep.active{background:var(--surface2);color:var(--accent);border-color:var(--accent);}
+.vstep.done{color:var(--green);border-color:rgba(79,255,176,.3);}
+.vstep-num{width:20px;height:20px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.vstep.active .vstep-num{background:var(--accent);color:#0f0f13;}
+.vstep.done .vstep-num{background:var(--green);color:#0f0f13;}
+
+.vpanel{display:none;}
+.vpanel.active{display:block;animation:fadeIn .25s ease;}
+
+.fmt-btns{display:flex;gap:12px;margin-bottom:20px;}
+.fmt-btn{flex:1;padding:16px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;background:var(--surface2);text-align:center;}
+.fmt-btn:hover{border-color:var(--accent2);}
+.fmt-btn.selected{border-color:var(--accent);background:rgba(232,255,71,.05);}
+.fmt-btn .fname{font-size:13px;font-weight:700;margin-bottom:4px;}
+.fmt-btn .fdesc{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:48px 32px;text-align:center;cursor:pointer;transition:all .3s;position:relative;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(232,255,71,.03);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:40px;margin-bottom:12px;}
+.upload-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.upload-sub{font-size:12px;color:var(--muted);}
+.upload-loaded{border-color:var(--green);background:rgba(79,255,176,.03);}
+
+.analyzing{display:none;text-align:center;padding:48px;}
+.analyzing.show{display:block;}
+.spin{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.analyzing-txt{font-size:14px;font-weight:700;margin-bottom:8px;}
+.analyzing-sub{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+.result-header{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.res-kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.res-kpi .val{font-size:32px;font-weight:800;line-height:1;margin-bottom:4px;}
+.res-kpi .lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.res-kpi.ok .val{color:var(--green);}
+.res-kpi.err .val{color:var(--accent3);}
+.res-kpi.warn .val{color:var(--orange);}
+.res-kpi.total .val{color:var(--accent);}
+
+.result-section{margin-bottom:24px;}
+.result-section-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.result-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.result-item{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;animation:slideIn .2s ease;}
+.result-item.match{border-color:rgba(79,255,176,.2);}
+.result-item.error{border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.04);}
+.result-item.warning{border-color:rgba(255,170,71,.3);background:rgba(255,170,71,.04);}
+.result-item.missing{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.06);}
+.result-icon{font-size:16px;margin-top:1px;}
+.result-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.result-detail{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.6;}
+.result-detail span{color:var(--text);}
+.result-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:3px 8px;border-radius:6px;white-space:nowrap;}
+.badge-ok{background:rgba(79,255,176,.15);color:var(--green);}
+.badge-err{background:rgba(255,107,107,.15);color:var(--accent3);}
+.badge-warn{background:rgba(255,170,71,.15);color:var(--orange);}
+.badge-missing{background:rgba(255,107,107,.2);color:var(--accent3);}
+
+/* V-INC TABLE */
+.vinc-table{width:100%;border-collapse:collapse;}
+.vinc-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+.vinc-table td{padding:10px 12px;font-family:'DM Mono',monospace;font-size:12px;border-bottom:1px solid rgba(42,42,56,.4);}
+.vinc-table tr:hover td{background:var(--surface2);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0f0f13;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:12px 20px;border-radius:10px;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><div class="logo-dot"></div>RH HOTELS · TRACKER NÓMINAS</div>
+  <div class="semana-badge" id="semana-label">Cargando...</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('resumen',this)">Resumen</button>
+  <button class="tab" onclick="switchTab('captura',this)">Captura</button>
+  <button class="tab" onclick="switchTab('correo',this)">Correo al Despacho</button>
+  <button class="tab" onclick="switchTab('verificacion-manual',this)">Verificación Manual</button>
+  <button class="tab" onclick="switchTab('verificacion-ia',this)">⚡ Verificación IA</button>
+</div>
+
+<div class="main">
+
+<!-- ==================== RESUMEN ==================== -->
+<div class="panel active" id="panel-resumen">
+  <div class="resumen-grid">
+    <div class="kpi accent"><div class="kpi-val" id="kpi-total">0</div><div class="kpi-label">Incidencias Capturadas</div></div>
+    <div class="kpi blue"><div class="kpi-val" id="kpi-enviados">0</div><div class="kpi-label">Hoteles Enviados</div></div>
+    <div class="kpi green"><div class="kpi-val" id="kpi-verificados">0</div><div class="kpi-label">Verificados OK</div></div>
+    <div class="kpi orange"><div class="kpi-val" id="kpi-pendientes">10</div><div class="kpi-label">Pendientes</div></div>
+  </div>
+  <div class="flex-between" style="margin-bottom:16px"><div class="section-title" style="margin:0">Estado por Hotel</div></div>
+  <div class="hotels-grid" id="resumen-hotels"></div>
+  <div class="section-title mt24">Actividad Reciente</div>
+  <div class="form-block" style="padding:0"><div class="timeline" id="timeline"></div></div>
+</div>
+
+<!-- ==================== CAPTURA ==================== -->
+<div class="panel" id="panel-captura">
+  <div class="flex-between" style="margin-bottom:20px"><div class="section-title" style="margin:0">Selecciona un Hotel</div></div>
+  <div class="hotels-grid" id="captura-hotels"></div>
+  <div id="form-incidencias" style="display:none">
+    <div class="form-block">
+      <h3>Hotel <span id="hotel-form-badge">—</span></h3>
+      <div class="section-title">Nueva Incidencia</div>
+      <div class="form-row triple">
+        <div class="field"><label>Nombre del Empleado</label><input type="text" id="inp-empleado" placeholder="Apellido Nombre (como en nómina)"></div>
+        <div class="field"><label>Tipo de Incidencia</label>
+          <select id="inp-tipo">
+            <option value="">— Seleccionar —</option>
+            <option>Falta injustificada</option><option>Falta justificada</option>
+            <option>Incapacidad</option><option>Baja</option>
+            <option>Horas extra</option><option>Vacaciones</option>
+            <option>Prima vacacional</option><option>Bono / Premio</option>
+            <option>Compensación</option><option>Descuento</option>
+            <option>Día festivo laborado</option><option>Permiso con goce</option>
+            <option>Permiso sin goce</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Días / Horas / Monto</label><input type="text" id="inp-valor" placeholder="Ej. 2 días / $500"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Periodo afectado</label><input type="text" id="inp-periodo" placeholder="Ej. 01–07 Mar"></div>
+        <div class="field"><label>Observaciones</label><input type="text" id="inp-obs" placeholder="Notas opcionales"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-secondary" onclick="agregarIncidencia()">+ Agregar Incidencia</button></div>
+    </div>
+    <div class="form-block">
+      <div class="flex-between" style="margin-bottom:16px">
+        <h3 style="margin:0">Incidencias Capturadas</h3>
+        <span class="tag pendiente" id="badge-count">0 incidencias</span>
+      </div>
+      <div class="incidencias-list" id="lista-incidencias"><div class="empty-state">Sin incidencias aún.</div></div>
+      <div class="btn-row mt16">
+        <button class="btn btn-primary" onclick="guardarHotel()">✓ Guardar Hotel</button>
+        <button class="btn btn-outline" onclick="limpiarHotel()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CORREO ==================== -->
+<div class="panel" id="panel-correo">
+  <div class="form-block">
+    <h3>Configuración del Correo</h3>
+    <div class="form-row">
+      <div class="field"><label>Despacho Destinatario</label>
+        <select id="sel-despacho" onchange="renderSelectCorreo()">
+          <option value="De la Peña Sainz">De la Peña Sainz</option>
+          <option value="Matas">Matas</option>
+        </select>
+      </div>
+      <div class="field"><label>Hoteles a incluir</label>
+        <select id="sel-hoteles-correo" multiple style="min-height:80px"></select>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="generarCorreo()">Generar Correo</button></div>
+  </div>
+  <div id="correo-preview-wrap" style="display:none">
+    <div class="section-title">Vista Previa</div>
+    <div class="correo-preview">
+      <div class="correo-header">
+        <div class="correo-meta"><label>Para</label><span id="correo-para">—</span></div>
+        <div class="correo-meta"><label>Asunto</label><span id="correo-asunto">—</span></div>
+      </div>
+      <div class="correo-body" id="correo-body"></div>
+      <div class="correo-actions">
+        <button class="btn btn-secondary" onclick="copiarCorreo()">Copiar Correo</button>
+        <button class="btn btn-primary" onclick="marcarEnviado()">✓ Marcar como Enviado</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VERIFICACION MANUAL ==================== -->
+<div class="panel" id="panel-verificacion-manual">
+  <div class="form-block">
+    <div class="flex-between" style="margin-bottom:20px">
+      <h3 style="margin:0">Verificación Manual · Nómina</h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="tag verificado" id="badge-ok">0 OK</span>
+        <span class="tag pendiente" id="badge-err">0 Con error</span>
+      </div>
+    </div>
+    <table class="tabla-verificacion">
+      <thead><tr><th>Hotel</th><th>Empleado</th><th>Tipo</th><th>Valor</th><th>Verificación</th><th>Nota</th></tr></thead>
+      <tbody id="tbody-verif"><tr><td colspan="6" class="empty-state">Sin incidencias guardadas aún.</td></tr></tbody>
+    </table>
+    <div class="btn-row mt16"><button class="btn btn-primary" onclick="exportarResumenManual()">Exportar Resumen TXT</button></div>
+  </div>
+</div>
+
+<!-- ==================== VERIFICACION IA ==================== -->
+<div class="panel" id="panel-verificacion-ia">
+
+  <!-- STEPS -->
+  <div class="vsteps">
+    <div class="vstep active" id="vstep1"><div class="vstep-num">1</div>Hotel e Incidencias</div>
+    <div class="vstep" id="vstep2"><div class="vstep-num">2</div>Lista de Raya PDF</div>
+    <div class="vstep" id="vstep3"><div class="vstep-num">3</div>Resultados</div>
+  </div>
+
+  <!-- VPANEL 1 -->
+  <div class="vpanel active" id="vpanel1">
+    <div class="form-block">
+      <div class="card-title" style="font-size:15px;font-weight:700;margin-bottom:6px">¿Qué hotel vas a verificar?</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Selecciona el hotel y confirma las incidencias que enviaste al despacho</div>
+      <div class="hotels-grid" id="v-hotels-grid"></div>
+      <div id="v-inc-section" style="display:none">
+        <div class="divider"></div>
+        <div class="flex-between" style="margin-bottom:16px">
+          <div style="font-size:13px;font-weight:700">Incidencias enviadas al despacho — <span class="tag tag-blue" id="v-hotel-tag">—</span></div>
+          <button class="btn btn-secondary" style="font-size:12px;padding:8px 14px" onclick="vAddInc()">+ Agregar</button>
+        </div>
+        <table class="vinc-table">
+          <thead><tr><th>Empleado (como aparece en nómina)</th><th>Tipo</th><th>Cantidad</th><th></th></tr></thead>
+          <tbody id="v-inc-tbody"><tr><td colspan="4" class="empty-state">Agrega las incidencias</td></tr></tbody>
+        </table>
+        <div class="btn-row mt16">
+          <button class="btn btn-primary" id="v-btn-paso2" onclick="vIrPaso2()" disabled>Continuar → Subir PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VPANEL 2 -->
+  <div class="vpanel" id="vpanel2">
+    <div class="form-block">
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Formato del despacho</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Cada despacho usa un sistema diferente</div>
+      <div class="fmt-btns">
+        <div class="fmt-btn selected" id="fmt-contpaq" onclick="vSelFormato('contpaq')">
+          <div class="fname">CONTPAQi · De la Peña</div>
+          <div class="fdesc">Muestra "Ausencias X" por empleado</div>
+        </div>
+        <div class="fmt-btn" id="fmt-sadper" onclick="vSelFormato('sadper')">
+          <div class="fname">SADPER · Matas</div>
+          <div class="fdesc">Código 503 = Falta injustificada</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-block">
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Sube la Lista de Raya (PDF)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">La IA leerá el PDF y extraerá las incidencias automáticamente</div>
+      <div class="upload-zone" id="v-upload-zone">
+        <input type="file" accept=".pdf" id="v-pdf-input" onchange="vHandlePDF(event)">
+        <div class="upload-icon">📄</div>
+        <div class="upload-title">Arrastra el PDF aquí o haz clic</div>
+        <div class="upload-sub">Lista de raya semanal · PDF</div>
+      </div>
+      <div class="btn-row mt16" id="v-btn-analizar-row" style="display:none">
+        <button class="btn btn-primary" onclick="vAnalizarPDF()">🔍 Analizar y Comparar</button>
+        <button class="btn btn-secondary" onclick="vIrPaso1()">← Regresar</button>
+      </div>
+    </div>
+    <div class="analyzing" id="v-analyzing">
+      <div class="spin"></div>
+      <div class="analyzing-txt">Analizando lista de raya...</div>
+      <div class="analyzing-sub" id="v-analyzing-sub">Leyendo PDF con IA</div>
+    </div>
+  </div>
+
+  <!-- VPANEL 3 -->
+  <div class="vpanel" id="vpanel3">
+    <div class="form-block" style="padding:20px 28px;margin-bottom:20px">
+      <div class="flex-between" style="flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">Resultado de Verificación IA</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace" id="v-res-label">—</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-secondary" style="font-size:12px;padding:8px 14px" onclick="vExportarTXT()">Exportar TXT</button>
+          <button class="btn btn-secondary" style="font-size:12px;padding:8px 14px" onclick="vNueva()">Nueva Verificación</button>
+        </div>
+      </div>
+    </div>
+    <div class="result-header">
+      <div class="res-kpi total"><div class="val" id="v-kpi-total">0</div><div class="lbl">Enviadas</div></div>
+      <div class="res-kpi ok"><div class="val" id="v-kpi-ok">0</div><div class="lbl">Correctas ✓</div></div>
+      <div class="res-kpi err"><div class="val" id="v-kpi-err">0</div><div class="lbl">Con error ✕</div></div>
+      <div class="res-kpi warn"><div class="val" id="v-kpi-miss">0</div><div class="lbl">No encontradas</div></div>
+    </div>
+    <div id="v-resultados"></div>
+    <div id="v-extras-section" style="display:none">
+      <div class="result-section-title">En nómina pero NO en tus incidencias</div>
+      <div id="v-extras-container"></div>
+    </div>
+    <div class="form-block" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px">Notas para el reporte</div>
+      <div class="field"><textarea id="v-notas" placeholder="Observaciones o aclaraciones para el despacho..."></textarea></div>
+      <div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" onclick="vExportarTXT()">Exportar Reporte Completo</button></div>
+    </div>
+  </div>
+
+</div><!-- /panel-verificacion-ia -->
+
+</div><!-- /main -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// DATOS GLOBALES
+// =====================================================
+const HOTELES_DATA = [
+  {nombre:"PLAZA BELICES",    razon:"Promotora Antonio Caso"},
+  {nombre:"HOT ELITE",        razon:"Promotora Carrillo Puerto"},
+  {nombre:"PLAZA CAMARONES",  razon:"Plaza Camarones"},
+  {nombre:"HOT VALLEJO",      razon:"ESDISA"},
+  {nombre:"HOT NARVARTE",     razon:"Operadora Bruesal"},
+  {nombre:"HOT INSURGENTES",  razon:"Promotora Plaza Tepeyac INS"},
+  {nombre:"HOT LA VILLA",     razon:"Promotora Plaza Tepeyac VILLA"},
+  {nombre:"HOT NAYARIT",      razon:"Hotel Nayarit"},
+  {nombre:"PLAZA DEL REY",    razon:"Promotora Plaza del Rey"},
+  {nombre:"LAVANDERÍA",       razon:"Promotora Plaza del Rey L"},
+];
+const HOTELES = HOTELES_DATA.map(h=>h.nombre);
+const RAZON_SOCIAL = Object.fromEntries(HOTELES_DATA.map(h=>[h.nombre,h.razon]));
+const DESPACHO_HOTEL = {
+  "PLAZA BELICES":"De la Peña Sainz","PLAZA CAMARONES":"De la Peña Sainz",
+  "HOT VALLEJO":"De la Peña Sainz","HOT INSURGENTES":"De la Peña Sainz",
+  "HOT LA VILLA":"De la Peña Sainz","HOT NAYARIT":"De la Peña Sainz",
+  "PLAZA DEL REY":"De la Peña Sainz","LAVANDERÍA":"De la Peña Sainz",
+  "HOT ELITE":"Matas","HOT NARVARTE":"Matas"
+};
+const DESPACHOS = {
+  "De la Peña Sainz":{email:"delapenasainz.nomina@gmail.com",hoteles:["PLAZA BELICES","PLAZA CAMARONES","HOT VALLEJO","HOT INSURGENTES","HOT LA VILLA","HOT NAYARIT","PLAZA DEL REY","LAVANDERÍA"]},
+  "Matas":{email:"gabriela.guzman@tmf-group.com",hoteles:["HOT ELITE","HOT NARVARTE"]}
+};
+const TIPOS_INC = ["Falta injustificada","Falta justificada","Incapacidad","Baja","Horas extra","Vacaciones","Prima vacacional","Bono / Premio","Compensación","Descuento","Día festivo laborado","Permiso con goce","Permiso sin goce","Otro"];
+
+let state = {};
+HOTELES.forEach(h=>{state[h]={status:'pendiente',incidencias:[],enviado:false,verificaciones:{}};});
+let hotelActivo=null, incidenciasTemp=[];
+const timelineData=[];
+
+// =====================================================
+// INIT
+// =====================================================
+function init(){
+  const now=new Date(), day=now.getDay();
+  const diff=now.getDate()-day+(day===0?-6:1);
+  const lunes=new Date(now.setDate(diff));
+  const viernes=new Date(lunes); viernes.setDate(lunes.getDate()+4);
+  const fmt=d=>d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+  document.getElementById('semana-label').textContent=`Semana ${fmt(lunes)} – ${fmt(viernes)}`;
+  renderResumen(); renderCapturaHoteles(); renderSelectCorreo();
+  renderVerificacionManual(); initVHoteles();
+}
+
+// =====================================================
+// TABS
+// =====================================================
+function switchTab(tab, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  el.classList.add('active');
+  if(tab==='verificacion-manual') renderVerificacionManual();
+  if(tab==='resumen') renderResumen();
+}
+
+// =====================================================
+// RESUMEN
+// =====================================================
+function renderResumen(){
+  const el=document.getElementById('resumen-hotels'); el.innerHTML='';
+  let totalInc=0,enviados=0,verificados=0,pendientes=0;
+  HOTELES.forEach(h=>{
+    const s=state[h];
+    totalInc+=s.incidencias.length;
+    if(s.status==='enviado') enviados++;
+    if(s.status==='verificado') verificados++;
+    if(s.status==='pendiente') pendientes++;
+    const card=document.createElement('div');
+    card.className='hotel-card';
+    card.innerHTML=`<div class="hotel-name">${h}</div><div class="hotel-status"><div class="status-dot ${s.status}"></div><span style="color:var(--muted)">${labelStatus(s.status)} · ${s.incidencias.length} inc.</span></div>`;
+    el.appendChild(card);
+  });
+  document.getElementById('kpi-total').textContent=totalInc;
+  document.getElementById('kpi-enviados').textContent=enviados;
+  document.getElementById('kpi-verificados').textContent=verificados;
+  document.getElementById('kpi-pendientes').textContent=pendientes;
+  renderTimeline();
+}
+function labelStatus(s){return{pendiente:'Pendiente',enviado:'Enviado',verificado:'Verificado',sin:'Sin inc.'}[s]||s;}
+
+// =====================================================
+// CAPTURA
+// =====================================================
+function renderCapturaHoteles(){
+  const el=document.getElementById('captura-hotels'); el.innerHTML='';
+  HOTELES.forEach(h=>{
+    const s=state[h];
+    const card=document.createElement('div');
+    card.className='hotel-card'+(hotelActivo===h?' selected':'');
+    card.innerHTML=`<div class="hotel-name">${h}</div><div class="hotel-status"><div class="status-dot ${s.status}"></div><span style="color:var(--muted)">${s.incidencias.length} incidencias</span></div>`;
+    card.onclick=()=>seleccionarHotel(h);
+    el.appendChild(card);
+  });
+}
+function seleccionarHotel(h){
+  hotelActivo=h; incidenciasTemp=[...state[h].incidencias];
+  document.getElementById('hotel-form-badge').textContent=h;
+  document.getElementById('form-incidencias').style.display='block';
+  renderListaTemp(); renderCapturaHoteles();
+}
+function agregarIncidencia(){
+  const emp=document.getElementById('inp-empleado').value.trim();
+  const tipo=document.getElementById('inp-tipo').value;
+  const val=document.getElementById('inp-valor').value.trim();
+  const per=document.getElementById('inp-periodo').value.trim();
+  const obs=document.getElementById('inp-obs').value.trim();
+  if(!emp||!tipo){showToast('⚠ Completa empleado y tipo');return;}
+  incidenciasTemp.push({emp,tipo,val,per,obs});
+  ['inp-empleado','inp-tipo','inp-valor','inp-obs'].forEach(id=>document.getElementById(id).value='');
+  renderListaTemp();
+}
+function renderListaTemp(){
+  const el=document.getElementById('lista-incidencias'); el.innerHTML='';
+  document.getElementById('badge-count').textContent=incidenciasTemp.length+' incidencias';
+  if(incidenciasTemp.length===0){el.innerHTML='<div class="empty-state">Sin incidencias aún.</div>';return;}
+  incidenciasTemp.forEach((inc,i)=>{
+    const div=document.createElement('div');
+    div.className='incidencia-item';
+    div.innerHTML=`<div class="incidencia-empleado">${inc.emp}<br><span style="color:var(--muted);font-size:11px;font-weight:400">${inc.per||'—'}</span></div><div class="incidencia-tipo">${inc.tipo}</div><div class="incidencia-valor">${inc.val||'—'}</div><button class="btn-del" onclick="eliminarInc(${i})">✕</button>`;
+    el.appendChild(div);
+  });
+}
+function eliminarInc(i){incidenciasTemp.splice(i,1);renderListaTemp();}
+function guardarHotel(){
+  if(!hotelActivo)return;
+  state[hotelActivo].incidencias=[...incidenciasTemp];
+  state[hotelActivo].status=incidenciasTemp.length===0?'sin':'pendiente';
+  addTimeline(hotelActivo,`${incidenciasTemp.length} incidencias guardadas`,'pendiente');
+  renderCapturaHoteles(); renderSelectCorreo(); showToast('✓ Hotel guardado');
+}
+function limpiarHotel(){incidenciasTemp=[];renderListaTemp();}
+
+// =====================================================
+// CORREO
+// =====================================================
+function renderSelectCorreo(){
+  const despachoActual=document.getElementById('sel-despacho')?.value||'De la Peña Sainz';
+  const hotelesDespacho=DESPACHOS[despachoActual]?.hoteles||HOTELES;
+  const selH=document.getElementById('sel-hoteles-correo'); selH.innerHTML='';
+  hotelesDespacho.forEach(h=>{
+    const opt=document.createElement('option');
+    opt.value=h; opt.textContent=`${h} (${state[h].incidencias.length} inc.)`;
+    if(state[h].incidencias.length>0) opt.selected=true;
+    selH.appendChild(opt);
+  });
+}
+function generarCorreo(){
+  const despacho=document.getElementById('sel-despacho').value;
+  const hotelesSel=Array.from(document.getElementById('sel-hoteles-correo').selectedOptions).map(o=>o.value);
+  if(hotelesSel.length===0){showToast('⚠ Selecciona al menos un hotel');return;}
+  const fecha=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  let cuerpo=`Estimado equipo de ${despacho},\n\nPor medio del presente correo les comparto las incidencias correspondientes a la semana en curso (${fecha}) para su integración en la nómina.\n\n`;
+  hotelesSel.forEach(h=>{
+    const incs=state[h].incidencias, razon=RAZON_SOCIAL[h]||h;
+    cuerpo+=`━━━━━━━━━━━━━━━━━━━━━━━\n${razon.toUpperCase()}  (${h})\n━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    if(incs.length===0){cuerpo+=`Sin incidencias para esta semana.\n\n`;}
+    else{incs.forEach((inc,i)=>{
+      cuerpo+=`\n${i+1}. Empleado: ${inc.emp}\n   Tipo: ${inc.tipo}\n`;
+      if(inc.val) cuerpo+=`   Valor: ${inc.val}\n`;
+      if(inc.per) cuerpo+=`   Periodo: ${inc.per}\n`;
+      if(inc.obs) cuerpo+=`   Observaciones: ${inc.obs}\n`;
+    });cuerpo+='\n';}
+  });
+  cuerpo+=`Quedo en espera de confirmación de recepción y de la lista de raya para revisión.\n\nSaludos,\nDepartamento de Recursos Humanos`;
+  document.getElementById('correo-para').textContent=DESPACHOS[despacho]?.email||'—';
+  document.getElementById('correo-asunto').textContent=`Incidencias Nómina Semanal · ${fecha}`;
+  document.getElementById('correo-body').textContent=cuerpo;
+  document.getElementById('correo-preview-wrap').style.display='block';
+}
+function copiarCorreo(){
+  navigator.clipboard.writeText(document.getElementById('correo-body').textContent)
+    .then(()=>showToast('✓ Correo copiado'));
+}
+function marcarEnviado(){
+  Array.from(document.getElementById('sel-hoteles-correo').selectedOptions).forEach(o=>{
+    if(state[o.value].incidencias.length>0){
+      state[o.value].status='enviado'; state[o.value].enviado=true;
+      addTimeline(o.value,'Correo enviado al despacho','enviado');
+    }
+  });
+  renderCapturaHoteles(); renderResumen(); showToast('✓ Marcado como enviado');
+}
+
+// =====================================================
+// VERIFICACION MANUAL
+// =====================================================
+function renderVerificacionManual(){
+  const tbody=document.getElementById('tbody-verif'); tbody.innerHTML='';
+  let total=0,ok=0,err=0;
+  HOTELES.forEach(h=>{
+    state[h].incidencias.forEach((inc,i)=>{
+      total++;
+      const key=`${h}_${i}`, ver=state[h].verificaciones[key]||null;
+      if(ver==='ok') ok++; if(ver==='error') err++;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><span style="font-size:11px;font-weight:700">${h}</span></td><td>${inc.emp}</td><td><span class="tag enviado">${inc.tipo}</span></td><td>${inc.val||'—'}</td><td><div class="check-cell"><button class="check-btn ok ${ver==='ok'?'active':''}" onclick="marcarVerif('${h}',${i},'ok')">✓ OK</button><button class="check-btn error ${ver==='error'?'active':''}" onclick="marcarVerif('${h}',${i},'error')">✕ Error</button></div></td><td><input type="text" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;width:140px;font-family:'DM Mono',monospace" placeholder="Nota..." onchange="guardarNota('${h}',${i},this.value)" value="${inc.nota||''}"></td>`;
+      tbody.appendChild(tr);
+    });
+  });
+  if(total===0) tbody.innerHTML='<tr><td colspan="6" class="empty-state">Sin incidencias guardadas. Ve a Captura primero.</td></tr>';
+  document.getElementById('badge-ok').textContent=ok+' OK';
+  document.getElementById('badge-err').textContent=err+' Con error';
+}
+function marcarVerif(hotel,i,val){
+  state[hotel].verificaciones[`${hotel}_${i}`]=val;
+  const allOk=state[hotel].incidencias.every((_,j)=>state[hotel].verificaciones[`${hotel}_${j}`]==='ok');
+  if(allOk&&state[hotel].incidencias.length>0){state[hotel].status='verificado';addTimeline(hotel,'Verificado manualmente ✓','verificado');}
+  renderVerificacionManual(); renderResumen();
+}
+function guardarNota(hotel,i,val){state[hotel].incidencias[i].nota=val;}
+function exportarResumenManual(){
+  let txt=`RESUMEN VERIFICACIÓN NÓMINA\nGenerado: ${new Date().toLocaleString('es-MX')}\n${'═'.repeat(50)}\n\n`;
+  HOTELES.forEach(h=>{
+    if(state[h].incidencias.length===0)return;
+    txt+=`${h.toUpperCase()}\n${'-'.repeat(40)}\n`;
+    state[h].incidencias.forEach((inc,i)=>{
+      const ver=state[h].verificaciones[`${h}_${i}`]||'Sin revisar';
+      txt+=`  • ${inc.emp} | ${inc.tipo} | ${inc.val||'—'} → ${ver.toUpperCase()}\n`;
+      if(inc.nota) txt+=`    Nota: ${inc.nota}\n`;
+    });txt+='\n';
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download=`verificacion_manual_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click(); showToast('✓ Resumen exportado');
+}
+
+// =====================================================
+// VERIFICACION IA
+// =====================================================
+let vHotelActivo=null, vIncidencias=[], vPdfBase64=null, vFormato='contpaq', vResultados=null;
+
+function initVHoteles(){
+  const grid=document.getElementById('v-hotels-grid'); grid.innerHTML='';
+  HOTELES_DATA.forEach(h=>{
+    const btn=document.createElement('div');
+    btn.className='hotel-card'; btn.id='vhbtn-'+h.nombre;
+    btn.innerHTML=`<div class="hotel-name">${h.nombre}</div><div class="hotel-status" style="color:var(--muted);font-family:'DM Mono',monospace;font-size:10px">${h.razon}</div>`;
+    btn.onclick=()=>vSelHotel(h.nombre);
+    grid.appendChild(btn);
+  });
+}
+
+function vSelHotel(nombre){
+  vHotelActivo=nombre;
+  document.querySelectorAll('#v-hotels-grid .hotel-card').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('vhbtn-'+nombre).classList.add('selected');
+  document.getElementById('v-inc-section').style.display='block';
+  document.getElementById('v-hotel-tag').textContent=nombre;
+  // Pre-cargar incidencias del tracker si existen
+  if(state[nombre].incidencias.length>0){
+    vIncidencias=state[nombre].incidencias.map(i=>({emp:i.emp,tipo:i.tipo,cantidad:i.val||'1'}));
+  } else { vIncidencias=[]; }
+  // Auto-formato
+  vFormato=DESPACHO_HOTEL[nombre]==='Matas'?'sadper':'contpaq';
+  vSelFormato(vFormato);
+  vRenderInc();
+}
+
+function vAddInc(){vIncidencias.push({emp:'',tipo:'Falta injustificada',cantidad:'1'});vRenderInc();}
+
+function vRenderInc(){
+  const tbody=document.getElementById('v-inc-tbody'); tbody.innerHTML='';
+  if(vIncidencias.length===0){
+    tbody.innerHTML='<tr><td colspan="4" class="empty-state">Agrega las incidencias</td></tr>';
+    document.getElementById('v-btn-paso2').disabled=true; return;
+  }
+  vIncidencias.forEach((inc,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input type="text" value="${inc.emp}" placeholder="Apellido Nombre"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none"
+        oninput="vIncidencias[${i}].emp=this.value;vCheckBtn()"></td>
+      <td><select onchange="vIncidencias[${i}].tipo=this.value"
+        style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;width:100%">
+        ${TIPOS_INC.map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input type="text" value="${inc.cantidad}" placeholder="1 día"
+        style="width:80px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none"
+        oninput="vIncidencias[${i}].cantidad=this.value"></td>
+      <td><button onclick="vDelInc(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:4px" onmouseover="this.style.color='var(--accent3)'" onmouseout="this.style.color='var(--muted)'">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  vCheckBtn();
+}
+function vDelInc(i){vIncidencias.splice(i,1);vRenderInc();}
+function vCheckBtn(){
+  document.getElementById('v-btn-paso2').disabled=!(vIncidencias.length>0&&vIncidencias.every(i=>i.emp.trim().length>1));
+}
+function vIrPaso2(){vSetStep(2);}
+function vIrPaso1(){vSetStep(1);}
+function vSetStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('vpanel'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('vstep'+i);
+    s.classList.remove('active','done');
+    if(i<n) s.classList.add('done');
+    if(i===n) s.classList.add('active');
+  });
+}
+function vSelFormato(f){
+  vFormato=f;
+  document.getElementById('fmt-contpaq').classList.toggle('selected',f==='contpaq');
+  document.getElementById('fmt-sadper').classList.toggle('selected',f==='sadper');
+}
+function vHandlePDF(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    vPdfBase64=ev.target.result.split(',')[1];
+    const zone=document.getElementById('v-upload-zone');
+    zone.classList.add('upload-loaded');
+    zone.innerHTML=`<div class="upload-icon">✅</div><div class="upload-title">${file.name}</div><div class="upload-sub" style="color:var(--green)">PDF cargado · listo para analizar</div>`;
+    document.getElementById('v-btn-analizar-row').style.display='flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function vAnalizarPDF(){
+  if(!vPdfBase64){showToast('⚠ Sube el PDF primero');return;}
+  document.getElementById('v-btn-analizar-row').style.display='none';
+  document.getElementById('v-analyzing').classList.add('show');
+  const subTxt=document.getElementById('v-analyzing-sub');
+  const msgs=['Leyendo lista de raya...','Identificando empleados...','Extrayendo incidencias...','Comparando contra lo enviado...'];
+  let mi=0;
+  const interval=setInterval(()=>{subTxt.textContent=msgs[Math.min(mi++,msgs.length-1)];},1800);
+
+  const incListaTxt=vIncidencias.map((inc,i)=>`${i+1}. ${inc.emp} | ${inc.tipo} | ${inc.cantidad}`).join('\n');
+  const fmtDesc=vFormato==='contpaq'
+    ?'CONTPAQi Nóminas: las ausencias aparecen como "Ausencias X" debajo del nombre. Incapacidades como "Incapacidades X". Bajas como liquidación o finiquito.'
+    :'SADPER: faltas injustificadas con código 503 "FALTA INJUSTIFICADA" en deducciones. Incapacidades como días no trabajados sin sueldo.';
+
+  const prompt=`Eres experto en nóminas México. Analiza esta lista de raya de ${vHotelActivo} y extrae TODAS las incidencias.
+
+FORMATO: ${fmtDesc}
+
+INCIDENCIAS QUE YO ENVIÉ AL DESPACHO:
+${incListaTxt}
+
+INSTRUCCIONES:
+1. Extrae todos los empleados con: faltas, incapacidades, bajas, compensaciones, bonos.
+2. Compara cada incidencia que envié vs lo que hay en el PDF.
+3. Clasifica: CORRECTO / ERROR (hay diferencia) / NO_ENCONTRADA (no aparece).
+4. Lista también extras en PDF que yo no envié.
+
+Responde SOLO en JSON sin texto extra ni backticks:
+{
+  "hotel":"${vHotelActivo}",
+  "periodo":"periodo del PDF",
+  "comparacion":[{"empleado":"nombre en PDF","empleado_enviado":"nombre que envié","tipo_enviado":"","tipo_nomina":"","cantidad_enviada":"","cantidad_nomina":"","estatus":"CORRECTO|ERROR|NO_ENCONTRADA","detalle":""}],
+  "extras_en_nomina":[{"empleado":"","tipo":"","cantidad":"","detalle":""}],
+  "resumen":"frase corta"
+}`;
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:vPdfBase64}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    clearInterval(interval);
+    const data=await response.json();
+    if(data.error) throw new Error(data.error.message);
+    const raw=data.content.map(c=>c.text||'').join('');
+    vResultados=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    document.getElementById('v-analyzing').classList.remove('show');
+    vMostrarResultados(vResultados);
+    // Actualizar estatus del hotel en el tracker
+    const comp=vResultados.comparacion||[];
+    const allOk=comp.length>0&&comp.every(c=>c.estatus==='CORRECTO');
+    if(allOk) state[vHotelActivo].status='verificado';
+    addTimeline(vHotelActivo,`IA: ${comp.filter(c=>c.estatus==='CORRECTO').length}✓ ${comp.filter(c=>c.estatus!=='CORRECTO').length}✕`,'verificado');
+    renderResumen();
+    vSetStep(3);
+  }catch(err){
+    clearInterval(interval);
+    document.getElementById('v-analyzing').classList.remove('show');
+    document.getElementById('v-btn-analizar-row').style.display='flex';
+    showToast('⚠ Error: '+(err.message||'intenta de nuevo'));
+    console.error(err);
+  }
+}
+
+function vMostrarResultados(data){
+  document.getElementById('v-res-label').textContent=`${data.hotel} · ${data.periodo||''} · ${data.resumen||''}`;
+  const comp=data.comparacion||[];
+  const correctos=comp.filter(c=>c.estatus==='CORRECTO').length;
+  const errores=comp.filter(c=>c.estatus==='ERROR').length;
+  const noEnc=comp.filter(c=>c.estatus==='NO_ENCONTRADA').length;
+  document.getElementById('v-kpi-total').textContent=comp.length;
+  document.getElementById('v-kpi-ok').textContent=correctos;
+  document.getElementById('v-kpi-err').textContent=errores;
+  document.getElementById('v-kpi-miss').textContent=noEnc;
+
+  const container=document.getElementById('v-resultados'); container.innerHTML='';
+  const errList=comp.filter(c=>c.estatus!=='CORRECTO');
+  const okList=comp.filter(c=>c.estatus==='CORRECTO');
+
+  if(errList.length>0){
+    const sec=document.createElement('div'); sec.className='result-section';
+    sec.innerHTML=`<div class="result-section-title">⚠ Requieren atención (${errList.length})</div>`;
+    errList.forEach(item=>sec.appendChild(vCrearItem(item)));
+    container.appendChild(sec);
+  }
+  if(okList.length>0){
+    const sec=document.createElement('div'); sec.className='result-section';
+    sec.innerHTML=`<div class="result-section-title">✓ Correctas (${okList.length})</div>`;
+    okList.forEach(item=>sec.appendChild(vCrearItem(item)));
+    container.appendChild(sec);
+  }
+
+  const extras=data.extras_en_nomina||[];
+  const extSec=document.getElementById('v-extras-section');
+  const extCont=document.getElementById('v-extras-container'); extCont.innerHTML='';
+  if(extras.length>0){
+    extSec.style.display='block';
+    extras.forEach(ex=>{
+      const div=document.createElement('div'); div.className='result-item warning';
+      div.innerHTML=`<div class="result-icon">⚡</div><div><div class="result-name">${ex.empleado}</div><div class="result-detail">Tipo: <span>${ex.tipo}</span> · Cantidad: <span>${ex.cantidad}</span><br>${ex.detalle||''}</div></div><div class="result-badge badge-warn">No enviada</div>`;
+      extCont.appendChild(div);
+    });
+  } else extSec.style.display='none';
+}
+
+function vCrearItem(item){
+  const div=document.createElement('div');
+  const esOk=item.estatus==='CORRECTO', esNoEnc=item.estatus==='NO_ENCONTRADA';
+  div.className=`result-item ${esOk?'match':esNoEnc?'missing':'error'}`;
+  const icon=esOk?'✓':esNoEnc?'✕':'⚠';
+  const badge=esOk?'<span class="result-badge badge-ok">Correcto</span>':esNoEnc?'<span class="result-badge badge-missing">No encontrada</span>':'<span class="result-badge badge-err">Error</span>';
+  let detalle='';
+  if(!esOk){
+    if(esNoEnc) detalle=`Enviaste: <span>${item.tipo_enviado}</span> · <span>${item.cantidad_enviada}</span> — No aparece en nómina`;
+    else{
+      const dT=item.tipo_enviado!==item.tipo_nomina?`Tipo: enviaste <span>${item.tipo_enviado}</span>, nómina: <span>${item.tipo_nomina}</span><br>`:'';
+      const dC=item.cantidad_enviada!==item.cantidad_nomina?`Cantidad: enviaste <span>${item.cantidad_enviada}</span>, nómina: <span>${item.cantidad_nomina}</span>`:'';
+      detalle=dT+dC||item.detalle||'';
+    }
+  } else detalle=`${item.tipo_nomina} · ${item.cantidad_nomina}`;
+  div.innerHTML=`<div class="result-icon">${icon}</div><div><div class="result-name">${item.empleado}</div><div class="result-detail">${detalle}${item.detalle&&!esOk?'<br><span style="color:var(--muted)">'+item.detalle+'</span>':''}</div></div>${badge}`;
+  return div;
+}
+
+function vExportarTXT(){
+  if(!vResultados){showToast('⚠ Realiza primero una verificación');return;}
+  const d=vResultados, comp=d.comparacion||[], notas=document.getElementById('v-notas').value;
+  const fecha=new Date().toLocaleString('es-MX');
+  let txt=`REPORTE VERIFICACIÓN IA · NÓMINA\n${'═'.repeat(50)}\nHotel: ${d.hotel}\nPeriodo: ${d.periodo||'—'}\nGenerado: ${fecha}\n\n`;
+  const errores=comp.filter(c=>c.estatus!=='CORRECTO');
+  const correctos=comp.filter(c=>c.estatus==='CORRECTO');
+  if(errores.length>0){
+    txt+=`INCIDENCIAS CON PROBLEMAS (${errores.length})\n${'-'.repeat(40)}\n`;
+    errores.forEach(item=>{
+      txt+=`\n• ${item.empleado}\n  Estatus: ${item.estatus}\n`;
+      if(item.estatus==='NO_ENCONTRADA') txt+=`  Enviada: ${item.tipo_enviado} · ${item.cantidad_enviada}\n  → NO aparece en nómina\n`;
+      else txt+=`  Enviado: ${item.tipo_enviado} · ${item.cantidad_enviada}\n  Nómina: ${item.tipo_nomina} · ${item.cantidad_nomina}\n${item.detalle?'  Nota: '+item.detalle+'\n':''}`;
+    });txt+='\n';
+  }
+  if(correctos.length>0){
+    txt+=`INCIDENCIAS CORRECTAS (${correctos.length})\n${'-'.repeat(40)}\n`;
+    correctos.forEach(item=>{txt+=`✓ ${item.empleado} · ${item.tipo_nomina} · ${item.cantidad_nomina}\n`;});txt+='\n';
+  }
+  const extras=d.extras_en_nomina||[];
+  if(extras.length>0){txt+=`EN NÓMINA PERO NO ENVIADAS (${extras.length})\n${'-'.repeat(40)}\n`;extras.forEach(ex=>{txt+=`⚡ ${ex.empleado} · ${ex.tipo} · ${ex.cantidad}\n`;});txt+='\n';}
+  if(notas.trim()) txt+=`NOTAS\n${'-'.repeat(40)}\n${notas}\n\n`;
+  txt+=`${'═'.repeat(50)}\nTotal: ${comp.length} · OK: ${correctos.length} · Errores: ${errores.filter(e=>e.estatus==='ERROR').length} · No encontradas: ${errores.filter(e=>e.estatus==='NO_ENCONTRADA').length}\n`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download=`verificacion_ia_${(d.hotel||'hotel').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click(); showToast('✓ Reporte exportado');
+}
+
+function vNueva(){
+  vHotelActivo=null; vIncidencias=[]; vPdfBase64=null; vResultados=null;
+  document.querySelectorAll('#v-hotels-grid .hotel-card').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('v-inc-section').style.display='none';
+  const zone=document.getElementById('v-upload-zone');
+  zone.className='upload-zone';
+  zone.innerHTML=`<input type="file" accept=".pdf" id="v-pdf-input" onchange="vHandlePDF(event)"><div class="upload-icon">📄</div><div class="upload-title">Arrastra el PDF aquí o haz clic</div><div class="upload-sub">Lista de raya semanal · PDF</div>`;
+  document.getElementById('v-btn-analizar-row').style.display='none';
+  document.getElementById('v-resultados').innerHTML='';
+  vRenderInc(); vSetStep(1);
+}
+
+// =====================================================
+// TIMELINE
+// =====================================================
+function addTimeline(hotel,action,status){
+  const hora=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  timelineData.unshift({hotel,action,status,hora});
+  if(timelineData.length>20) timelineData.pop();
+  renderTimeline();
+}
+function renderTimeline(){
+  const el=document.getElementById('timeline'); if(!el)return;
+  if(timelineData.length===0){el.innerHTML='<div class="empty-state">Sin actividad aún.</div>';return;}
+  el.innerHTML=timelineData.slice(0,8).map(t=>`<div class="timeline-item"><div class="timeline-dot ${t.status}"></div><div class="timeline-content"><div class="hotel">${t.hotel}</div><div class="action">${t.action}</div></div><div class="timeline-time">${t.hora}</div></div>`).join('');
+}
+
+// =====================================================
+// TOAST
+// =====================================================
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Nóminas · RH Hotels</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #16161d;
+    --surface2: #1e1e28;
+    --border: #2a2a38;
+    --accent: #e8ff47;
+    --accent2: #47b4ff;
+    --accent3: #ff6b6b;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --green: #4fffb0;
+    --orange: #ffaa47;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .semana-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 24px 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* MAIN */
+  .main { padding: 32px; max-width: 1200px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION HEADERS */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* GRID HOTELS */
+  .hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .hotel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hotel-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .hotel-card.selected {
+    border-color: var(--accent);
+    background: #1a1a10;
+  }
+
+  .hotel-card.selected::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .hotel-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .hotel-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-dot.pendiente { background: var(--orange); }
+  .status-dot.enviado { background: var(--accent2); }
+  .status-dot.verificado { background: var(--green); }
+  .status-dot.sin-incidencias { background: var(--muted); }
+
+  /* FORM INCIDENCIAS */
+  .form-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .form-block h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-block h3 span {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: 20px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-row.triple {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .field input, .field select, .field textarea {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .field textarea { resize: vertical; min-height: 80px; }
+
+  .field select option { background: var(--surface2); }
+
+  /* INCIDENCIAS LIST */
+  .incidencias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .incidencia-item {
+    display: grid;
+    grid-template-columns: 1fr 140px 120px 40px;
+    gap: 10px;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .incidencia-empleado {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .incidencia-tipo {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(71, 180, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .incidencia-valor {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .btn-del {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+
+  .btn-del:hover { color: var(--accent3); }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 11px 22px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0f13;
+  }
+
+  .btn-primary:hover {
+    background: #d4eb2a;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .btn-outline {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* CORREO PREVIEW */
+  .correo-preview {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .correo-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    gap: 24px;
+  }
+
+  .correo-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .correo-meta label {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .correo-body {
+    padding: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    min-height: 200px;
+  }
+
+  .correo-actions {
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* VERIFICACION TABLE */
+  .tabla-verificacion {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .tabla-verificacion th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tabla-verificacion td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(42, 42, 56, 0.5);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .tabla-verificacion tr:hover td {
+    background: var(--surface2);
+  }
+
+  .check-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .check-btn {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .check-btn.ok {
+    background: rgba(79, 255, 176, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(79, 255, 176, 0.3);
+  }
+
+  .check-btn.ok:hover, .check-btn.ok.active {
+    background: var(--green);
+    color: #0f0f13;
+  }
+
+  .check-btn.error {
+    background: rgba(255, 107, 107, 0.1);
+    color: var(--accent3);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+  }
+
+  .check-btn.error:hover, .check-btn.error.active {
+    background: var(--accent3);
+    color: white;
+  }
+
+  /* RESUMEN PANEL */
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .kpi-val {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .kpi.accent .kpi-val { color: var(--accent); }
+  .kpi.blue .kpi-val { color: var(--accent2); }
+  .kpi.green .kpi-val { color: var(--green); }
+  .kpi.orange .kpi-val { color: var(--orange); }
+
+  /* TIMELINE */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(42,42,56,0.5);
+    align-items: flex-start;
+  }
+
+  .timeline-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .timeline-content .hotel { font-size: 13px; font-weight: 700; }
+  .timeline-content .action {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .timeline-time {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: #0f0f13;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 10px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* HELPERS */
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag.pendiente { background: rgba(255,170,71,0.15); color: var(--orange); }
+  .tag.enviado { background: rgba(71,180,255,0.15); color: var(--accent2); }
+  .tag.verificado { background: rgba(79,255,176,0.15); color: var(--green); }
+  .tag.sin { background: rgba(107,107,128,0.15); color: var(--muted); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    TRACKER NÓMINAS · RH HOTELS
+  </div>
+  <div class="semana-badge" id="semana-label">Cargando semana...</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('resumen')">Resumen</button>
+  <button class="tab" onclick="switchTab('captura')">Captura</button>
+  <button class="tab" onclick="switchTab('correo')">Correo al Despacho</button>
+  <button class="tab" onclick="switchTab('verificacion')">Verificación</button>
+</div>
+
+<div class="main">
+
+  <!-- ===================== RESUMEN ===================== -->
+  <div class="panel active" id="panel-resumen">
+    <div class="resumen-grid">
+      <div class="kpi accent">
+        <div class="kpi-val" id="kpi-total">0</div>
+        <div class="kpi-label">Incidencias Capturadas</div>
+      </div>
+      <div class="kpi blue">
+        <div class="kpi-val" id="kpi-enviados">0</div>
+        <div class="kpi-label">Hoteles Enviados</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-val" id="kpi-verificados">0</div>
+        <div class="kpi-label">Verificados OK</div>
+      </div>
+      <div class="kpi orange">
+        <div class="kpi-val" id="kpi-pendientes">10</div>
+        <div class="kpi-label">Pendientes</div>
+      </div>
+    </div>
+
+    <div class="flex-between" style="margin-bottom:16px">
+      <div class="section-title">Estado por Hotel</div>
+    </div>
+
+    <div class="hotels-grid" id="resumen-hotels"></div>
+
+    <div class="section-title mt24">Actividad Reciente</div>
+    <div class="form-block" style="padding:0">
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </div>
+
+  <!-- ===================== CAPTURA ===================== -->
+  <div class="panel" id="panel-captura">
+    <div class="flex-between" style="margin-bottom:20px">
+      <div class="section-title" style="margin:0">Selecciona un Hotel</div>
+    </div>
+
+    <div class="hotels-grid" id="captura-hotels"></div>
+
+    <div id="form-incidencias" style="display:none">
+      <div class="form-block">
+        <h3 id="hotel-form-title">Hotel <span id="hotel-form-badge">—</span></h3>
+
+        <div class="section-title">Nueva Incidencia</div>
+        <div class="form-row triple">
+          <div class="field">
+            <label>Nombre del Empleado</label>
+            <input type="text" id="inp-empleado" placeholder="Ej. María López">
+          </div>
+          <div class="field">
+            <label>Tipo de Incidencia</label>
+            <select id="inp-tipo">
+              <option value="">— Seleccionar —</option>
+              <option value="Falta injustificada">Falta injustificada</option>
+              <option value="Falta justificada">Falta justificada</option>
+              <option value="Retardo">Retardo</option>
+              <option value="Horas extra">Horas extra</option>
+              <option value="Vacaciones">Vacaciones</option>
+              <option value="Incapacidad">Incapacidad</option>
+              <option value="Prima vacacional">Prima vacacional</option>
+              <option value="Bono / Premio">Bono / Premio</option>
+              <option value="Descuento">Descuento</option>
+              <option value="Día festivo laborado">Día festivo laborado</option>
+              <option value="Permiso con goce">Permiso con goce</option>
+              <option value="Permiso sin goce">Permiso sin goce</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Días / Horas / Monto</label>
+            <input type="text" id="inp-valor" placeholder="Ej. 2 días / $500">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Periodo afectado</label>
+            <input type="text" id="inp-periodo" placeholder="Ej. 01–07 Dic">
+          </div>
+          <div class="field">
+            <label>Observaciones</label>
+            <input type="text" id="inp-obs" placeholder="Notas adicionales (opcional)">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="agregarIncidencia()">+ Agregar Incidencia</button>
+        </div>
+      </div>
+
+      <div class="form-block">
+        <div class="flex-between" style="margin-bottom:16px">
+          <h3 style="margin:0">Lista de Incidencias Capturadas</h3>
+          <span class="tag pendiente" id="badge-count">0 incidencias</span>
+        </div>
+        <div class="incidencias-list" id="lista-incidencias">
+          <div class="empty-state">Sin incidencias aún. Agrégalas arriba.</div>
+        </div>
+        <div class="btn-row mt16">
+          <button class="btn btn-primary" onclick="guardarHotel()">✓ Guardar Hotel</button>
+          <button class="btn btn-outline" onclick="limpiarHotel()">Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CORREO ===================== -->
+  <div class="panel" id="panel-correo">
+    <div class="form-block">
+      <h3>Configuración del Correo</h3>
+      <div class="form-row">
+        <div class="field">
+          <label>Despacho Destinatario</label>
+          <select id="sel-despacho">
+            <option value="De la Peña Sainz">De la Peña Sainz</option>
+            <option value="Matas">Matas</option>
+          </select>
+          </select>
+        </div>
+        <div class="field">
+          <label>Hoteles a incluir</label>
+          <select id="sel-hoteles-correo" multiple style="min-height:80px">
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="generarCorreo()">Generar Correo</button>
+      </div>
+    </div>
+
+    <div id="correo-preview-wrap" style="display:none">
+      <div class="section-title">Vista Previa del Correo</div>
+      <div class="correo-preview">
+        <div class="correo-header">
+          <div class="correo-meta">
+            <label>Para</label>
+            <span id="correo-para">—</span>
+          </div>
+          <div class="correo-meta">
+            <label>Asunto</label>
+            <span id="correo-asunto">—</span>
+          </div>
+        </div>
+        <div class="correo-body" id="correo-body"></div>
+        <div class="correo-actions">
+          <button class="btn btn-secondary" onclick="copiarCorreo()">Copiar Correo</button>
+          <button class="btn btn-primary" onclick="marcarEnviado()">✓ Marcar como Enviado</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VERIFICACION ===================== -->
+  <div class="panel" id="panel-verificacion">
+    <div class="form-block">
+      <div class="flex-between" style="margin-bottom:20px">
+        <h3 style="margin:0">Lista de Verificación · Nómina</h3>
+        <div style="display:flex; gap:10px; align-items:center">
+          <span class="tag verificado" id="badge-ok">0 OK</span>
+          <span class="tag pendiente" id="badge-err">0 Con error</span>
+        </div>
+      </div>
+      <table class="tabla-verificacion" id="tabla-verif">
+        <thead>
+          <tr>
+            <th>Hotel</th>
+            <th>Empleado</th>
+            <th>Tipo</th>
+            <th>Valor</th>
+            <th>Verificación</th>
+            <th>Nota</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-verif">
+          <tr><td colspan="6" class="empty-state">Sin incidencias guardadas aún.</td></tr>
+        </tbody>
+      </table>
+      <div class="btn-row mt16">
+        <button class="btn btn-primary" onclick="exportarResumen()">Exportar Resumen TXT</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========================= DATOS =========================
+const HOTELES_DATA = [
+  { nombre: "PLAZA BELICES",     razon: "Promotora Antonio Caso" },
+  { nombre: "HOT ELITE",         razon: "Promotora Carrillo Puerto" },
+  { nombre: "PLAZA CAMARONES",   razon: "Plaza Camarones" },
+  { nombre: "HOT VALLEJO",       razon: "ESDISA" },
+  { nombre: "HOT NARVARTE",      razon: "Operadora Bruesal" },
+  { nombre: "HOT INSURGENTES",   razon: "Promotora Plaza Tepeyac INS" },
+  { nombre: "HOT LA VILLA",      razon: "Promotora Plaza Tepeyac VILLA" },
+  { nombre: "HOT NAYARIT",       razon: "Hotel Nayarit" },
+  { nombre: "PLAZA DEL REY",     razon: "Promotora Plaza del Rey" },
+  { nombre: "LAVANDERÍA",        razon: "Promotora Plaza del Rey L" },
+];
+
+const HOTELES = HOTELES_DATA.map(h => h.nombre);
+const RAZON_SOCIAL = Object.fromEntries(HOTELES_DATA.map(h => [h.nombre, h.razon]));
+
+const DESPACHOS = {
+  "De la Peña Sainz": {
+    email: "delapenasainz.nomina@gmail.com",
+    hoteles: ["PLAZA BELICES","PLAZA CAMARONES","HOT VALLEJO","HOT INSURGENTES","HOT LA VILLA","HOT NAYARIT","PLAZA DEL REY","LAVANDERÍA"]
+  },
+  "Matas": {
+    email: "gabriela.guzman@tmf-group.com",
+    hoteles: ["HOT ELITE","HOT NARVARTE"]
+  }
+};
+
+let state = {};
+HOTELES.forEach(h => {
+  state[h] = { status: 'pendiente', incidencias: [], enviado: false, verificaciones: {} };
+});
+
+let hotelActivo = null;
+let incidenciasTemp = [];
+
+// ========================= INIT =========================
+function init() {
+  // Semana actual
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+  const lunes = new Date(now.setDate(diff));
+  const viernes = new Date(lunes); viernes.setDate(lunes.getDate() + 4);
+  const fmt = d => d.toLocaleDateString('es-MX', {day:'2-digit',month:'short'});
+  document.getElementById('semana-label').textContent = `Semana ${fmt(lunes)} – ${fmt(viernes)}`;
+
+  renderResumen();
+  renderCapturaHoteles();
+  renderSelectCorreo();
+  renderVerificacion();
+}
+
+// ========================= TABS =========================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'verificacion') renderVerificacion();
+  if (tab === 'resumen') renderResumen();
+}
+
+// ========================= RESUMEN =========================
+function renderResumen() {
+  const hotelsEl = document.getElementById('resumen-hotels');
+  hotelsEl.innerHTML = '';
+
+  let totalInc = 0, enviados = 0, verificados = 0, pendientes = 0;
+
+  HOTELES.forEach(h => {
+    const s = state[h];
+    totalInc += s.incidencias.length;
+    if (s.status === 'enviado') enviados++;
+    if (s.status === 'verificado') verificados++;
+    if (s.status === 'pendiente') pendientes++;
+
+    const card = document.createElement('div');
+    card.className = 'hotel-card';
+    card.innerHTML = `
+      <div class="hotel-name">${h}</div>
+      <div class="hotel-status">
+        <div class="status-dot ${s.status}"></div>
+        <span style="color:var(--muted)">${labelStatus(s.status)} · ${s.incidencias.length} inc.</span>
+      </div>
+    `;
+    hotelsEl.appendChild(card);
+  });
+
+  document.getElementById('kpi-total').textContent = totalInc;
+  document.getElementById('kpi-enviados').textContent = enviados;
+  document.getElementById('kpi-verificados').textContent = verificados;
+  document.getElementById('kpi-pendientes').textContent = pendientes;
+}
+
+function labelStatus(s) {
+  return { pendiente: 'Pendiente', enviado: 'Enviado', verificado: 'Verificado', sin: 'Sin inc.' }[s] || s;
+}
+
+// ========================= CAPTURA =========================
+function renderCapturaHoteles() {
+  const el = document.getElementById('captura-hotels');
+  el.innerHTML = '';
+  HOTELES.forEach(h => {
+    const s = state[h];
+    const card = document.createElement('div');
+    card.className = 'hotel-card' + (hotelActivo === h ? ' selected' : '');
+    card.innerHTML = `
+      <div class="hotel-name">${h}</div>
+      <div class="hotel-status">
+        <div class="status-dot ${s.status}"></div>
+        <span style="color:var(--muted)">${s.incidencias.length} incidencias</span>
+      </div>
+    `;
+    card.onclick = () => seleccionarHotel(h);
+    el.appendChild(card);
+  });
+}
+
+function seleccionarHotel(h) {
+  hotelActivo = h;
+  incidenciasTemp = [...state[h].incidencias];
+  document.getElementById('hotel-form-badge').textContent = h;
+  document.getElementById('form-incidencias').style.display = 'block';
+  renderListaTemp();
+  renderCapturaHoteles();
+}
+
+function agregarIncidencia() {
+  const emp = document.getElementById('inp-empleado').value.trim();
+  const tipo = document.getElementById('inp-tipo').value;
+  const val = document.getElementById('inp-valor').value.trim();
+  const per = document.getElementById('inp-periodo').value.trim();
+  const obs = document.getElementById('inp-obs').value.trim();
+
+  if (!emp || !tipo) { showToast('⚠ Completa empleado y tipo'); return; }
+
+  incidenciasTemp.push({ emp, tipo, val, per, obs });
+  document.getElementById('inp-empleado').value = '';
+  document.getElementById('inp-tipo').value = '';
+  document.getElementById('inp-valor').value = '';
+  document.getElementById('inp-obs').value = '';
+  renderListaTemp();
+}
+
+function renderListaTemp() {
+  const el = document.getElementById('lista-incidencias');
+  el.innerHTML = '';
+  document.getElementById('badge-count').textContent = incidenciasTemp.length + ' incidencias';
+
+  if (incidenciasTemp.length === 0) {
+    el.innerHTML = '<div class="empty-state">Sin incidencias aún.</div>';
+    return;
+  }
+
+  incidenciasTemp.forEach((inc, i) => {
+    const div = document.createElement('div');
+    div.className = 'incidencia-item';
+    div.innerHTML = `
+      <div class="incidencia-empleado">${inc.emp}<br><span style="color:var(--muted);font-size:11px;font-weight:400">${inc.per || '—'}</span></div>
+      <div class="incidencia-tipo">${inc.tipo}</div>
+      <div class="incidencia-valor">${inc.val || '—'}</div>
+      <button class="btn-del" onclick="eliminarInc(${i})">✕</button>
+    `;
+    el.appendChild(div);
+  });
+}
+
+function eliminarInc(i) {
+  incidenciasTemp.splice(i, 1);
+  renderListaTemp();
+}
+
+function guardarHotel() {
+  if (!hotelActivo) return;
+  state[hotelActivo].incidencias = [...incidenciasTemp];
+  state[hotelActivo].status = incidenciasTemp.length === 0 ? 'sin' : 'pendiente';
+  addTimeline(hotelActivo, `${incidenciasTemp.length} incidencias guardadas`, 'pendiente');
+  renderCapturaHoteles();
+  renderSelectCorreo();
+  showToast('✓ Hotel guardado');
+}
+
+function limpiarHotel() {
+  incidenciasTemp = [];
+  renderListaTemp();
+}
+
+// ========================= CORREO =========================
+function renderSelectCorreo() {
+  const sel = document.getElementById("sel-despacho");
+  const despachoActual = sel ? sel.value : "De la Peña Sainz";
+  const hotelesDespacho = DESPACHOS[despachoActual]?.hoteles || HOTELES;
+  const selH = document.getElementById("sel-hoteles-correo");
+  selH.innerHTML = "";
+  hotelesDespacho.forEach(h => {
+    const opt = document.createElement("option");
+    opt.value = h;
+    opt.textContent = `${h} (${state[h].incidencias.length} inc.)`;
+    if (state[h].incidencias.length > 0) opt.selected = true;
+    selH.appendChild(opt);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const selDesp = document.getElementById("sel-despacho");
+  if (selDesp) selDesp.addEventListener("change", renderSelectCorreo);
+});
+
+function generarCorreo() {
+  const despacho = document.getElementById('sel-despacho').value;
+  const sel = document.getElementById('sel-hoteles-correo');
+  const hotelesSel = Array.from(sel.selectedOptions).map(o => o.value);
+
+  if (hotelesSel.length === 0) { showToast('⚠ Selecciona al menos un hotel'); return; }
+
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-MX', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+
+  let cuerpo = `Estimado equipo de ${despacho},\n\n`;
+  cuerpo += `Por medio del presente correo les comparto las incidencias correspondientes a la semana en curso (${fecha}) para su integración en la nómina.\n\n`;
+
+  hotelesSel.forEach(h => {
+    const incs = state[h].incidencias;
+    const razon = RAZON_SOCIAL[h] || h;
+    cuerpo += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    cuerpo += `${razon.toUpperCase()}  (${h})\n`;
+    cuerpo += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+    if (incs.length === 0) {
+      cuerpo += `Sin incidencias para esta semana.\n\n`;
+    } else {
+      incs.forEach((inc, i) => {
+        cuerpo += `\n${i+1}. Empleado: ${inc.emp}\n`;
+        cuerpo += `   Tipo: ${inc.tipo}\n`;
+        if (inc.val) cuerpo += `   Valor: ${inc.val}\n`;
+        if (inc.per) cuerpo += `   Periodo: ${inc.per}\n`;
+        if (inc.obs) cuerpo += `   Observaciones: ${inc.obs}\n`;
+      });
+      cuerpo += '\n';
+    }
+  });
+
+  cuerpo += `Quedo en espera de confirmación de recepción y de la lista de raya para revisión.\n\n`;
+  cuerpo += `Saludos,\nDepartamento de Recursos Humanos`;
+
+  const email = DESPACHOS[despacho]?.email || 'nominas@despacho.com';
+  document.getElementById('correo-para').textContent = email;
+  document.getElementById('correo-asunto').textContent = `Incidencias Nómina Semanal · ${fecha}`;
+  document.getElementById('correo-body').textContent = cuerpo;
+  document.getElementById('correo-preview-wrap').style.display = 'block';
+}
+
+function copiarCorreo() {
+  const txt = document.getElementById('correo-body').textContent;
+  navigator.clipboard.writeText(txt).then(() => showToast('✓ Correo copiado al portapapeles'));
+}
+
+function marcarEnviado() {
+  const sel = document.getElementById('sel-hoteles-correo');
+  Array.from(sel.selectedOptions).forEach(o => {
+    if (state[o.value].incidencias.length > 0) {
+      state[o.value].status = 'enviado';
+      state[o.value].enviado = true;
+      addTimeline(o.value, 'Correo enviado al despacho', 'enviado');
+    }
+  });
+  renderCapturaHoteles();
+  renderResumen();
+  showToast('✓ Marcado como enviado');
+}
+
+// ========================= VERIFICACION =========================
+function renderVerificacion() {
+  const tbody = document.getElementById('tbody-verif');
+  tbody.innerHTML = '';
+  let total = 0, ok = 0, err = 0;
+
+  HOTELES.forEach(h => {
+    state[h].incidencias.forEach((inc, i) => {
+      total++;
+      const key = `${h}_${i}`;
+      const ver = state[h].verificaciones[key] || null;
+      if (ver === 'ok') ok++;
+      if (ver === 'error') err++;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span style="font-size:11px;font-weight:700">${h}</span></td>
+        <td>${inc.emp}</td>
+        <td><span class="tag enviado">${inc.tipo}</span></td>
+        <td>${inc.val || '—'}</td>
+        <td>
+          <div class="check-cell">
+            <button class="check-btn ok ${ver === 'ok' ? 'active' : ''}" onclick="marcarVerif('${h}',${i},'ok')">✓ OK</button>
+            <button class="check-btn error ${ver === 'error' ? 'active' : ''}" onclick="marcarVerif('${h}',${i},'error')">✕ Error</button>
+          </div>
+        </td>
+        <td><input type="text" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;width:140px;font-family:'DM Mono',monospace" placeholder="Nota..." id="nota_${h}_${i}" onchange="guardarNota('${h}',${i},this.value)" value="${inc.nota||''}"></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Sin incidencias guardadas aún. Ve a Captura primero.</td></tr>';
+  }
+
+  document.getElementById('badge-ok').textContent = ok + ' OK';
+  document.getElementById('badge-err').textContent = err + ' Con error';
+}
+
+function marcarVerif(hotel, i, val) {
+  const key = `${hotel}_${i}`;
+  state[hotel].verificaciones[key] = val;
+
+  // Checa si todos los del hotel están verificados
+  const allVerif = state[hotel].incidencias.every((_, j) => state[hotel].verificaciones[`${hotel}_${j}`] === 'ok');
+  if (allVerif && state[hotel].incidencias.length > 0) {
+    state[hotel].status = 'verificado';
+    addTimeline(hotel, 'Todas las incidencias verificadas ✓', 'verificado');
+  }
+
+  renderVerificacion();
+  renderResumen();
+}
+
+function guardarNota(hotel, i, val) {
+  state[hotel].incidencias[i].nota = val;
+}
+
+// ========================= EXPORT =========================
+function exportarResumen() {
+  let txt = `RESUMEN VERIFICACIÓN NÓMINA\n`;
+  txt += `Generado: ${new Date().toLocaleString('es-MX')}\n`;
+  txt += `${'═'.repeat(50)}\n\n`;
+
+  HOTELES.forEach(h => {
+    if (state[h].incidencias.length === 0) return;
+    txt += `${h.toUpperCase()}\n${'-'.repeat(40)}\n`;
+    state[h].incidencias.forEach((inc, i) => {
+      const key = `${h}_${i}`;
+      const ver = state[h].verificaciones[key] || 'Sin revisar';
+      txt += `  • ${inc.emp} | ${inc.tipo} | ${inc.val||'—'} → ${ver.toUpperCase()}\n`;
+      if (inc.nota) txt += `    Nota: ${inc.nota}\n`;
+    });
+    txt += '\n';
+  });
+
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `verificacion_nomina_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  showToast('✓ Resumen exportado');
+}
+
+// ========================= TIMELINE =========================
+const timelineData = [];
+function addTimeline(hotel, action, status) {
+  const now = new Date();
+  const hora = now.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+  timelineData.unshift({ hotel, action, status, hora });
+  if (timelineData.length > 20) timelineData.pop();
+  renderTimeline();
+}
+
+function renderTimeline() {
+  const el = document.getElementById('timeline');
+  if (!el) return;
+  if (timelineData.length === 0) {
+    el.innerHTML = '<div class="empty-state">Sin actividad aún.</div>';
+    return;
+  }
+  el.innerHTML = timelineData.slice(0,8).map(t => `
+    <div class="timeline-item">
+      <div class="timeline-dot ${t.status}"></div>
+      <div class="timeline-content">
+        <div class="hotel">${t.hotel}</div>
+        <div class="action">${t.action}</div>
+      </div>
+      <div class="timeline-time">${t.hora}</div>
+    </div>
+  `).join('');
+}
+
+// ========================= TOAST =========================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ========================= RUN =========================
+init();
+renderTimeline();
+</script>
+</body>
+</html>

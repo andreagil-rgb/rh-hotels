@@ -980,7 +980,7 @@ function generarCorreo(){
   });
   cuerpo+=`Quedo en espera de confirmación de recepción y de la lista de raya para revisión.\n\nSaludos,\nDepartamento de Recursos Humanos`;
   document.getElementById('correo-para').textContent=DESPACHOS[despacho]?.email||'—';
-  document.getElementById('correo-asunto').textContent=`NOMINA ${semanaActual} ${hotelesSel.join(', ')}`;
+  document.getElementById('correo-asunto').textContent=`NOMINA ${Math.ceil((new Date()-new Date(new Date().getFullYear(),0,1))/604800000+1)} ${hotelesSel.join(', ')}`;
   document.getElementById('correo-body').textContent=cuerpo;
   document.getElementById('correo-preview-wrap').style.display='block';
 }

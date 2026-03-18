@@ -617,8 +617,6 @@ const TIPOS_INC = ["Falta injustificada","Falta justificada","Incapacidad","Baja
 // =====================================================
 const SHEETS_ID = '13k5brVhbtgxr8-80YRtMwLdjvG2XF6D6lOXJgh_9lLo';
 
-// Mapeo real: nombre de pestaña en el Sheet → hotel
-// Solo los 6 identificados hasta ahora. Los 4 restantes se agregan cuando los gerentes llenen.
 const SHEETS_HOTEL_TAB = {
   "PLAZA CAMARONES": "Form Responses 1",
   "HOT VALLEJO":     "Form Responses 2",
@@ -630,6 +628,19 @@ const SHEETS_HOTEL_TAB = {
   "HOT ELITE":       "Form Responses 8",
   "HOT LA VILLA":    "Form Responses 9",
   "LAVANDERÍA":      "Form Responses 10",
+};
+
+const HOTEL_EMPLEADOS_COUNT = {
+  "PLAZA CAMARONES": 18,
+  "HOT VALLEJO":     14,
+  "HOT INSURGENTES": 18,
+  "HOT LA VILLA":    19,
+  "HOT NAYARIT":     12,
+  "PLAZA BELICES":   16,
+  "PLAZA DEL REY":   18,
+  "LAVANDERÍA":      15,
+  "HOT NARVARTE":    17,
+  "HOT ELITE":       13,
 };
 
 let formsData = {};
@@ -662,28 +673,49 @@ async function leerFormularios(){
         const rows = json?.table?.rows || [];
         const cols = json?.table?.cols || [];
 
-        const idxOf = name => cols.findIndex(c=>(c.label||'').toLowerCase().includes(name.toLowerCase()));
-        const iEmp  = idxOf('empleado') !== -1 ? idxOf('empleado') : idxOf('nombre');
-        const iTipo = idxOf('tipo') !== -1 ? idxOf('tipo') : idxOf('incidencia');
-        const iCant = idxOf('cantidad') !== -1 ? idxOf('cantidad') : idxOf('días');
-        const iObs  = idxOf('observaci');
-        const iTime = 0;
+        const numEmpleados = HOTEL_EMPLEADOS_COUNT[hotel] || 20;
+        const BASE_COL = 3;
+
+        const empleadosHeaders = [];
+        for(let e = 0; e < numEmpleados; e++){
+          const colIdx = BASE_COL + (e * 3);
+          if(colIdx < cols.length){
+            const label = cols[colIdx]?.label || '';
+            const nombre = label.replace(/\s*\[.*?\]\s*$/, '').trim();
+            empleadosHeaders.push(nombre || `Empleado ${e+1}`);
+          } else {
+            empleadosHeaders.push(`Empleado ${e+1}`);
+          }
+        }
 
         const incidencias = [];
         rows.forEach(row => {
           const c = row.c || [];
-          const emp  = c[iEmp]?.v  || c[iEmp]?.f  || '';
-          const tipo = c[iTipo]?.v || c[iTipo]?.f || '';
-          const cant = c[iCant]?.v || c[iCant]?.f || '1';
-          const obs  = iObs >= 0 ? (c[iObs]?.v || '') : '';
-          const ts   = c[iTime]?.v || c[iTime]?.f || '';
-          if(emp && tipo) incidencias.push({empleado: emp.trim(), tipo: tipo.trim(), cantidad: String(cant).trim(), observaciones: obs.trim(), timestamp: ts});
+          for(let e = 0; e < numEmpleados; e++){
+            const colInc  = BASE_COL + (e * 3);
+            const colCant = BASE_COL + (e * 3) + 1;
+            const colObs  = BASE_COL + (e * 3) + 2;
+            const tipo = c[colInc]?.v || c[colInc]?.f || '';
+            const cant = c[colCant]?.v || c[colCant]?.f || '';
+            const obs  = c[colObs]?.v  || c[colObs]?.f  || '';
+            const ts   = c[0]?.v || c[0]?.f || '';
+            if(tipo && tipo !== 'Sin incidencia'){
+              incidencias.push({
+                empleado: empleadosHeaders[e],
+                tipo: tipo.trim(),
+                cantidad: String(cant).trim() || '1',
+                observaciones: obs.trim(),
+                timestamp: ts
+              });
+            }
+          }
         });
 
         formsData[hotel] = incidencias;
         if(incidencias.length > 0){ conRespuesta++; totalInc += incidencias.length; }
 
       }catch(e){
+        console.error('Error leyendo', hotel, e);
         formsData[hotel] = [];
       }
     }
@@ -698,7 +730,6 @@ async function leerFormularios(){
     console.error(err);
   }
 }
-
 function renderFormsResultado(conRespuesta, totalInc){
   const sinRespuesta = HOTELES.length - conRespuesta;
   document.getElementById('forms-badge-ok').textContent  = `${conRespuesta} hotel${conRespuesta!==1?'es':''} con respuesta`;

@@ -703,7 +703,19 @@ async function leerFormularios(){
             const cant = c[colCant]?.v || c[colCant]?.f || '';
             const obs  = c[colObs]?.v  || c[colObs]?.f  || '';
             const ts   = c[0]?.v || c[0]?.f || '';
-            if(tipo && tipo !== 'Sin incidencia'){
+           if(tipo && tipo !== 'Sin incidencia'){
+  // Separar múltiples incidencias (checkboxes generan valores separados por coma)
+  const tipos = tipo.split(',').map(t => t.trim()).filter(t => t && t !== 'Sin incidencia');
+  tipos.forEach(tipoSingle => {
+    incidencias.push({
+      empleado: empleadosHeaders[e],
+      tipo: tipoSingle,
+      cantidad: String(cant).trim() || '1',
+      observaciones: obs.trim(),
+      timestamp: ts
+    });
+  });
+}
               incidencias.push({
                 empleado: empleadosHeaders[e],
                 tipo: tipo.trim(),

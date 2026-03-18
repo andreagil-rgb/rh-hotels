@@ -624,13 +624,12 @@ const SHEETS_HOTEL_TAB = {
   "HOT VALLEJO":     "Form Responses 2",
   "HOT INSURGENTES": "Form Responses 3",
   "HOT NAYARIT":     "Form Responses 4",
+  "PLAZA BELICES":   "Form Responses 5",
+  "PLAZA DEL REY":   "Form Responses 6",
   "HOT NARVARTE":    "Form Responses 7",
+  "HOT ELITE":       "Form Responses 8",
+  "HOT LA VILLA":    "Form Responses 9",
   "LAVANDERÍA":      "Form Responses 10",
-  // Pendientes de identificar:
-  // "PLAZA BELICES":   "Form Responses ?",
-  // "HOT ELITE":       "Form Responses ?",
-  // "HOT LA VILLA":    "Form Responses ?",
-  // "PLAZA DEL REY":   "Form Responses ?",
 };
 
 let formsData = {};
@@ -906,44 +905,14 @@ function copiarCorreo(){
   navigator.clipboard.writeText(document.getElementById('correo-body').textContent).then(()=>showToast('✓ Correo copiado'));
 }
 
-async function enviarPorGmail(){
+function enviarPorGmail(){
   const para = document.getElementById('correo-para').textContent;
   const asunto = document.getElementById('correo-asunto').textContent;
   const cuerpo = document.getElementById('correo-body').textContent;
   if(!para || para==='—'){showToast('⚠ Genera el correo primero');return;}
-  const btn = document.getElementById('btn-enviar-gmail');
-  btn.disabled = true; btn.textContent = '⏳ Enviando...';
-  try {
-    const apiKey = localStorage.getItem('rh_api_key');
-    if(!apiKey){showToast('⚠ Configura tu API Key primero');btn.disabled=false;btn.textContent='📤 Enviar por Gmail';return;}
-    const prompt = `Usando la herramienta Gmail, crea y envía un correo con estos datos exactos:\nPara: ${para}\nAsunto: ${asunto}\nCuerpo (texto plano, respeta los saltos de línea):\n${cuerpo}\n\nUsa gmail_create_draft para crearlo y luego confirma. Responde SOLO con JSON: {"ok":true,"draftId":"..."} o {"ok":false,"error":"..."}`;
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-beta':'mcp-client-2025-04-04'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,mcp_servers:[{type:'url',url:'https://gmail.mcp.claude.com/mcp',name:'gmail-mcp'}],messages:[{role:'user',content:prompt}]})
-    });
-    if(!resp.ok){ const err = await resp.text(); throw new Error(`API error ${resp.status}: ${err}`); }
-    const data = await resp.json();
-    const textoResp = data.content?.filter(b=>b.type==='text').map(b=>b.text).join('') || '';
-    let resultado = {ok:false, error:'Sin respuesta'};
-    try { const jsonMatch = textoResp.match(/\{[^}]+\}/); if(jsonMatch) resultado = JSON.parse(jsonMatch[0]); else if(textoResp.toLowerCase().includes('draft') || textoResp.toLowerCase().includes('borrador') || textoResp.toLowerCase().includes('creado')) resultado = {ok:true}; } catch(e){}
-    if(resultado.ok){
-      showToast('✅ Borrador creado en Gmail');
-      btn.textContent = '✅ Borrador creado';
-      setTimeout(()=>window.open('https://mail.google.com/mail/u/andrea.gil@hoteleshot.com/#drafts','_blank'), 1000);
-    } else {
-      const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-      window.open(mailtoLink,'_blank');
-      showToast('📧 Abriendo Gmail con el correo pre-llenado');
-      btn.disabled = false; btn.textContent = '📤 Enviar por Gmail';
-    }
-  } catch(err){
-    console.error('Error Gmail:', err);
-    const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-    window.open(mailtoLink,'_blank');
-    showToast('📧 Abriendo Gmail con el correo pre-llenado');
-    btn.disabled = false; btn.textContent = '📤 Enviar por Gmail';
-  }
+  const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+  window.open(mailtoLink,'_blank');
+  showToast('📧 Abriendo Gmail con el correo pre-llenado');
 }
 
 function marcarEnviado(){

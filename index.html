@@ -666,32 +666,23 @@ async function leerFormularios(){
   document.getElementById('forms-resultado').style.display = 'none';
   document.getElementById('forms-loading').style.display = 'flex';
   const subEl = document.getElementById('forms-loading-sub');
-
   formsData = {};
   let totalInc = 0;
   let conRespuesta = 0;
-
   try{
     for(const hotel of HOTELES){
       subEl.textContent = `Leyendo: ${hotel}...`;
       const tab = SHEETS_HOTEL_TAB[hotel];
       if(!tab){ formsData[hotel] = []; continue; }
-
       const url = `https://docs.google.com/spreadsheets/d/${SHEETS_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
-
       try{
         const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.replace(/^[^{]+|[^}]+$|\n/g,''));
         const rows = json?.table?.rows || [];
-        const cols = json?.table?.cols || [];
-
         const numEmpleados = HOTEL_EMPLEADOS_COUNT[hotel] || 20;
         const BASE_COL = 3;
-
-       const empleadosHeaders = HOTEL_EMPLEADOS[hotel] || 
-          Array.from({length: numEmpleados}, (_, i) => `Empleado ${i+1}`);
-
+        const empleadosHeaders = HOTEL_EMPLEADOS[hotel] || Array.from({length: numEmpleados}, (_, i) => `Empleado ${i+1}`);
         const incidencias = [];
         rows.forEach(row => {
           const c = row.c || [];
@@ -703,31 +694,29 @@ async function leerFormularios(){
             const cant = c[colCant]?.v || c[colCant]?.f || '';
             const obs  = c[colObs]?.v  || c[colObs]?.f  || '';
             const ts   = c[0]?.v || c[0]?.f || '';
-           if(tipo && tipo !== 'Sin incidencia'){
-  // Separar múltiples incidencias (checkboxes generan valores separados por coma)
-  const tipos = tipo.split(',').map(t => t.trim()).filter(t => t && t !== 'Sin incidencia');
-  tipos.forEach(tipoSingle => {
-    incidencias.push({
-      empleado: empleadosHeaders[e],
-      tipo: tipoSingle,
-      cantidad: String(cant).trim() || '1',
-      observaciones: obs.trim(),
-      timestamp: ts
-    });
-  });
-        }
+            if(tipo && tipo !== 'Sin incidencia'){
+              const tipos = tipo.split(',').map(t => t.trim()).filter(t => t && t !== 'Sin incidencia');
+              tipos.forEach(tipoSingle => {
+                incidencias.push({
+                  empleado: empleadosHeaders[e],
+                  tipo: tipoSingle,
+                  cantidad: String(cant).trim() || '1',
+                  observaciones: obs.trim(),
+                  timestamp: ts
+                });
+              });
+            }
+          }
+        });
         formsData[hotel] = incidencias;
         if(incidencias.length > 0){ conRespuesta++; totalInc += incidencias.length; }
-
       }catch(e){
         console.error('Error leyendo', hotel, e);
         formsData[hotel] = [];
       }
     }
-
     document.getElementById('forms-loading').style.display = 'none';
     renderFormsResultado(conRespuesta, totalInc);
-
   }catch(err){
     document.getElementById('forms-loading').style.display = 'none';
     document.getElementById('forms-inicial').style.display = 'block';

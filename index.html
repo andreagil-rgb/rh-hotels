@@ -694,8 +694,8 @@ async function leerFormularios(){
             const cant = c[colCant]?.v || c[colCant]?.f || '';
             const obs  = c[colObs]?.v  || c[colObs]?.f  || '';
             const ts   = c[0]?.v || c[0]?.f || '';
-            if(tipo && tipo !== 'Sin incidencia'){
-              const tipos = tipo.split(',').map(t => t.trim()).filter(t => t && t !== 'Sin incidencia');
+           if(tipo && !tipo.split(',').every(t => t.trim() === 'Sin incidencia')){
+              const tipos = tipo.split(',').map(t => t.trim()).filter(t => t && t.trim() !== 'Sin incidencia');
               tipos.forEach(tipoSingle => {
                 incidencias.push({
                   empleado: empleadosHeaders[e],

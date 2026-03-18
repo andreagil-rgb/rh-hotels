@@ -716,16 +716,6 @@ async function leerFormularios(){
     });
   });
 }
-              incidencias.push({
-                empleado: empleadosHeaders[e],
-                tipo: tipo.trim(),
-                cantidad: String(cant).trim() || '1',
-                observaciones: obs.trim(),
-                timestamp: ts
-              });
-            }
-          }
-        });
 
         formsData[hotel] = incidencias;
         if(incidencias.length > 0){ conRespuesta++; totalInc += incidencias.length; }

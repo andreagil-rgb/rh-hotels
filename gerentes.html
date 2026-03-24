@@ -16,18 +16,13 @@
   --muted: #8a8070;
   --green: #2d6a4f;
   --green-bg: #d8f3dc;
+  --blue: #2c5f8a;
+  --blue-bg: #dbeafe;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-body {
-  font-family: 'Syne', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-
-/* HEADER */
 .header {
   background: var(--accent);
   color: white;
@@ -36,11 +31,7 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-.header-logo {
-  font-family: 'Instrument Serif', serif;
-  font-size: 22px;
-  letter-spacing: .02em;
-}
+.header-logo { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: .02em; }
 .header-logo span { color: #e8b87a; }
 .header-badge {
   font-family: 'DM Mono', monospace;
@@ -51,329 +42,122 @@ body {
   color: rgba(255,255,255,.7);
 }
 
-/* MAIN */
 .main { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
 
-/* STEP */
-.step {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px;
-  margin-bottom: 20px;
-  display: none;
-}
+.step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; display: none; }
 .step.active { display: block; animation: fadeUp .3s ease; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-.step-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  margin-bottom: 8px;
-}
-.step-title {
-  font-family: 'Instrument Serif', serif;
-  font-size: 26px;
-  margin-bottom: 6px;
-}
-.step-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
+.step-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.step-title { font-family: 'Instrument Serif', serif; font-size: 26px; margin-bottom: 6px; }
+.step-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
 
-/* HOTEL GRID */
-.hotel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
-}
-.hotel-btn {
+/* GRUPO SELECTOR */
+.grupo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grupo-btn {
   border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 24px 20px;
   cursor: pointer;
   transition: all .2s;
   background: var(--bg);
-  text-align: left;
+  text-align: center;
 }
+.grupo-btn:hover { border-color: var(--accent); background: white; transform: translateY(-2px); }
+.grupo-btn.selected-a { border-color: var(--accent); background: white; }
+.grupo-btn.selected-b { border-color: var(--blue); background: white; }
+.grupo-icon { font-size: 32px; margin-bottom: 10px; }
+.grupo-label { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.grupo-desc { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.5; }
+
+/* GRUPO BADGE */
+.grupo-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.badge-a { background: var(--accent); color: white; }
+.badge-b { background: var(--blue); color: white; }
+
+/* HOTEL GRID */
+.hotel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.hotel-btn { border: 2px solid var(--border); border-radius: 12px; padding: 16px; cursor: pointer; transition: all .2s; background: var(--bg); text-align: left; }
 .hotel-btn:hover { border-color: var(--accent); background: white; }
 .hotel-btn.selected { border-color: var(--accent2); background: white; }
 .hotel-btn .hname { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
 .hotel-btn .hrazon { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 
-/* SEMANA */
-.semana-display {
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  color: var(--muted);
-}
+.semana-display { font-family: 'DM Mono', monospace; font-size: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; color: var(--muted); }
 .semana-display strong { color: var(--text); }
 
-/* EMPLEADOS */
-.empleado-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  transition: border-color .2s;
-}
+/* EMPLEADO CARDS */
+.empleado-card { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; transition: border-color .2s; }
 .empleado-card.tiene-inc { border-color: var(--accent2); }
-.empleado-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  cursor: pointer;
-  background: var(--bg);
-  gap: 12px;
-}
+.empleado-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--bg); gap: 12px; }
 .empleado-header:hover { background: #ede8e0; }
-.empleado-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  flex-shrink: 0;
-  width: 32px;
-}
-.empleado-nombre {
-  font-size: 13px;
-  font-weight: 600;
-  flex: 1;
-}
-.empleado-status {
-  font-size: 11px;
-  font-family: 'DM Mono', monospace;
-  color: var(--muted);
-  flex-shrink: 0;
-}
+.empleado-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); flex-shrink: 0; width: 32px; }
+.empleado-nombre { font-size: 13px; font-weight: 600; flex: 1; }
+.empleado-status { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); flex-shrink: 0; }
 .empleado-status.ok { color: var(--accent2); font-weight: 700; }
-.chevron {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  transition: transform .2s;
-  color: var(--muted);
-}
+.chevron { width: 16px; height: 16px; flex-shrink: 0; transition: transform .2s; color: var(--muted); }
 .empleado-card.open .chevron { transform: rotate(180deg); }
-
-.empleado-body {
-  display: none;
-  padding: 16px;
-  border-top: 1px solid var(--border);
-  background: white;
-}
+.empleado-body { display: none; padding: 16px; border-top: 1px solid var(--border); background: white; }
 .empleado-card.open .empleado-body { display: block; }
 
 .field { margin-bottom: 14px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.field select, .field input, .field textarea {
-  width: 100%;
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color .2s;
-}
-.field select:focus, .field input:focus, .field textarea:focus {
-  border-color: var(--accent);
-}
+.field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.field select, .field input, .field textarea { width: 100%; font-family: 'DM Mono', monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; outline: none; transition: border-color .2s; }
+.field select:focus, .field input:focus, .field textarea:focus { border-color: var(--accent); }
 .field textarea { resize: vertical; min-height: 60px; }
-.field select option { background: white; }
-
 .inc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-.btn-add-inc {
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  background: none;
-  border: 1px dashed var(--border);
-  color: var(--muted);
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  transition: all .2s;
-  margin-top: 4px;
-}
+.btn-add-inc { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; background: none; border: 1px dashed var(--border); color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; width: 100%; transition: all .2s; margin-top: 4px; }
 .btn-add-inc:hover { border-color: var(--accent2); color: var(--accent2); }
-
-.btn-del-inc {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 18px;
-  padding: 0 4px;
-  line-height: 1;
-  transition: color .2s;
-  align-self: center;
-}
+.btn-del-inc { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; transition: color .2s; align-self: center; }
 .btn-del-inc:hover { color: var(--accent2); }
+.inc-block { background: var(--bg); border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; }
+.inc-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.inc-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 500; }
 
-.inc-block {
-  background: var(--bg);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 8px;
-  position: relative;
-}
-.inc-block-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.inc-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-/* RESUMEN */
-.resumen-hotel {
-  font-family: 'Instrument Serif', serif;
-  font-size: 22px;
-  margin-bottom: 4px;
-}
-.resumen-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-.resumen-item {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  background: var(--bg);
-}
+.resumen-hotel { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 4px; }
+.resumen-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.resumen-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; background: var(--bg); }
 .resumen-item.sin { opacity: .5; }
-.resumen-emp {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.resumen-inc {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--accent2);
-}
-.resumen-obs {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
-}
+.resumen-emp { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.resumen-inc { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent2); }
+.resumen-obs { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* BUTTONS */
-.btn {
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 14px 28px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: all .2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
+.btn { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; }
 .btn-primary { background: var(--accent); color: white; }
 .btn-primary:hover { background: #2d2d4a; transform: translateY(-1px); }
 .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-.btn-secondary {
-  background: white;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
+.btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { border-color: var(--accent); }
 .btn-danger { background: var(--accent2); color: white; }
 .btn-danger:hover { background: #a8432a; }
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 
-/* SUCCESS */
-.success-box {
-  text-align: center;
-  padding: 48px 24px;
-}
+.success-box { text-align: center; padding: 48px 24px; }
 .success-icon { font-size: 64px; margin-bottom: 16px; }
-.success-title {
-  font-family: 'Instrument Serif', serif;
-  font-size: 28px;
-  margin-bottom: 8px;
-}
+.success-title { font-family: 'Instrument Serif', serif; font-size: 28px; margin-bottom: 8px; }
 .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
-/* PROGRESS */
-.progress {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 28px;
-}
-.progress-step {
-  flex: 1;
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  transition: background .3s;
-}
+.progress { display: flex; gap: 8px; margin-bottom: 28px; }
+.progress-step { flex: 1; height: 4px; background: var(--border); border-radius: 2px; transition: background .3s; }
 .progress-step.active { background: var(--accent2); }
 .progress-step.done { background: var(--accent); }
 
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--accent);
-  color: white;
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 12px 24px;
-  border-radius: 100px;
-  opacity: 0;
-  transition: all .3s cubic-bezier(.34,1.56,.64,1);
-  z-index: 999;
-  white-space: nowrap;
-}
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--accent); color: white; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 12px 24px; border-radius: 100px; opacity: 0; transition: all .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-/* SIN INC LABEL */
-.sin-inc-label {
-  font-size: 12px;
-  color: var(--muted);
-  font-style: italic;
-  padding: 8px 0;
-}
+.sin-inc-label { font-size: 12px; color: var(--muted); font-style: italic; padding: 8px 0; }
 
 @media (max-width: 480px) {
+  .grupo-grid { grid-template-columns: 1fr; }
   .hotel-grid { grid-template-columns: 1fr 1fr; }
   .inc-row { grid-template-columns: 1fr; }
   .header { padding: 16px 20px; }
@@ -393,56 +177,76 @@ body {
     <div class="progress-step active" id="prog1"></div>
     <div class="progress-step" id="prog2"></div>
     <div class="progress-step" id="prog3"></div>
+    <div class="progress-step" id="prog4"></div>
   </div>
 
-  <!-- PASO 1: SELECCIONAR HOTEL -->
+  <!-- PASO 1: TIPO DE NÓMINA -->
   <div class="step active" id="step1">
-    <div class="step-num">Paso 1 de 3</div>
-    <div class="step-title">¿Cuál es tu hotel?</div>
-    <div class="step-sub">Selecciona el hotel para ver la lista de empleados.</div>
-    <div class="hotel-grid" id="hotel-grid"></div>
+    <div class="step-num">Paso 1 de 4</div>
+    <div class="step-title">¿Qué nómina reportas?</div>
+    <div class="step-sub">Selecciona el tipo de nómina para ver la lista de empleados correspondiente.</div>
+    <div class="grupo-grid">
+      <div class="grupo-btn" id="gbtn-A" onclick="selGrupo('A')">
+        <div class="grupo-icon">🏦</div>
+        <div class="grupo-label">Nómina Banco</div>
+        <div class="grupo-desc">Grupo A · CONTPAQi<br>Pago por transferencia</div>
+      </div>
+      <div class="grupo-btn" id="gbtn-B" onclick="selGrupo('B')">
+        <div class="grupo-icon">💵</div>
+        <div class="grupo-label">Nómina Efectivo</div>
+        <div class="grupo-desc">Grupo B · Pago semanal<br>en efectivo</div>
+      </div>
+    </div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>
-        Continuar →
-      </button>
+      <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>Continuar →</button>
     </div>
   </div>
 
-  <!-- PASO 2: CAPTURAR INCIDENCIAS -->
+  <!-- PASO 2: SELECCIONAR HOTEL -->
   <div class="step" id="step2">
-    <div class="step-num">Paso 2 de 3</div>
+    <div class="step-num">Paso 2 de 4</div>
+    <div class="step-title">¿Cuál es tu hotel? <span class="grupo-badge" id="badge-grupo"></span></div>
+    <div class="step-sub">Selecciona el hotel para ver la lista de empleados.</div>
+    <div class="hotel-grid" id="hotel-grid"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irPaso3()" id="btn-paso3" disabled>Continuar →</button>
+      <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar tipo</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: CAPTURAR INCIDENCIAS -->
+  <div class="step" id="step3">
+    <div class="step-num">Paso 3 de 4</div>
     <div class="step-title">Incidencias de la semana</div>
     <div class="semana-display" id="semana-display">Semana —</div>
     <div class="step-sub">Abre solo los empleados que tienen incidencia. Los demás se reportan automáticamente sin incidencia.</div>
     <div id="empleados-list"></div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso3()">Ver resumen →</button>
-      <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar hotel</button>
+      <button class="btn btn-primary" onclick="irPaso4()">Ver resumen →</button>
+      <button class="btn btn-secondary" onclick="irPaso2()">← Cambiar hotel</button>
     </div>
   </div>
 
-  <!-- PASO 3: RESUMEN Y ENVÍO -->
-  <div class="step" id="step3">
-    <div class="step-num">Paso 3 de 3</div>
+  <!-- PASO 4: RESUMEN Y ENVÍO -->
+  <div class="step" id="step4">
+    <div class="step-num">Paso 4 de 4</div>
     <div class="step-title">Confirma y envía</div>
-    <div class="step-sub">Revisa las incidencias antes de enviar. Solo se reportan los empleados con incidencia.</div>
+    <div class="step-sub">Revisa las incidencias antes de enviar.</div>
     <div class="resumen-hotel" id="resumen-hotel-nombre"></div>
     <div class="resumen-sub" id="resumen-semana"></div>
     <div id="resumen-lista"></div>
     <div class="btn-row">
-      <button class="btn btn-danger" onclick="enviarReporte()" id="btn-enviar">
-        📤 Enviar reporte
-      </button>
-      <button class="btn btn-secondary" onclick="irPaso2()">← Editar</button>
+      <button class="btn btn-danger" onclick="enviarReporte()" id="btn-enviar">📤 Enviar reporte</button>
+      <button class="btn btn-secondary" onclick="irPaso3()">← Editar</button>
     </div>
   </div>
 
-  <!-- PASO 4: ENVIADO -->
-  <div class="step" id="step4">
+  <!-- PASO 5: ENVIADO -->
+  <div class="step" id="step5">
     <div class="success-box">
       <div class="success-icon">✅</div>
       <div class="success-title">¡Reporte enviado!</div>
-      <div class="success-sub" id="success-msg">Tu reporte ha sido enviado correctamente a Recursos Humanos.</div>
+      <div class="success-sub" id="success-msg"></div>
       <div class="btn-row" style="justify-content:center;margin-top:28px">
         <button class="btn btn-secondary" onclick="reiniciar()">Enviar otro reporte</button>
       </div>
@@ -454,47 +258,82 @@ body {
 
 <script>
 // =====================================================
-// DATOS
+// HOTELES
 // =====================================================
-const HOTELES_DATA = [
-  {nombre:"PLAZA BELICES",    razon:"Promotora Antonio Caso"},
-  {nombre:"HOT ELITE",        razon:"Promotora Carrillo Puerto"},
-  {nombre:"PLAZA CAMARONES",  razon:"Plaza Camarones"},
-  {nombre:"HOT VALLEJO",      razon:"ESDISA"},
-  {nombre:"HOT NARVARTE",     razon:"Operadora Bruesal"},
-  {nombre:"HOT INSURGENTES",  razon:"Promotora Plaza Tepeyac INS"},
-  {nombre:"HOT LA VILLA",     razon:"Promotora Plaza Tepeyac VILLA"},
-  {nombre:"HOT NAYARIT",      razon:"Hotel Nayarit"},
-  {nombre:"PLAZA DEL REY",    razon:"Promotora Plaza del Rey"},
-  {nombre:"LAVANDERÍA",       razon:"Promotora Plaza del Rey L"},
+const HOTELES_A = [
+  {nombre:'HOT INS',      razon:'Promotora Plaza Tepeyac INS'},
+  {nombre:'HOT VILLA',    razon:'Promotora Plaza Tepeyac VILLA'},
+  {nombre:'HOT NAYARIT',  razon:'Hotel Nayarit'},
+  {nombre:'HOT PAC',      razon:'Promotora Antonio Caso'},
+  {nombre:'HOT VALLEJO',  razon:'ESDISA'},
+  {nombre:'CAMARONES',    razon:'Plaza Camarones'},
+  {nombre:'HOT PDR',      razon:'Promotora Plaza del Rey'},
+  {nombre:'HOT PDR LAV',  razon:'Plaza del Rey Lavandería'},
+  {nombre:'HOT NARVARTE', razon:'Operadora Bruesal'},
+  {nombre:'HOT ELITE',    razon:'Promotora Carrillo Puerto'},
 ];
+
+const HOTELES_B = [
+  {nombre:'HOT INS',      razon:'Promotora Plaza Tepeyac INS'},
+  {nombre:'HOT VILLA',    razon:'Promotora Plaza Tepeyac VILLA'},
+  {nombre:'HOT NAYARIT',  razon:'Hotel Nayarit'},
+  {nombre:'HOT PAC',      razon:'Promotora Antonio Caso'},
+  {nombre:'HOT VALLEJO',  razon:'ESDISA'},
+  {nombre:'CAMARONES',    razon:'Plaza Camarones'},
+  {nombre:'HOT PDR',      razon:'Promotora Plaza del Rey'},
+  {nombre:'HOT PDR LAV',  razon:'Plaza del Rey Lavandería'},
+  {nombre:'HOT NARVARTE', razon:'Operadora Bruesal'},
+  {nombre:'HOT ELITE',    razon:'Promotora Carrillo Puerto'},
+  {nombre:'HOT ESLA',     razon:'Hotel ESLA'},
+];
+
+// =====================================================
+// EMPLEADOS GRUPO A
+// =====================================================
+const EMPLEADOS_A = {
+  'HOT INS': ['009 MAGDALENO MARTINEZ SONIA','091 SAN AGUSTIN SAN AGUSTIN IVAN GERMAN','167 TOLEDO MARTINEZ LORENA','196 GARCIA GUERRERO VIRIDIANA','223 VARGAS MARTINEZ TERESA','238 ROCHA MEDINA ANABEL','257 MALDONADO FLORES ANGELICA MARIA','274 LINARES VELAZQUEZ RAFAEL','276 QUEZADA RAMIREZ MARIA GUADALUPE','279 VARGAS MEDINA JUANA DE DIOS','280 PACHECO LOPEZ ALMA GUADALUPE','286 CERON DE JESUS ADILENE CONCEPCION','294 REYES CORTES JOHANN','297 VACA RODRIGUEZ CINTHYA FAMITSAI','298 GONZALEZ DOMINGUEZ VIVIANA KAREN','299 ORTIZ LOPEZ ARIADNE JOCELYN','301 PINEDA MASSANGE LUIS JOEL','302 PACHECO GOMEZ NUBIA ARACELI'],
+  'HOT VILLA': ['098 ROMERO MERINO MARIA GUADALUPE','100 RUBIO AGUILAR TERESA','123 MORALES MARQUEZ MARIA LUISA','128 HERNANDEZ ESPINOZA ENORINA','143 HERNANDEZ FLORES ICHELT NOEMI','158 URBINA HERNANDEZ ERIK','167 MENDEZ PRIETO MARIA DEL CARMEN','176 MORALES MARTINEZ MARCELA','180 CEDRO AZUARA YOLANDA','194 MARTIN ANGELINA MARIA CATALINA','197 ESTRADA FLORES YOLANDA','236 MONROY VARGAS ARACELI','245 FRANCO VENTURA ROSA','253 GARCIA CONTRERAS ZIRCE IRAIS','258 LARA FLORES OLGA LIDIA','269 PILLADO GONZALEZ DULCE ADRIANA','270 FUENTES SANTIAGO JUAN','271 CASTAÑEDA SANCHEZ DANIA ELBA','272 ALFARO RODRIGUEZ ASUNCION ALBERTO'],
+  'HOT NAYARIT': ['005 CHORA SUASTEGUI RODRIGA','106 GONZALEZ MARTINEZ BRENDA PAOLA','152 PEREZ NIETO VICTOR MANUEL','215 HERNANDEZ HERNANDEZ BLANCA ALEJANDRA','228 GARCIA MARTINEZ DANIEL','230 HERNANDEZ NICOLAS PEDRO','233 VAZQUEZ GONZALEZ ROCIO CAROLINA','245 NUÑEZ CASTRO CHRISTIAN MAURO','246 HERNANDEZ REYES MARISOL','253 RUFINO AGUILAR RUBICELIA','259 RIVERA RANGEL LUCIA','272 SAN AGUSTIN VELASCO MARCELA'],
+  'HOT PAC': ['002 CALDERON MALDONADO GEORGINA','008 MALDONADO LUJANO OSCAR','013 EVARISTO GARCIA ROBERTO','017 EVARISTO GARCIA AGUSTIN','020 HERNANDEZ GOMEZ BERNARDO','028 HERNANDEZ ARVIZU MARIA DEL ROSARIO','089 GARCIA LOPEZ ADELA','103 MILLAN MAYA LEONARDO','106 ASCENCION MORALES MARIA DE LOS ANGELES','113 BARON TORRES LIDIA VIANEY','124 ROCHA SOTO YESENIA','132 VARGAS RIOS LILIANA','141 HERNANDEZ MARTINEZ MARIANA GABRIELA','143 GONZALEZ RAMIREZ EVARISTO','144 OLARTE TORRES ALEJANDRA','156 SANDOVAL TORRES GUILLERMINA'],
+  'HOT VALLEJO': ['005 ARZOLA NAVARRETE MATILDE MERCED','006 CORONA MONZALVO ARACELI','008 TORRES LEON GUILLERMO','010 BLANCAS JUAREZ ANA LETICIA','012 RAMIREZ MARTINEZ MARIA ANTONIETA','013 SOTELO GONZALEZ RITA','014 HERNANDEZ NICOLAS CARLOS','015 LOPEZ URBANO PEDRO','016 AYALA VAZQUEZ SILVIA','017 HERNANDEZ NICOLAS ROGELIO','018 HERNANDEZ GOMEZ DANIEL ALBERTO','031 LOPEZ GALINDO MARIA DOLORES','035 MONDRAGON CONTRERAS CANCHOLA GRECIA CAROLINA','036 CELIS MOLINA PAOLA'],
+  'CAMARONES': ['001 FLORES OREA EVELIA','003 OCAÑA GARIN LILIANA','005 HERNANDEZ FERNANDEZ DELIA','006 MARTINEZ CLARA MARISOL','022 GUERRERO BOLAÑOS ALFREDO','059 GUERRERO PEREZ BLANCA LIDIA','075 GUTIERREZ VACA ELOY LUIS','095 LINARES MOLINA BRENDA ELIZABETH','105 MARTINEZ ANGELES JORGE LUIS','128 SALGADO LANGARICA JULIAN JAVIER','142 MARIN CLARA APOLONIO','144 CERRILLO MORALES MARITZA ITZEL','145 GONZALEZ MENDOZA MITZI AURORA','147 VELASCO HERNANDEZ ARIADNA','151 ARANO CRUZ ALEJANDRA','175 CORDERO RANGEL MARIA LAURA','178 PONCE DE LEON BARRIENTOS DIANA','181 BALDERRAMA BOBADILLA BRENDA'],
+  'HOT PDR': ['001 CABRERA NAVA JOSE SALVADOR','005 ANTONIO ANDRES JOSE LUIS','008 MORENO HERNANDEZ ADRIANA','017 HERNANDEZ VELASCO LILIA LETICIA','139 CARRANCO COLMENERO ARACELI','154 HERNANDEZ CISNEROS MARIA LUISA','196 PERCASTRIGUI MENDOZA ALEJANDRA','220 HERNANDEZ NICOLAS BENITO','232 DORANTES MENDOZA MIGUEL','238 SANCHEZ CASTRO MARLENNE LUZ MARIA','257 RECILLAS RIVERA ROCIO','263 HERNANDEZ CIPRES LESLLY PAULINA','301 SEGUEDA GRANADOS JASMIN AIDEE','303 LOPEZ ZUÑIGA EMANUEL','305 ARANDA GUTIERREZ YOVANA','307 JUAREZ MEZA ANDREA MONTSERRAT','311 ROJAS PEREZ JOSE LUIS'],
+  'HOT PDR LAV': ['018 OLIVARES MARTINEZ JOSE LUIS','019 ROSAS CHAVEZ MAURA','021 ROSAS CHAVEZ TERESA','025 ROMERO MELENDEZ REFUGIO SANDRA','075 LOPEZ PEREZ ANA MARIA','082 HERNANDEZ CHAVEZ SILVANA ROCIO','151 HERNANDEZ ISIDRO MARIANO','239 CRUZ BAUTISTA EDUARDO','241 GARCIA LOPEZ LAURA ITZEL','243 MEJIA RODRIGUEZ MIGUEL ANGEL','256 AVILA LIBORIO SANTIAGO','287 GONZALEZ CRUZ ADRIANA','288 RAMIREZ SEGURA ERICK URIEL','290 GARCES URIBE ANGEL DAVID','291 DIAZ FLORES MIGUEL'],
+  'HOT NARVARTE': ['004 CHIMAL SANCHEZ SILVIA','005 ESTRADA RAMIREZ ALEJANDRA','016 SANTIAGO BAÑOS MARIA DEL CARMEN','023 VERDIN RAMIREZ JESUS EDUARDO','064 SANDOVAL PEREZ SUSANA','084 RICARDO GARCIA MAURA ELVIRA','156 CERVANTES SANTIAGO ARTURO','165 ANGELES CONTRERAS JOSUE','169 VEGA GUERRERO NORMA','175 OLEA CHACHA BRENDA MITZI','185 GONZALEZ TREJO MIRIAM AGRIPINA','196 ALCANTARA MORALES JOSE LUIS','213 HUERTA FLORES HAZEL MIRANDA','220 ORTIZ GONZALEZ KARLA NOEMI','222 HUERTO ROJAS MARIA DEL CARMEN','236 VELAZQUEZ GUZMAN ESTELA JULIETA'],
+  'HOT ELITE': ['003 GARCIA MORALES GUADALUPE IVON','026 LOPEZ ROMO BRENDA AMERICA','058 RODRIGUEZ TORRES CHRISTA DAHIANA','068 CEBALLOS VILLEGAS LUCIA','080 MAYA BECERRA ARLETTE SOFIA','086 LOPEZ MARTINEZ MARTIN','091 VILLAGOMEZ URIBE MIRIAM','110 CANELA PEÑA ADRIAN','120 GUZMAN JUAREZ BRISEYDA','123 MUÑOZ CORDOVA BEATRIZ ESTHER','128 GUERRERO RUIZ FERNANDO','160 MORALES BAUTISTA RUTH NOEMI','161 MORALES BAUTISTA XOCHITL CITLALI'],
+};
+
+// =====================================================
+// EMPLEADOS GRUPO B
+// =====================================================
+const EMPLEADOS_B = {
+  'HOT ELITE': ['Ana Cristina Jimenez','Victor Bravo Orozco','Ulani Lopez Hernandez','Pedro Hernandez Nicolas / Nayarit','Guiovana Fabiola Carmona Zetina','Rafael Parra Barbosa','Josue Escobedo Flores','Daniela Hernandez Galindo','Amada Olivera Cardenas','Yadira Guadalupe Rojas Carmona','Jesus Mauricio Ferro Castellan','Adriana Fabiola Morales Hernandez','Hernandez Gomez Belem Berenice','Gesica Jazzmin Alvarez','Jose Luis Coreno Gonzalez','Rosalba Guillen Lopez','Maria Isabel Garduño Martinez','Alfonso Ramirez Flores','Jesus Soto Linares','Brisa Daniela Becerra Robledo','Alexander Villena Espinal'],
+  'HOT INS': ['ANA REYES','LUIS JOEL PINEDA MASSANGE','KARLA GRACIELA MORENO LOPEZ','NUBIA PACHECO GOMEZ','SOFIA CANO','BERENICE TORRES CARDENAZ','MARIA GUADALUPE QUEZADA','JOCELINE CRISTEL','MARINA DOMINGUEZ CASTILLO','ESTELA'],
+  'HOT VILLA': ['CARRILLO LOPEZ EDUARDO','ALFARO RODRIGUEZ ASUNCION ALBERTO','ATZIRI SUISANA LIBRADO ROJO','MARIA LIDIA SORIA RAMIRES','CASTAÑEDA SANCHEZ DANIA ELBA','LETICIA VILLA HERNANDEZ','DE LA PAZ RAMOS CARLOS','MARIA DE LOS ANGELS ZAMORANO RESENDIZ','GONZALEZ JUAREZ MARIA ANGELICA','LEYTE PEREZ MARICELA'],
+  'CAMARONES': ['BLANCA ESTELA CORTES MORENO','MONSERRAT ARACELI JIMENEZ CRUZ','CARLOS ANDRES PASTRANA HERNANDEZ','ARTURO CARDENAS GUARDADO','JUAN CARLOS CENOBIO MORALES','DANA JACQUELINE AVILA ROJAS','ANA LAURA SANCHEZ GONZALEZ','EDGAR OMAR FLORES CALDERON','BRIZA GARCIA BELTRAN','PAOLA FLORES BRAVO','RAFAEL MEJIA MEJIA','GRACIELA DOMINGUEZ HERRERA','ELIZABETH FLORES LUGO'],
+  'HOT PAC': ['DIEGO EDUARDO LUNA CRUZ','TRUJILLO PLATA CARLOS','CLAUDIA GENOVEVA FLORES GARCIA','ANGEL HERNANDEZ LOPEZ','JOSE ALBERTO CHAVEZ ORTIZ','SANTOS ASCENCION GABRIEL','OLIVER MIGUEL ANGEL ISLAS GARCIA','FATIMA GENESIS CUBA BAEZ','HAYDEE ROCHA PARANGUEO','GUILLERMINA SANDOVAL TORRES','FAUSTO GARCIA ESCAMILLA'],
+  'HOT NARVARTE': ['CANO COLIN JAVIER DE JESUS','CRUZ GARCIA MAURICIO ISRAEL','GALLEGOS GALVAN ANGELICA VERONICA','ROMERO TEMOXTLE JESUS','CERVANTES HERNANDEZ ALBERTO RAFAEL','GONZALEZ ARTEAGA OSCAR','FIERRO DIAZ JOSUE ASAEL','MENDOZA SERNA DIEGO DE JESUS','OCHOA ORTIZ REINA PATRICIA','MARTINEZ TURANZAS ALEJANDRO'],
+  'HOT NAYARIT': ['ADRIANA PEREZ CAMACHO','IVON VIRIDIANA MORENO DE LA CONCHA','ADRIANA ABIGAIL ESCALANTE RIOS','SANDRA MUNGUIA ORTEGA','MARCELA SAN AGUSTIN VELASCO','ESTELA CASTRO VIGUERAS','EDWING JESUS RAVELO LEON','MARIBEL OLIVA ZURO','ORTIZ SANCHEZ JESSICA VIRIDIANA','ADRIANA CASTRO ALVAREZ','ITZEL GUADALUPE PEREZ CAMACHO','MARIBEL JIMENEZ JAIMES','EDGAR ARTURO LINARES GARCIA','ROMINAITZA ALATORRE CABALLERO','EVELIN ESMERALDA MALACARA DEL ANGEL','INGRID ABIGAIL ORTIZ GOMEZ','MIRIAM NALLELY GARCIA HUERTA','ADRIANA MUÑOZ CALLEJA'],
+  'HOT PDR': ['CARLOS MONDRAGON','JULIETA PILAR VALENZUELA ROBLES','ANGEL BARRON GALVAN','ALEX EDUARDO CAMARGO NAVA','BRENDA OROZCO SALAS','ZAED JOSUE HERNANDEZ','SHAMANTA SALINAS ZARATE','LETICIA MORALES PANTALEON','MARIA DE LOURDES JIMENEZ JIMENEZ','JOSE ADRIAN PERALTA SUAREZ','LETICIA SOLIS','ANGEL ANTONIO AGAPITO MEDINA','NALLELY GUADALUPE GARCIA MENDOZA'],
+  'HOT VALLEJO': ['JIMENEZ ANDRADE ANDREA DESSIRE','MARTINEZ LAURA','DIAZ DIONISIO SARAHI','ANA YENCI ORTEGA MARTINEZ','VELAZQUEZ PICASO PABLO JESUS','RODRIGUEZ CRUZ KARLA ESTELA','LUNA PRESA EMILY','SANCHEZ SANCHEZ ZHAIRA ITZEL'],
+  'HOT ESLA': ['Hilaria Flores Estefes','FLORES SUMUANO BRANDON ISAAC','GOMEZ RODRIGUEZ NAYELI ABIGAIL','Nancy Zamudio Escartin','Xiomara García Vázquez','Erika Mariana García Nieto','María Guadalupe Medina Vences','SONIA MORENO MORALES','CLAUDIA ROSA RODRIGUEZ RUIZ'],
+  'HOT PDR LAV': ['ENRIQUE LIZAMA CHAMAL','MIGUEL ANGEL AVILA MENDOZA','VEGA REGULES ESTEBA','ABAROA LUNA LUIS ALBERTO','FONSECA ALVAREZ MARIANA ILSE','ZAPATA DELGADO BRICEIDA','ZAMBRANO RAMIREZ JOSE LUIS','SANCHEZ RAMIREZ FABRICIO','MEDINA FRAGOSO BLANCA ESTELA','ROMERO LUNA RICARDO BENJAMIN','SALDAÑA BRETADO MIGUEL ANGEL','DORANTES MENDOZA MIGUEL'],
+};
 
 const TIPOS_INC = [
-  "Falta injustificada","Falta justificada","Incapacidad IMSS",
-  "Baja voluntaria","Baja por abandono","Vacaciones",
-  "Prima vacacional","Horas extra","Bono / Compensación",
-  "Descuento","Día festivo laborado","Pago día festivo",
-  "Permiso con goce","Permiso sin goce","Otro"
+  'Falta injustificada','Falta justificada','Incapacidad IMSS',
+  'Baja voluntaria','Baja por abandono','Vacaciones',
+  'Prima vacacional','Horas extra','Bono / Compensación',
+  'Descuento','Día festivo laborado','Pago día festivo',
+  'Permiso con goce','Permiso sin goce','Otro'
 ];
-
-const HOTEL_EMPLEADOS = {
-  "PLAZA CAMARONES": ["001 FLORES OREA EVELIA","003 OCAÑA GARIN LILIANA","005 HERNANDEZ FERNANDEZ DELIA","006 MARTINEZ CLARA MARISOL","022 GUERRERO BOLAÑOS ALFREDO","059 GUERRERO PEREZ BLANCA LIDIA","075 GUTIERREZ VACA ELOY LUIS","095 LINARES MOLINA BRENDA ELIZABETH","105 MARTINEZ ANGELES JORGE LUIS","128 SALGADO LANGARICA JULIAN JAVIER","142 MARIN CLARA APOLONIO","144 CERRILLO MORALES MARITZA ITZEL","145 GONZALEZ MENDOZA MITZI AURORA","147 VELASCO HERNANDEZ ARIADNA","151 ARANO CRUZ ALEJANDRA","175 CORDERO RANGEL MARIA LAURA","178 PONCE DE LEON BARRIENTOS DIANA","181 BALDERRAMA BOBADILLA BRENDA"],
-  "HOT VALLEJO": ["005 ARZOLA NAVARRETE MATILDE MERCED","006 CORONA MONZALVO ARACELI","008 TORRES LEON GUILLERMO","010 BLANCAS JUAREZ ANA LETICIA","012 RAMIREZ MARTINEZ MARIA ANTONIETA","013 SOTELO GONZALEZ RITA","014 HERNANDEZ NICOLAS CARLOS","015 LOPEZ URBANO PEDRO","016 AYALA VAZQUEZ SILVIA","017 HERNANDEZ NICOLAS ROGELIO","018 HERNANDEZ GOMEZ DANIEL ALBERTO","031 LOPEZ GALINDO MARIA DOLORES","035 MONDRAGON CONTRERAS CANCHOLA GRECIA CAROLINA","036 CELIS MOLINA PAOLA"],
-  "HOT INSURGENTES": ["009 MAGDALENO MARTINEZ SONIA","091 SAN AGUSTIN SAN AGUSTIN IVAN GERMAN","167 TOLEDO MARTINEZ LORENA","196 GARCIA GUERRERO VIRIDIANA","223 VARGAS MARTINEZ TERESA","238 ROCHA MEDINA ANABEL","257 MALDONADO FLORES ANGELICA MARIA","274 LINARES VELAZQUEZ RAFAEL","276 QUEZADA RAMIREZ MARIA GUADALUPE","279 VARGAS MEDINA JUANA DE DIOS","280 PACHECO LOPEZ ALMA GUADALUPE","286 CERON DE JESUS ADILENE CONCEPCION","294 REYES CORTES JOHANN","297 VACA RODRIGUEZ CINTHYA FAMITSAI","298 GONZALEZ DOMINGUEZ VIVIANA KAREN","299 ORTIZ LOPEZ ARIADNE JOCELYN","301 PINEDA MASSANGE LUIS JOEL","302 PACHECO GOMEZ NUBIA ARACELI"],
-  "HOT LA VILLA": ["098 ROMERO MERINO MARIA GUADALUPE","100 RUBIO AGUILAR TERESA","123 MORALES MARQUEZ MARIA LUISA","128 HERNANDEZ ESPINOZA ENORINA","143 HERNANDEZ FLORES ICHELT NOEMI","158 URBINA HERNANDEZ ERIK","167 MENDEZ PRIETO MARIA DEL CARMEN","176 MORALES MARTINEZ MARCELA","180 CEDRO AZUARA YOLANDA","194 MARTIN ANGELINA MARIA CATALINA","197 ESTRADA FLORES YOLANDA","236 MONROY VARGAS ARACELI","245 FRANCO VENTURA ROSA","253 GARCIA CONTRERAS ZIRCE IRAIS","258 LARA FLORES OLGA LIDIA","269 PILLADO GONZALEZ DULCE ADRIANA","270 FUENTES SANTIAGO JUAN","271 CASTAÑEDA SANCHEZ DANIA ELBA","272 ALFARO RODRIGUEZ ASUNCION ALBERTO"],
-  "HOT NAYARIT": ["005 CHORA SUASTEGUI RODRIGA","106 GONZALEZ MARTINEZ BRENDA PAOLA","152 PEREZ NIETO VICTOR MANUEL","215 HERNANDEZ HERNANDEZ BLANCA ALEJANDRA","228 GARCIA MARTINEZ DANIEL","230 HERNANDEZ NICOLAS PEDRO","233 VAZQUEZ GONZALEZ ROCIO CAROLINA","245 NUÑEZ CASTRO CHRISTIAN MAURO","246 HERNANDEZ REYES MARISOL","253 RUFINO AGUILAR RUBICELIA","259 RIVERA RANGEL LUCIA","272 SAN AGUSTIN VELASCO MARCELA"],
-  "PLAZA BELICES": ["002 CALDERON MALDONADO GEORGINA","008 MALDONADO LUJANO OSCAR","013 EVARISTO GARCIA ROBERTO","017 EVARISTO GARCIA AGUSTIN","020 HERNANDEZ GOMEZ BERNARDO","028 HERNANDEZ ARVIZU MARIA DEL ROSARIO","089 GARCIA LOPEZ ADELA","103 MILLAN MAYA LEONARDO","106 ASCENCION MORALES MARIA DE LOS ANGELES","113 BARON TORRES LIDIA VIANEY","124 ROCHA SOTO YESENIA","132 VARGAS RIOS LILIANA","141 HERNANDEZ MARTINEZ MARIANA GABRIELA","143 GONZALEZ RAMIREZ EVARISTO","144 OLARTE TORRES ALEJANDRA","156 SANDOVAL TORRES GUILLERMINA"],
-  "PLAZA DEL REY": ["001 CABRERA NAVA JOSE SALVADOR","005 ANTONIO ANDRES JOSE LUIS","008 MORENO HERNANDEZ ADRIANA","017 HERNANDEZ VELASCO LILIA LETICIA","139 CARRANCO COLMENERO ARACELI","154 HERNANDEZ CISNEROS MARIA LUISA","196 PERCASTRIGUI MENDOZA ALEJANDRA","220 HERNANDEZ NICOLAS BENITO","232 DORANTES MENDOZA MIGUEL","238 SANCHEZ CASTRO MARLENNE LUZ MARIA","257 RECILLAS RIVERA ROCIO","263 HERNANDEZ CIPRES LESLLY PAULINA","301 SEGUEDA GRANADOS JASMIN AIDEE","303 LOPEZ ZUÑIGA EMANUEL","305 ARANDA GUTIERREZ YOVANA","307 JUAREZ MEZA ANDREA MONTSERRAT","310 VAZQUEZ RIVERA JASIBI","311 ROJAS PEREZ JOSE LUIS"],
-  "LAVANDERÍA": ["018 OLIVARES MARTINEZ JOSE LUIS","019 ROSAS CHAVEZ MAURA","021 ROSAS CHAVEZ TERESA","025 ROMERO MELENDEZ REFUGIO SANDRA","075 LOPEZ PEREZ ANA MARIA","082 HERNANDEZ CHAVEZ SILVANA ROCIO","151 HERNANDEZ ISIDRO MARIANO","239 CRUZ BAUTISTA EDUARDO","241 GARCIA LOPEZ LAURA ITZEL","243 MEJIA RODRIGUEZ MIGUEL ANGEL","256 AVILA LIBORIO SANTIAGO","287 GONZALEZ CRUZ ADRIANA","288 RAMIREZ SEGURA ERICK URIEL","290 GARCES URIBE ANGEL DAVID","291 DIAZ FLORES MIGUEL"],
-  "HOT NARVARTE": ["004 CHIMAL SANCHEZ SILVIA","005 ESTRADA RAMIREZ ALEJANDRA","016 SANTIAGO BAÑOS MARIA DEL CARMEN","023 VERDIN RAMIREZ JESUS EDUARDO","064 SANDOVAL PEREZ SUSANA","084 RICARDO GARCIA MAURA ELVIRA","156 CERVANTES SANTIAGO ARTURO","165 ANGELES CONTRERAS JOSUE","169 VEGA GUERRERO NORMA","175 OLEA CHACHA BRENDA MITZI","185 GONZALEZ TREJO MIRIAM AGRIPINA","196 ALCANTARA MORALES JOSE LUIS","213 HUERTA FLORES HAZEL MIRANDA","220 ORTIZ GONZALEZ KARLA NOEMI","222 HUERTO ROJAS MARIA DEL CARMEN","235 LOPEZ LAZARO LESLY MARELY","236 VELAZQUEZ GUZMAN ESTELA JULIETA"],
-  "HOT ELITE": ["003 GARCIA MORALES GUADALUPE IVON","026 LOPEZ ROMO BRENDA AMERICA","058 RODRIGUEZ TORRES CHRISTA DAHIANA","068 CEBALLOS VILLEGAS LUCIA","080 MAYA BECERRA ARLETTE SOFIA","086 LOPEZ MARTINEZ MARTIN","091 VILLAGOMEZ URIBE MIRIAM","110 CANELA PEÑA ADRIAN","120 GUZMAN JUAREZ BRISEYDA","123 MUÑOZ CORDOVA BEATRIZ ESTHER","128 GUERRERO RUIZ FERNANDO","160 MORALES BAUTISTA RUTH NOEMI","161 MORALES BAUTISTA XOCHITL CITLALI"],
-};
 
 // =====================================================
 // ESTADO
 // =====================================================
+let grupoActivo = null;  // 'A' o 'B'
 let hotelActivo = null;
-let incidencias = {}; // {empleadoIdx: [{tipo, cantidad, observaciones}]}
+let incidencias = {};
 let semanaNum = 0;
 let semanaStr = '';
 
@@ -504,9 +343,9 @@ let semanaStr = '';
 function init(){
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const day = now.getDay(); // 0=domingo, 1=lunes, ..., 6=sábado
+  const day = now.getDay();
   const sunday = new Date(now);
-  sunday.setDate(now.getDate() - day); // retroceder al domingo
+  sunday.setDate(now.getDate() - day);
   const saturday = new Date(sunday);
   saturday.setDate(sunday.getDate() + 6);
   semanaNum = Math.ceil((sunday - startOfYear) / 604800000) + 1;
@@ -514,10 +353,40 @@ function init(){
   semanaStr = `Semana ${semanaNum} · ${fmt(sunday)} al ${fmt(saturday)}`;
   document.getElementById('semana-header').textContent = semanaStr;
   document.getElementById('semana-display').innerHTML = `<strong>${semanaStr}</strong>`;
+}
 
-  // Render hotel grid
+// =====================================================
+// PASO 1 — GRUPO
+// =====================================================
+function selGrupo(g){
+  grupoActivo = g;
+  hotelActivo = null;
+  incidencias = {};
+  document.getElementById('gbtn-A').classList.remove('selected-a');
+  document.getElementById('gbtn-B').classList.remove('selected-b');
+  document.getElementById('gbtn-' + g).classList.add('selected-' + g.toLowerCase());
+  document.getElementById('btn-paso2').disabled = false;
+}
+
+function irPaso1(){
+  setStep(1);
+}
+
+// =====================================================
+// PASO 2 — HOTEL
+// =====================================================
+function irPaso2(){
+  if(!grupoActivo){ showToast('⚠ Selecciona el tipo de nómina'); return; }
+  setStep(2);
+
+  const badge = document.getElementById('badge-grupo');
+  badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo==='A'?'Banco':'Efectivo');
+  badge.className = 'grupo-badge badge-' + grupoActivo.toLowerCase();
+
+  const hoteles = grupoActivo === 'A' ? HOTELES_A : HOTELES_B;
   const grid = document.getElementById('hotel-grid');
-  HOTELES_DATA.forEach(h => {
+  grid.innerHTML = '';
+  hoteles.forEach(h => {
     const btn = document.createElement('div');
     btn.className = 'hotel-btn';
     btn.id = 'hbtn-' + h.nombre;
@@ -525,65 +394,57 @@ function init(){
     btn.onclick = () => selHotel(h.nombre);
     grid.appendChild(btn);
   });
+  document.getElementById('btn-paso3').disabled = true;
 }
 
 function selHotel(nombre){
   hotelActivo = nombre;
+  incidencias = {};
   document.querySelectorAll('.hotel-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('hbtn-' + nombre).classList.add('selected');
-  document.getElementById('btn-paso2').disabled = false;
+  document.getElementById('btn-paso3').disabled = false;
 }
 
 // =====================================================
-// PASOS
+// PASO 3 — INCIDENCIAS
 // =====================================================
-function irPaso1(){
-  setStep(1);
-}
-
-function irPaso2(){
+function irPaso3(){
   if(!hotelActivo){ showToast('⚠ Selecciona un hotel'); return; }
-  setStep(2);
+  setStep(3);
   renderEmpleados();
 }
 
-function irPaso3(){
-  setStep(3);
+function irPaso4(){
+  setStep(4);
   renderResumen();
 }
 
-function setStep(n){
-  [1,2,3,4].forEach(i => {
-    document.getElementById('step'+i).classList.toggle('active', i===n);
-  });
-  [1,2,3].forEach(i => {
-    const el = document.getElementById('prog'+i);
-    el.classList.toggle('done', i < n);
-    el.classList.toggle('active', i === n);
-  });
+function getEmpleados(){
+  const map = grupoActivo === 'A' ? EMPLEADOS_A : EMPLEADOS_B;
+  return map[hotelActivo] || [];
 }
 
-// =====================================================
-// EMPLEADOS
-// =====================================================
 function renderEmpleados(){
-  const empleados = HOTEL_EMPLEADOS[hotelActivo] || [];
+  const empleados = getEmpleados();
   const list = document.getElementById('empleados-list');
   list.innerHTML = '';
 
   empleados.forEach((emp, idx) => {
-    const parts = emp.split(' ');
-    const num = parts[0];
-    const nombre = parts.slice(1).join(' ');
+    // Grupo A tiene número al inicio, Grupo B no
+    let num = '—', nombre = emp;
+    if(grupoActivo === 'A'){
+      const parts = emp.split(' ');
+      num = parts[0];
+      nombre = parts.slice(1).join(' ');
+    }
+
     const incs = incidencias[idx] || [];
     const tieneInc = incs.length > 0;
+    const statusTxt = tieneInc ? incs.length + ' incidencia' + (incs.length>1?'s':'') : 'Sin incidencia';
 
     const card = document.createElement('div');
     card.className = 'empleado-card' + (tieneInc ? ' tiene-inc' : '');
     card.id = 'emp-card-' + idx;
-
-    const statusTxt = tieneInc ? incs.length + ' incidencia' + (incs.length>1?'s':'') : 'Sin incidencia';
-
     card.innerHTML = `
       <div class="empleado-header" onclick="toggleEmp(${idx})">
         <div class="empleado-num">${num}</div>
@@ -597,15 +458,13 @@ function renderEmpleados(){
         <div id="inc-list-${idx}"></div>
         <button class="btn-add-inc" onclick="addInc(${idx})">+ Agregar incidencia</button>
       </div>`;
-
     list.appendChild(card);
     renderIncList(idx);
   });
 }
 
 function toggleEmp(idx){
-  const card = document.getElementById('emp-card-' + idx);
-  card.classList.toggle('open');
+  document.getElementById('emp-card-' + idx).classList.toggle('open');
 }
 
 function renderIncList(idx){
@@ -614,7 +473,7 @@ function renderIncList(idx){
   const incs = incidencias[idx] || [];
 
   if(incs.length === 0){
-    container.innerHTML = '<div class="sin-inc-label">Sin incidencias — el empleado trabajó normalmente.</div>';
+    container.innerHTML = '<div class="sin-inc-label">Sin incidencias — trabajó normalmente.</div>';
   } else {
     container.innerHTML = incs.map((inc, i) => `
       <div class="inc-block">
@@ -625,7 +484,7 @@ function renderIncList(idx){
         <div class="field">
           <label>Tipo de incidencia</label>
           <select onchange="updateInc(${idx},${i},'tipo',this.value)">
-            ${TIPOS_INC.map(t => `<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
+            ${TIPOS_INC.map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
           </select>
         </div>
         <div class="inc-row">
@@ -641,7 +500,6 @@ function renderIncList(idx){
       </div>`).join('');
   }
 
-  // Actualizar status badge
   const statusEl = document.getElementById('emp-status-' + idx);
   const card = document.getElementById('emp-card-' + idx);
   if(statusEl){
@@ -659,8 +517,7 @@ function renderIncList(idx){
 
 function addInc(idx){
   if(!incidencias[idx]) incidencias[idx] = [];
-  incidencias[idx].push({tipo: 'Falta injustificada', cantidad: '', observaciones: ''});
-  // Open card
+  incidencias[idx].push({tipo:'Falta injustificada', cantidad:'', observaciones:''});
   const card = document.getElementById('emp-card-' + idx);
   if(!card.classList.contains('open')) card.classList.add('open');
   renderIncList(idx);
@@ -673,16 +530,15 @@ function delInc(idx, i){
 }
 
 function updateInc(idx, i, field, value){
-  if(!incidencias[idx]) return;
-  incidencias[idx][i][field] = value;
+  if(incidencias[idx]) incidencias[idx][i][field] = value;
 }
 
 // =====================================================
-// RESUMEN
+// PASO 4 — RESUMEN
 // =====================================================
 function renderResumen(){
-  const empleados = HOTEL_EMPLEADOS[hotelActivo] || [];
-  document.getElementById('resumen-hotel-nombre').textContent = hotelActivo;
+  const empleados = getEmpleados();
+  document.getElementById('resumen-hotel-nombre').textContent = hotelActivo + ' · Grupo ' + grupoActivo;
   document.getElementById('resumen-semana').textContent = semanaStr;
 
   const lista = document.getElementById('resumen-lista');
@@ -698,7 +554,7 @@ function renderResumen(){
     const incs = incidencias[idx];
     return `<div class="resumen-item">
       <div class="resumen-emp">${emp}</div>
-      ${incs.map(inc => `<div class="resumen-inc">${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}</div>${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
+      ${incs.map(inc=>`<div class="resumen-inc">${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}</div>${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
     </div>`;
   }).join('');
 }
@@ -711,19 +567,31 @@ async function enviarReporte(){
   btn.disabled = true;
   btn.textContent = '⏳ Enviando...';
 
-  const empleados = HOTEL_EMPLEADOS[hotelActivo] || [];
+  const empleados = getEmpleados();
   const conInc = Object.keys(incidencias);
 
-  // Construir texto del reporte
-  let texto = `REPORTE DE INCIDENCIAS\n`;
+  const jsonData = {
+    hotel: hotelActivo,
+    grupo: grupoActivo,
+    semana: semanaNum,
+    semanaStr: semanaStr,
+    timestamp: new Date().toISOString(),
+    incidencias: conInc.map(idx => ({
+      empleado: empleados[parseInt(idx)],
+      incidencias: incidencias[idx]
+    }))
+  };
+
+  let texto = `REPORTE DE INCIDENCIAS — GRUPO ${grupoActivo}\n`;
   texto += `${'═'.repeat(45)}\n`;
   texto += `Hotel: ${hotelActivo}\n`;
+  texto += `Grupo: ${grupoActivo} (${grupoActivo==='A'?'Nómina Banco':'Nómina Efectivo'})\n`;
   texto += `${semanaStr}\n`;
   texto += `Enviado: ${new Date().toLocaleString('es-MX')}\n`;
   texto += `${'═'.repeat(45)}\n\n`;
 
   if(conInc.length === 0){
-    texto += `Sin incidencias esta semana. Todos los empleados trabajaron normalmente.\n`;
+    texto += `Sin incidencias esta semana.\n`;
   } else {
     texto += `EMPLEADOS CON INCIDENCIAS (${conInc.length}):\n\n`;
     conInc.forEach(idx => {
@@ -740,57 +608,43 @@ async function enviarReporte(){
     });
   }
 
-  // JSON para el tracker
-  const jsonData = {
-    hotel: hotelActivo,
-    semana: semanaNum,
-    semanaStr: semanaStr,
-    timestamp: new Date().toISOString(),
-    incidencias: conInc.map(idx => ({
-      empleado: empleados[parseInt(idx)],
-      incidencias: incidencias[idx]
-    }))
-  };
-
   try {
     const payload = JSON.stringify({
       hotel: hotelActivo,
+      grupo: grupoActivo,
       semana: semanaStr,
       total_incidencias: conInc.length,
       reporte: texto,
       tracker_json: JSON.stringify(jsonData)
     });
 
-    // 1. Formspree — correo a Andrea (prioritario)
     const respFormspree = await fetch('https://formspree.io/f/mjgajoqa', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: payload
     });
-    if (!respFormspree.ok) throw new Error('Error Formspree');
+    if(!respFormspree.ok) throw new Error('Error Formspree');
 
-    // 2. Apps Script — Google Sheet usando FormData (evita bloqueo CORS)
     const fd = new FormData();
     fd.append('data', payload);
     fetch('https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
-      method: 'POST',
-      mode: 'no-cors',
-      body: fd
-    }).catch(err => console.warn('Sheet no disponible:', err));
+      method: 'POST', mode: 'no-cors', body: fd
+    }).catch(e => console.warn('Sheet:', e));
 
-    setStep(4);
+    setStep(5);
     document.getElementById('success-msg').innerHTML = `
-      Tu reporte de <strong>${hotelActivo}</strong> para la <strong>${semanaStr}</strong> fue enviado correctamente a RH.<br><br>
+      Reporte de <strong>${hotelActivo}</strong> · Grupo ${grupoActivo} · <strong>${semanaStr}</strong><br>
+      enviado correctamente a RH.<br><br>
       <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:12px">
         ${conInc.length} empleado${conInc.length!==1?'s':''} con incidencia${conInc.length!==1?'s':''}
       </span>`;
 
-    [1,2,3].forEach(i => {
+    [1,2,3,4].forEach(i => {
       document.getElementById('prog'+i).classList.add('done');
       document.getElementById('prog'+i).classList.remove('active');
     });
 
-  } catch(err) {
+  } catch(err){
     btn.disabled = false;
     btn.textContent = '📤 Enviar reporte';
     showToast('⚠ Error al enviar. Intenta de nuevo.');
@@ -798,27 +652,32 @@ async function enviarReporte(){
   }
 }
 
-function reiniciar(){
-  hotelActivo = null;
-  incidencias = {};
-  document.querySelectorAll('.hotel-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('btn-paso2').disabled = true;
-  setStep(1);
-  [1,2,3].forEach(i => {
+// =====================================================
+// UTILIDADES
+// =====================================================
+function setStep(n){
+  [1,2,3,4,5].forEach(i => {
+    document.getElementById('step'+i).classList.toggle('active', i===n);
+  });
+  [1,2,3,4].forEach(i => {
     const el = document.getElementById('prog'+i);
-    el.classList.remove('done');
-    el.classList.toggle('active', i===1);
+    el.classList.toggle('done', i < n);
+    el.classList.toggle('active', i === n);
   });
 }
 
-function copiarTexto(id, btn){
-  const el = document.getElementById(id);
-  const txt = el.value || el.textContent;
-  navigator.clipboard.writeText(txt).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✓ Copiado';
-    btn.style.background = 'var(--green)';
-    setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--accent)'; }, 2000);
+function reiniciar(){
+  grupoActivo = null;
+  hotelActivo = null;
+  incidencias = {};
+  document.getElementById('gbtn-A').classList.remove('selected-a');
+  document.getElementById('gbtn-B').classList.remove('selected-b');
+  document.getElementById('btn-paso2').disabled = true;
+  setStep(1);
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('prog'+i);
+    el.classList.remove('done');
+    el.classList.toggle('active', i===1);
   });
 }
 

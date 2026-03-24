@@ -761,22 +761,22 @@ async function enviarReporte(){
       tracker_json: JSON.stringify(jsonData)
     });
 
-    // Enviar a Formspree (correo a Andrea) Y a Apps Script (Google Sheet) en paralelo
-    await Promise.all([
-      fetch('https://formspree.io/f/mjgajoqa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload
-      }),
-      fetch('https://script.google.com/a/macros/hoteleshot.com/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload
-      })
-    ]);
+    // 1. Formspree — correo a Andrea (prioritario)
+    const respFormspree = await fetch('https://formspree.io/f/mjgajoqa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    });
+    if (!respFormspree.ok) throw new Error('Error Formspree');
 
-    // Éxito — Formspree confirma, Apps Script es opaco por no-cors
+    // 2. Apps Script — Google Sheet (independiente, si falla no afecta el flujo)
+    fetch('https://script.google.com/a/macros/hoteleshot.com/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    }).catch(err => console.warn('Sheet no disponible:', err));
+
     setStep(4);
     document.getElementById('success-msg').innerHTML = `
       Tu reporte de <strong>${hotelActivo}</strong> para la <strong>${semanaStr}</strong> fue enviado correctamente a RH.<br><br>

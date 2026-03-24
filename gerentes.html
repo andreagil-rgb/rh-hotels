@@ -753,8 +753,9 @@ async function enviarReporte(){
   };
 
   try {
-    const resp = await fetch('https://formspree.io/f/mjgajoqa', {
+    const resp = await fetch('https://script.google.com/a/macros/hoteleshot.com/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         hotel: hotelActivo,
@@ -765,8 +766,7 @@ async function enviarReporte(){
       })
     });
 
-    if(!resp.ok) throw new Error('Error al enviar');
-
+    // Con mode:'no-cors' la respuesta es opaca — asumimos éxito si no hubo excepción
     setStep(4);
     document.getElementById('success-msg').innerHTML = `
       Tu reporte de <strong>${hotelActivo}</strong> para la <strong>${semanaStr}</strong> fue enviado correctamente a RH.<br><br>

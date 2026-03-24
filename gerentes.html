@@ -770,7 +770,7 @@ async function enviarReporte(){
     if (!respFormspree.ok) throw new Error('Error Formspree');
 
     // 2. Apps Script — Google Sheet (independiente, si falla no afecta el flujo)
-    fetch('https://script.google.com/a/macros/hoteleshot.com/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },

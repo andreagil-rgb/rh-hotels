@@ -769,12 +769,13 @@ async function enviarReporte(){
     });
     if (!respFormspree.ok) throw new Error('Error Formspree');
 
-    // 2. Apps Script — Google Sheet (independiente, si falla no afecta el flujo)
+    // 2. Apps Script — Google Sheet usando FormData (evita bloqueo CORS)
+    const fd = new FormData();
+    fd.append('data', payload);
     fetch('https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec', {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload
+      body: fd
     }).catch(err => console.warn('Sheet no disponible:', err));
 
     setStep(4);

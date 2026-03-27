@@ -19,30 +19,23 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
 .header { background: var(--accent); color: white; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
 .header-logo { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: .02em; }
 .header-logo span { color: #e8b87a; }
 .header-badge { font-family: 'DM Mono', monospace; font-size: 11px; background: rgba(255,255,255,.1); padding: 4px 12px; border-radius: 20px; color: rgba(255,255,255,.7); }
-
 .main { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
-
 .step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; display: none; }
 .step.active { display: block; animation: fadeUp .3s ease; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-
 .step-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
 .step-title { font-family: 'Instrument Serif', serif; font-size: 26px; margin-bottom: 6px; }
 .step-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
-
 .loading-box { text-align: center; padding: 48px 24px; }
 .loading-spinner { font-size: 40px; animation: spin 1s linear infinite; display: inline-block; margin-bottom: 16px; }
 @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 .loading-text { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); }
-
 .error-box { background: #fff0ed; border: 1px solid #f5c6bc; border-radius: 12px; padding: 20px; text-align: center; }
 .error-box p { font-size: 13px; color: var(--accent2); margin-bottom: 12px; }
-
 .grupo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .grupo-btn { border: 2px solid var(--border); border-radius: 14px; padding: 24px 20px; cursor: pointer; transition: all .2s; background: var(--bg); text-align: center; }
 .grupo-btn:hover { border-color: var(--accent); background: white; transform: translateY(-2px); }
@@ -51,21 +44,17 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .grupo-icon { font-size: 32px; margin-bottom: 10px; }
 .grupo-label { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
 .grupo-desc { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.5; }
-
 .grupo-badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
 .badge-a { background: var(--accent); color: white; }
 .badge-b { background: var(--blue); color: white; }
-
 .hotel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .hotel-btn { border: 2px solid var(--border); border-radius: 12px; padding: 16px; cursor: pointer; transition: all .2s; background: var(--bg); text-align: left; }
 .hotel-btn:hover { border-color: var(--accent); background: white; }
 .hotel-btn.selected { border-color: var(--accent2); background: white; }
 .hotel-btn .hname { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
 .hotel-btn .hcount { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
-
 .semana-display { font-family: 'DM Mono', monospace; font-size: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; color: var(--muted); }
 .semana-display strong { color: var(--text); }
-
 .empleado-card { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; transition: border-color .2s; }
 .empleado-card.tiene-inc { border-color: var(--accent2); }
 .empleado-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--bg); gap: 12px; }
@@ -78,13 +67,11 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .empleado-card.open .chevron { transform: rotate(180deg); }
 .empleado-body { display: none; padding: 16px; border-top: 1px solid var(--border); background: white; }
 .empleado-card.open .empleado-body { display: block; }
-
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
 .field select, .field input { width: 100%; font-family: 'DM Mono', monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; outline: none; transition: border-color .2s; }
 .field select:focus, .field input:focus { border-color: var(--accent); }
 .inc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
 .btn-add-inc { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; background: none; border: 1px dashed var(--border); color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; width: 100%; transition: all .2s; margin-top: 4px; }
 .btn-add-inc:hover { border-color: var(--accent2); color: var(--accent2); }
 .btn-del-inc { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; transition: color .2s; }
@@ -92,7 +79,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .inc-block { background: var(--bg); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
 .inc-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .inc-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 500; }
-
 .resumen-hotel { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 4px; }
 .resumen-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
 .resumen-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; background: var(--bg); }
@@ -101,7 +87,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .resumen-puesto { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
 .resumen-inc { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent2); }
 .resumen-obs { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
 .btn { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; }
 .btn-primary { background: var(--accent); color: white; }
 .btn-primary:hover { background: #2d2d4a; transform: translateY(-1px); }
@@ -111,21 +96,17 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .btn-danger { background: var(--accent2); color: white; }
 .btn-danger:hover { background: #a8432a; }
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-
 .success-box { text-align: center; padding: 48px 24px; }
 .success-icon { font-size: 64px; margin-bottom: 16px; }
 .success-title { font-family: 'Instrument Serif', serif; font-size: 28px; margin-bottom: 8px; }
 .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
 .progress { display: flex; gap: 8px; margin-bottom: 28px; }
 .progress-step { flex: 1; height: 4px; background: var(--border); border-radius: 2px; transition: background .3s; }
 .progress-step.active { background: var(--accent2); }
 .progress-step.done { background: var(--accent); }
-
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--accent); color: white; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 12px 24px; border-radius: 100px; opacity: 0; transition: all .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .sin-inc-label { font-size: 12px; color: var(--muted); font-style: italic; padding: 8px 0; }
-
 @media (max-width: 480px) {
   .grupo-grid { grid-template-columns: 1fr; }
   .hotel-grid { grid-template-columns: 1fr 1fr; }
@@ -137,12 +118,10 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="header-logo">RH <span>Hotels</span> · Reporte de Incidencias</div>
   <div class="header-badge" id="semana-header">Cargando...</div>
 </div>
-
 <div class="main">
   <div class="progress">
     <div class="progress-step active" id="prog1"></div>
@@ -150,7 +129,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     <div class="progress-step" id="prog3"></div>
     <div class="progress-step" id="prog4"></div>
   </div>
-
   <!-- CARGANDO -->
   <div class="step active" id="step-loading">
     <div class="loading-box">
@@ -158,7 +136,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <div class="loading-text">Cargando lista de personal...</div>
     </div>
   </div>
-
   <!-- ERROR -->
   <div class="step" id="step-error">
     <div class="error-box">
@@ -166,7 +143,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-secondary" onclick="cargarCatalogo()">🔄 Reintentar</button>
     </div>
   </div>
-
   <!-- PASO 1: TIPO DE NÓMINA -->
   <div class="step" id="step1">
     <div class="step-num">Paso 1 de 4</div>
@@ -188,7 +164,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>Continuar →</button>
     </div>
   </div>
-
   <!-- PASO 2: HOTEL -->
   <div class="step" id="step2">
     <div class="step-num">Paso 2 de 4</div>
@@ -200,7 +175,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar tipo</button>
     </div>
   </div>
-
   <!-- PASO 3: INCIDENCIAS -->
   <div class="step" id="step3">
     <div class="step-num">Paso 3 de 4</div>
@@ -213,7 +187,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-secondary" onclick="irPaso2()">← Cambiar hotel</button>
     </div>
   </div>
-
   <!-- PASO 4: RESUMEN -->
   <div class="step" id="step4">
     <div class="step-num">Paso 4 de 4</div>
@@ -227,7 +200,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-secondary" onclick="irPaso3()">← Editar</button>
     </div>
   </div>
-
   <!-- ENVIADO -->
   <div class="step" id="step5">
     <div class="success-box">
@@ -240,16 +212,14 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
 // ── Config ──────────────────────────────────────────
-const SHEET_ID    = '1gId-CZPRI3CeI6eo968wxuZ5V-F1qM4gzAvZmW5cRPg';
-const SHEET_TAB   = 'Catálogo Personal';
+// Lee del TRACKER en lugar de "Catálogo Personal"
+const SHEET_ID    = '1eKrw_gD8SX9xEk3_7LB2ubnye8dkN7ERWx8KT4pI2_k';
+const SHEET_TAB   = 'tracker';
 const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
-
 const TIPOS_INC = [
   'Falta injustificada','Falta justificada','Incapacidad IMSS',
   'Baja voluntaria','Baja por abandono','Vacaciones',
@@ -257,7 +227,6 @@ const TIPOS_INC = [
   'Descuento','Día festivo laborado','Pago día festivo',
   'Permiso con goce','Permiso sin goce','Otro'
 ];
-
 // ── Estado ──────────────────────────────────────────
 let catalogo    = [];   // [{hotel, grupo, nombre, puesto}]
 let grupoActivo = null;
@@ -265,7 +234,6 @@ let hotelActivo = null;
 let incidencias = {};
 let semanaNum   = 0;
 let semanaStr   = '';
-
 // ── Init ────────────────────────────────────────────
 function init() {
   const now = new Date();
@@ -280,8 +248,7 @@ function init() {
   document.getElementById('semana-display').innerHTML  = `<strong>${semanaStr}</strong>`;
   cargarCatalogo();
 }
-
-// ── Cargar catálogo desde Sheet ──────────────────────
+// ── Cargar catálogo desde Tracker ──────────────────────
 async function cargarCatalogo() {
   mostrarStep('step-loading');
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
@@ -291,26 +258,35 @@ async function cargarCatalogo() {
     const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
     const rows = json?.table?.rows || [];
     const cols = json?.table?.cols || [];
-
     const idx = {};
     cols.forEach((c, i) => { idx[c.label.trim()] = i; });
 
-    catalogo = rows.map(r => ({
-      hotel:  (r.c[idx['Hotel']]?.v  || '').trim(),
-      grupo:  (r.c[idx['Grupo']]?.v  || '').trim(),
-      nombre: (r.c[idx['Nombre']]?.v || '').trim(),
-      puesto: (r.c[idx['Puesto']]?.v || '').trim(),
-      activo: (r.c[idx['Activo']]?.v || '').toString().trim(),
-    })).filter(e => e.nombre && e.activo === 'Sí');
+    // Mapeo de columnas del tracker
+    // B=GRUPO, D=HOTEL, I=NOMBRE, J=PUESTO, C=STATUS
+    catalogo = rows.map((r, rowIdx) => {
+      const grupo = (r.c[1]?.v || '').toString().trim(); // Columna B
+      const hotel = (r.c[3]?.v || '').toString().trim(); // Columna D
+      const nombre = (r.c[8]?.v || '').toString().trim(); // Columna I
+      const puesto = (r.c[9]?.v || '').toString().trim(); // Columna J
+      const status = (r.c[2]?.v || '').toString().trim(); // Columna C
 
-    if (catalogo.length === 0) throw new Error('El catálogo no tiene empleados activos.');
+      return {
+        hotel: hotel,
+        grupo: grupo,
+        nombre: nombre,
+        puesto: puesto,
+        status: status,
+      };
+    }).filter(e => e.nombre && e.status !== ''); // Filtrar sin nombre o sin status
+
+    if (catalogo.length === 0) throw new Error('El tracker no tiene empleados.');
+    console.log('Catalogo cargado:', catalogo.length, 'empleados');
     mostrarStep('step1');
   } catch(e) {
-    document.getElementById('error-msg').textContent = '⚠ ' + (e.message || 'No se pudo cargar. Verifica que el Sheet sea público.');
+    document.getElementById('error-msg').textContent = '⚠ ' + (e.message || 'No se pudo cargar. Verifica que el Sheet sea público y la pestaña "tracker" exista.');
     mostrarStep('step-error');
   }
 }
-
 // ── Paso 1: Grupo ────────────────────────────────────
 function selGrupo(g) {
   grupoActivo = g;
@@ -322,21 +298,17 @@ function selGrupo(g) {
   document.getElementById('btn-paso2').disabled = false;
 }
 function irPaso1() { mostrarStep('step1'); }
-
 // ── Paso 2: Hotel ────────────────────────────────────
 function irPaso2() {
   if (!grupoActivo) { showToast('⚠ Selecciona el tipo de nómina'); return; }
-
   const badge = document.getElementById('badge-grupo');
   badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo === 'A' ? 'Banco' : 'Efectivo');
   badge.className   = 'grupo-badge badge-' + grupoActivo.toLowerCase();
-
   // Hoteles únicos del grupo con conteo de empleados
   const hotelesMap = {};
   catalogo.filter(e => e.grupo === grupoActivo).forEach(e => {
     hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
   });
-
   const grid = document.getElementById('hotel-grid');
   grid.innerHTML = '';
   Object.entries(hotelesMap).sort(([a],[b]) => a.localeCompare(b)).forEach(([nombre, count]) => {
@@ -347,11 +319,9 @@ function irPaso2() {
     btn.onclick = () => selHotel(nombre);
     grid.appendChild(btn);
   });
-
   document.getElementById('btn-paso3').disabled = true;
   mostrarStep('step2');
 }
-
 function selHotel(nombre) {
   hotelActivo = nombre;
   incidencias = {};
@@ -359,7 +329,6 @@ function selHotel(nombre) {
   document.getElementById('hbtn-' + nombre).classList.add('selected');
   document.getElementById('btn-paso3').disabled = false;
 }
-
 // ── Paso 3: Incidencias ──────────────────────────────
 function irPaso3() {
   if (!hotelActivo) { showToast('⚠ Selecciona un hotel'); return; }
@@ -367,11 +336,9 @@ function irPaso3() {
   renderEmpleados();
 }
 function irPaso4() { mostrarStep('step4'); renderResumen(); }
-
 function getEmpleados() {
   return catalogo.filter(e => e.grupo === grupoActivo && e.hotel === hotelActivo);
 }
-
 function renderEmpleados() {
   const empleados = getEmpleados();
   const list = document.getElementById('empleados-list');
@@ -401,11 +368,9 @@ function renderEmpleados() {
     renderIncList(idx);
   });
 }
-
 function toggleEmp(idx) {
   document.getElementById('emp-card-' + idx).classList.toggle('open');
 }
-
 function renderIncList(idx) {
   const container = document.getElementById('inc-list-' + idx);
   if (!container) return;
@@ -435,7 +400,6 @@ function renderIncList(idx) {
           </div>
         </div>
       </div>`).join('');
-
   const statusEl = document.getElementById('emp-status-' + idx);
   const card     = document.getElementById('emp-card-' + idx);
   if (statusEl) {
@@ -450,7 +414,6 @@ function renderIncList(idx) {
     }
   }
 }
-
 function addInc(idx) {
   if (!incidencias[idx]) incidencias[idx] = [];
   incidencias[idx].push({tipo:'Falta injustificada', cantidad:'', observaciones:''});
@@ -466,7 +429,6 @@ function delInc(idx, i) {
 function updateInc(idx, i, field, value) {
   if (incidencias[idx]) incidencias[idx][i][field] = value;
 }
-
 // ── Paso 4: Resumen ──────────────────────────────────
 function renderResumen() {
   const empleados = getEmpleados();
@@ -488,16 +450,13 @@ function renderResumen() {
     </div>`;
   }).join('');
 }
-
 // ── Envío ────────────────────────────────────────────
 async function enviarReporte() {
   const btn = document.getElementById('btn-enviar');
   btn.disabled    = true;
   btn.textContent = '⏳ Enviando...';
-
   const empleados = getEmpleados();
   const conInc    = Object.keys(incidencias);
-
   const jsonData = {
     hotel:     hotelActivo,
     grupo:     grupoActivo,
@@ -510,7 +469,6 @@ async function enviarReporte() {
       incidencias: incidencias[idx]
     }))
   };
-
   let texto = `REPORTE GRUPO ${grupoActivo} · ${hotelActivo}\n${'═'.repeat(45)}\n`;
   texto += `${semanaStr}\nEnviado: ${new Date().toLocaleString('es-MX')}\n${'═'.repeat(45)}\n\n`;
   if (conInc.length === 0) {
@@ -527,7 +485,6 @@ async function enviarReporte() {
       texto += '\n';
     });
   }
-
   try {
     const payload = JSON.stringify({
       hotel:             hotelActivo,
@@ -537,15 +494,12 @@ async function enviarReporte() {
       reporte:           texto,
       tracker_json:      JSON.stringify(jsonData)
     });
-
     const resp = await fetch(FORMSPREE, {
       method: 'POST', headers: {'Content-Type':'application/json'}, body: payload
     });
     if (!resp.ok) throw new Error('Error Formspree');
-
     const fd = new FormData(); fd.append('data', payload);
     fetch(APPS_SCRIPT, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
-
     mostrarStep('step5');
     document.getElementById('success-msg').innerHTML = `
       <strong>${hotelActivo}</strong> · Grupo ${grupoActivo}<br>
@@ -563,7 +517,6 @@ async function enviarReporte() {
     showToast('⚠ Error al enviar. Intenta de nuevo.');
   }
 }
-
 // ── Utilidades ───────────────────────────────────────
 function mostrarStep(id) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -576,7 +529,6 @@ function mostrarStep(id) {
     el.classList.toggle('active', i === n);
   });
 }
-
 function reiniciar() {
   grupoActivo = null; hotelActivo = null; incidencias = {};
   document.getElementById('gbtn-A').classList.remove('selected-a');
@@ -584,13 +536,11 @@ function reiniciar() {
   document.getElementById('btn-paso2').disabled = true;
   mostrarStep('step1');
 }
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
 init();
 </script>
 </body>

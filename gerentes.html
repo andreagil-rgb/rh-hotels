@@ -305,8 +305,10 @@ function irPaso2() {
   badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo === 'A' ? 'Banco' : 'Efectivo');
   badge.className   = 'grupo-badge badge-' + grupoActivo.toLowerCase();
   // Hoteles únicos del grupo con conteo de empleados
+  // Si selecciona Banco (A), incluye también AB (mixto)
+  const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
   const hotelesMap = {};
-  catalogo.filter(e => e.grupo === grupoActivo).forEach(e => {
+  catalogo.filter(e => gruposValidos.includes(e.grupo)).forEach(e => {
     hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
   });
   const grid = document.getElementById('hotel-grid');
@@ -337,7 +339,9 @@ function irPaso3() {
 }
 function irPaso4() { mostrarStep('step4'); renderResumen(); }
 function getEmpleados() {
-  return catalogo.filter(e => e.grupo === grupoActivo && e.hotel === hotelActivo);
+  // Si selecciona Banco (A), incluye también AB (mixto)
+  const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
+  return catalogo.filter(e => gruposValidos.includes(e.grupo) && e.hotel === hotelActivo);
 }
 function renderEmpleados() {
   const empleados = getEmpleados();

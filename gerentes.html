@@ -221,11 +221,12 @@ const SHEET_TAB   = 'tracker';
 const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
 const TIPOS_INC = [
-  'Falta injustificada','Falta justificada','Incapacidad IMSS',
-  'Baja voluntaria','Baja por abandono','Vacaciones',
-  'Prima vacacional','Horas extra','Bono / Compensación',
-  'Descuento','Día festivo laborado','Pago día festivo',
-  'Permiso con goce','Permiso sin goce','Otro'
+  'Incapacidad IMSS','Falta','Baja','Día extra','Día festivo laborado'
+];
+ 
+// Opciones limitadas para Grupo B
+const TIPOS_INC_GRUPO_B = [
+  'Falta','Baja','Día extra','Día festivo laborado'
 ];
 // ── Estado ──────────────────────────────────────────
 let catalogo    = [];   // [{hotel, grupo, nombre, puesto}]
@@ -260,7 +261,7 @@ async function cargarCatalogo() {
     const cols = json?.table?.cols || [];
     const idx = {};
     cols.forEach((c, i) => { idx[c.label.trim()] = i; });
-
+ 
     // Mapeo de columnas del tracker
     // B=GRUPO, D=HOTEL, I=NOMBRE, J=PUESTO, C=STATUS
     catalogo = rows.map((r, rowIdx) => {
@@ -269,7 +270,7 @@ async function cargarCatalogo() {
       const nombre = (r.c[8]?.v || '').toString().trim(); // Columna I
       const puesto = (r.c[9]?.v || '').toString().trim(); // Columna J
       const status = (r.c[2]?.v || '').toString().trim(); // Columna C
-
+ 
       return {
         hotel: hotel,
         grupo: grupo,
@@ -278,7 +279,7 @@ async function cargarCatalogo() {
         status: status,
       };
     }).filter(e => e.nombre && e.status !== ''); // Filtrar sin nombre o sin status
-
+ 
     if (catalogo.length === 0) throw new Error('El tracker no tiene empleados.');
     console.log('Catalogo cargado:', catalogo.length, 'empleados');
     mostrarStep('step1');
@@ -390,7 +391,7 @@ function renderIncList(idx) {
         <div class="field">
           <label>Tipo de incidencia</label>
           <select onchange="updateInc(${idx},${i},'tipo',this.value)">
-            ${TIPOS_INC.map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
+            ${(grupoActivo === 'B' ? TIPOS_INC_GRUPO_B : TIPOS_INC).map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
           </select>
         </div>
         <div class="inc-row">
@@ -420,7 +421,8 @@ function renderIncList(idx) {
 }
 function addInc(idx) {
   if (!incidencias[idx]) incidencias[idx] = [];
-  incidencias[idx].push({tipo:'Falta injustificada', cantidad:'', observaciones:''});
+  const defaultType = grupoActivo === 'B' ? 'Falta' : 'Falta injustificada';
+  incidencias[idx].push({tipo:defaultType, cantidad:'', observaciones:''});
   const card = document.getElementById('emp-card-' + idx);
   if (!card.classList.contains('open')) card.classList.add('open');
   renderIncList(idx);
@@ -549,3 +551,4 @@ init();
 </script>
 </body>
 </html>
+ 

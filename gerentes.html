@@ -366,11 +366,11 @@ function irPaso4() {
     showToast('⚠ Falta foto de incapacidad: ' + faltanFotos.join(', '));
     return;
   }
-  // Validar cantidad obligatoria en todas las incidencias
+  // Validar cantidad en Falta y Turno extra
   const faltanCantidad = [];
   Object.entries(incidencias).forEach(([empIdx, incs]) => {
     incs.forEach((inc) => {
-      if (!inc.cantidad || inc.cantidad.trim() === '') {
+      if (['Falta','Turno extra'].includes(inc.tipo) && (!inc.cantidad || inc.cantidad.trim() === '')) {
         const nombre = empleados[parseInt(empIdx)]?.nombre || 'Empleado';
         if (!faltanCantidad.includes(nombre)) faltanCantidad.push(nombre);
       }
@@ -378,6 +378,20 @@ function irPaso4() {
   });
   if (faltanCantidad.length > 0) {
     showToast('⚠ Falta cantidad en: ' + faltanCantidad.join(', '));
+    return;
+  }
+  // Validar último día en Baja
+  const faltanUltimoDia = [];
+  Object.entries(incidencias).forEach(([empIdx, incs]) => {
+    incs.forEach((inc) => {
+      if (inc.tipo === 'Baja' && (!inc.ultimoDia || inc.ultimoDia.trim() === '')) {
+        const nombre = empleados[parseInt(empIdx)]?.nombre || 'Empleado';
+        if (!faltanUltimoDia.includes(nombre)) faltanUltimoDia.push(nombre);
+      }
+    });
+  });
+  if (faltanUltimoDia.length > 0) {
+    showToast('⚠ Falta último día trabajado en: ' + faltanUltimoDia.join(', '));
     return;
   }
   mostrarStep('step4');
@@ -455,16 +469,32 @@ function renderIncList(idx) {
           </div>
           <input type="file" id="foto-input-${idx}-${i}" accept="image/*,application/pdf" style="display:none" onchange="handleFoto(${idx},${i},this)">
         </div>` : ''}
+        ${inc.tipo === 'Baja' ? `
+        <div class="field">
+          <label>Último día trabajado <span style="color:var(--accent2);font-weight:700">* obligatorio</span></label>
+          <input type="date" value="${inc.ultimoDia||''}" oninput="updateInc(${idx},${i},'ultimoDia',this.value)" style="font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;width:100%;outline:none;">
+        </div>
+        <div class="field">
+          <label>Observaciones</label>
+          <input type="text" placeholder="Notas opcionales" value="${inc.observaciones||''}" oninput="updateInc(${idx},${i},'observaciones',this.value)">
+        </div>
+        ` : `
         <div class="inc-row">
+          ${['Falta','Turno extra'].includes(inc.tipo) ? `
           <div class="field">
             <label>Cantidad / Días <span style="color:var(--accent2);font-weight:700">*</span></label>
             <input type="text" placeholder="Ej: 3 días" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
-          </div>
+          </div>` : `
+          <div class="field">
+            <label>Cantidad / Días</label>
+            <input type="text" placeholder="Ej: 3 días" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
+          </div>`}
           <div class="field">
             <label>Observaciones</label>
             <input type="text" placeholder="Notas opcionales" value="${inc.observaciones||''}" oninput="updateInc(${idx},${i},'observaciones',this.value)">
           </div>
         </div>
+        `}
       </div>`;
     }).join('');
   const statusEl = document.getElementById('emp-status-' + idx);
@@ -527,7 +557,15 @@ function renderResumen() {
     return `<div class="resumen-item">
       <div class="resumen-emp">${emp.nombre}</div>
       <div class="resumen-puesto">${emp.puesto}</div>
-      ${incs.map(inc=>`<div class="resumen-inc">${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}${inc.tipo==='Incapacidad IMSS'?` <span style='color:#2d6a4f'>📎 ${inc.fotoNombre||''}</span>`:''}</div>${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
+      ${incs.map(inc=>`
+        <div class="resumen-inc">
+          ${inc.tipo}
+          ${inc.tipo==='Baja' && inc.ultimoDia ? ' · Último día: '+inc.ultimoDia : ''}
+          ${['Falta','Turno extra'].includes(inc.tipo) && inc.cantidad ? ' · '+inc.cantidad : ''}
+          ${!['Falta','Turno extra','Baja'].includes(inc.tipo) && inc.cantidad ? ' · '+inc.cantidad : ''}
+          ${inc.tipo==='Incapacidad IMSS' && inc.fotoNombre ? `<span style='color:#2d6a4f'> 📎 ${inc.fotoNombre}</span>` : ''}
+        </div>
+        ${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
     </div>`;
   }).join('');
 }

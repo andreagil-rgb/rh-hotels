@@ -215,21 +215,18 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 <div class="toast" id="toast"></div>
 <script>
 // ── Config ──────────────────────────────────────────
-// Lee del TRACKER en lugar de "Catálogo Personal"
 const SHEET_ID    = '1eKrw_gD8SX9xEk3_7LB2ubnye8dkN7ERWx8KT4pI2_k';
-const SHEET_TAB   = 'tracker';
+const SHEET_TAB   = 'TRACKER';
 const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
 const TIPOS_INC = [
   'Incapacidad IMSS','Falta','Baja','Día extra','Día festivo laborado'
 ];
- 
-// Opciones limitadas para Grupo B
 const TIPOS_INC_GRUPO_B = [
   'Falta','Baja','Día extra','Día festivo laborado'
 ];
 // ── Estado ──────────────────────────────────────────
-let catalogo    = [];   // [{hotel, grupo, nombre, puesto}]
+let catalogo    = [];
 let grupoActivo = null;
 let hotelActivo = null;
 let incidencias = {};
@@ -249,42 +246,60 @@ function init() {
   document.getElementById('semana-display').innerHTML  = `<strong>${semanaStr}</strong>`;
   cargarCatalogo();
 }
-// ── Cargar catálogo desde Tracker ──────────────────────
+// ── Cargar catálogo — SOLO ACTIVOS ──────────────────
 async function cargarCatalogo() {
   mostrarStep('step-loading');
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
-  try {
-    const res  = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
-    const rows = json?.table?.rows || [];
-    const cols = json?.table?.cols || [];
-    const idx = {};
-    cols.forEach((c, i) => { idx[c.label.trim()] = i; });
- 
-    // Mapeo de columnas del tracker
-    // B=GRUPO, D=HOTEL, I=NOMBRE, J=PUESTO, C=STATUS
-    catalogo = rows.map((r, rowIdx) => {
-      const grupo = (r.c[1]?.v || '').toString().trim(); // Columna B
-      const hotel = (r.c[3]?.v || '').toString().trim(); // Columna D
-      const nombre = (r.c[8]?.v || '').toString().trim(); // Columna I
-      const puesto = (r.c[9]?.v || '').toString().trim(); // Columna J
-      const status = (r.c[2]?.v || '').toString().trim(); // Columna C
- 
-      return {
-        hotel: hotel,
-        grupo: grupo,
-        nombre: nombre,
-        puesto: puesto,
-        status: status,
-      };
-    }).filter(e => e.nombre && e.status !== ''); // Filtrar sin nombre o sin status
- 
-    if (catalogo.length === 0) throw new Error('El tracker no tiene empleados.');
-    console.log('Catalogo cargado:', catalogo.length, 'empleados');
-    mostrarStep('step1');
-  } catch(e) {
-    document.getElementById('error-msg').textContent = '⚠ ' + (e.message || 'No se pudo cargar. Verifica que el Sheet sea público y la pestaña "tracker" exista.');
+  // Nota: el nombre de pestaña puede tener mayúsculas/minúsculas variables;
+  // probamos ambas versiones
+  const tabs = ['TRACKER', 'tracker', 'Tracker'];
+  let loaded = false;
+
+  for (const tab of tabs) {
+    try {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+      const res  = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
+      const rows = json?.table?.rows || [];
+
+      if (rows.length === 0) continue;
+
+      // Mapeo de columnas del TRACKER:
+      // Col 0: OPCIÓN, Col 1: GRUPO, Col 2: STATUS, Col 3: HOTEL,
+      // Col 4: FECHA INGRESO, Col 5: FECHA BAJA, Col 6: BAJA OP2, Col 7: ALTA OP2,
+      // Col 8: NOMBRE, Col 9: (vacío/apellido separado en algunos), Col 10: SALARIO DIARIO
+      // PUESTO está en col 9 en algunos registros — lo detectamos dinámicamente
+      catalogo = rows.map(r => {
+        const grupo  = (r.c[1]?.v || '').toString().trim();
+        const status = (r.c[2]?.v || '').toString().trim().toUpperCase();
+        const hotel  = (r.c[3]?.v || '').toString().trim();
+        const nombre = (r.c[8]?.v || '').toString().trim();
+        // El puesto en el TRACKER está en la col después del nombre (col 9)
+        // pero en algunos registros está vacío; intentamos cols 9 y el header lo confirma
+        const puesto = (r.c[9]?.v || '').toString().trim();
+
+        return { hotel, grupo, nombre, puesto, status };
+      }).filter(e => {
+        // ✅ CORRECCIÓN PRINCIPAL: solo empleados con nombre Y status ACTIVO
+        return e.nombre && e.status === 'ACTIVO';
+      });
+
+      if (catalogo.length === 0) continue;
+
+      console.log(`Catálogo cargado desde pestaña "${tab}":`, catalogo.length, 'empleados ACTIVOS');
+      loaded = true;
+      mostrarStep('step1');
+      break;
+
+    } catch(e) {
+      console.warn(`Error cargando pestaña "${tab}":`, e.message);
+      continue;
+    }
+  }
+
+  if (!loaded) {
+    document.getElementById('error-msg').textContent =
+      '⚠ No se pudo cargar el catálogo. Verifica que el Sheet sea público y la pestaña TRACKER exista.';
     mostrarStep('step-error');
   }
 }
@@ -305,12 +320,10 @@ function irPaso2() {
   const badge = document.getElementById('badge-grupo');
   badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo === 'A' ? 'Banco' : 'Efectivo');
   badge.className   = 'grupo-badge badge-' + grupoActivo.toLowerCase();
-  // Hoteles únicos del grupo con conteo de empleados
-  // Si selecciona Banco (A), incluye también AB (mixto)
   const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
   const hotelesMap = {};
   catalogo.filter(e => gruposValidos.includes(e.grupo)).forEach(e => {
-    hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
+    if (e.hotel) hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
   });
   const grid = document.getElementById('hotel-grid');
   grid.innerHTML = '';
@@ -340,7 +353,6 @@ function irPaso3() {
 }
 function irPaso4() { mostrarStep('step4'); renderResumen(); }
 function getEmpleados() {
-  // Si selecciona Banco (A), incluye también AB (mixto)
   const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
   return catalogo.filter(e => gruposValidos.includes(e.grupo) && e.hotel === hotelActivo);
 }
@@ -348,6 +360,10 @@ function renderEmpleados() {
   const empleados = getEmpleados();
   const list = document.getElementById('empleados-list');
   list.innerHTML = '';
+  if (empleados.length === 0) {
+    list.innerHTML = '<div class="sin-inc-label">No hay empleados activos para este hotel y grupo.</div>';
+    return;
+  }
   empleados.forEach((emp, idx) => {
     const incs = incidencias[idx] || [];
     const tieneInc = incs.length > 0;
@@ -421,7 +437,7 @@ function renderIncList(idx) {
 }
 function addInc(idx) {
   if (!incidencias[idx]) incidencias[idx] = [];
-  const defaultType = grupoActivo === 'B' ? 'Falta' : 'Falta injustificada';
+  const defaultType = grupoActivo === 'B' ? 'Falta' : 'Falta';
   incidencias[idx].push({tipo:defaultType, cantidad:'', observaciones:''});
   const card = document.getElementById('emp-card-' + idx);
   if (!card.classList.contains('open')) card.classList.add('open');
@@ -551,4 +567,3 @@ init();
 </script>
 </body>
 </html>
- 

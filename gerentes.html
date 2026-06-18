@@ -220,10 +220,10 @@ const SHEET_TAB   = 'TRACKER';
 const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
 const TIPOS_INC = [
-  'Incapacidad IMSS','Falta','Baja','Día extra','Día festivo laborado'
+  'Incapacidad IMSS','Falta','Baja','Turno extra','Día festivo laborado'
 ];
 const TIPOS_INC_GRUPO_B = [
-  'Falta','Baja','Día extra','Día festivo laborado'
+  'Falta','Baja','Turno extra','Día festivo laborado'
 ];
 // ── Estado ──────────────────────────────────────────
 let catalogo    = [];
@@ -351,7 +351,38 @@ function irPaso3() {
   mostrarStep('step3');
   renderEmpleados();
 }
-function irPaso4() { mostrarStep('step4'); renderResumen(); }
+function irPaso4() {
+  // Validar que incapacidades IMSS tengan foto
+  const faltanFotos = [];
+  const empleados = getEmpleados();
+  Object.entries(incidencias).forEach(([empIdx, incs]) => {
+    incs.forEach((inc, i) => {
+      if (inc.tipo === 'Incapacidad IMSS' && !inc.fotoBase64) {
+        faltanFotos.push(empleados[parseInt(empIdx)]?.nombre || 'Empleado');
+      }
+    });
+  });
+  if (faltanFotos.length > 0) {
+    showToast('⚠ Falta foto de incapacidad: ' + faltanFotos.join(', '));
+    return;
+  }
+  // Validar cantidad obligatoria en todas las incidencias
+  const faltanCantidad = [];
+  Object.entries(incidencias).forEach(([empIdx, incs]) => {
+    incs.forEach((inc) => {
+      if (!inc.cantidad || inc.cantidad.trim() === '') {
+        const nombre = empleados[parseInt(empIdx)]?.nombre || 'Empleado';
+        if (!faltanCantidad.includes(nombre)) faltanCantidad.push(nombre);
+      }
+    });
+  });
+  if (faltanCantidad.length > 0) {
+    showToast('⚠ Falta cantidad en: ' + faltanCantidad.join(', '));
+    return;
+  }
+  mostrarStep('step4');
+  renderResumen();
+}
 function getEmpleados() {
   const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
   return catalogo.filter(e => gruposValidos.includes(e.grupo) && e.hotel === hotelActivo);
@@ -398,7 +429,10 @@ function renderIncList(idx) {
   const incs = incidencias[idx] || [];
   container.innerHTML = incs.length === 0
     ? '<div class="sin-inc-label">Sin incidencias — trabajó normalmente.</div>'
-    : incs.map((inc, i) => `
+    : incs.map((inc, i) => {
+      const esImss = inc.tipo === 'Incapacidad IMSS';
+      const fotoOk = inc.fotoNombre ? true : false;
+      return `
       <div class="inc-block">
         <div class="inc-block-header">
           <div class="inc-num">Incidencia ${i+1}</div>
@@ -406,21 +440,33 @@ function renderIncList(idx) {
         </div>
         <div class="field">
           <label>Tipo de incidencia</label>
-          <select onchange="updateInc(${idx},${i},'tipo',this.value)">
+          <select onchange="updateInc(${idx},${i},'tipo',this.value);renderIncList(${idx})">
             ${(grupoActivo === 'B' ? TIPOS_INC_GRUPO_B : TIPOS_INC).map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
           </select>
         </div>
+        ${esImss ? `
+        <div class="field">
+          <label>📎 Foto de incapacidad <span style="color:var(--accent2);font-weight:700">* obligatorio</span></label>
+          <div style="border:2px dashed ${fotoOk ? '#2d6a4f' : 'var(--accent2)'}; border-radius:8px; padding:14px; text-align:center; cursor:pointer; background:${fotoOk ? '#f0faf4' : '#fff8f7'};" onclick="document.getElementById('foto-input-${idx}-${i}').click()">
+            ${fotoOk
+              ? `<div style="color:#2d6a4f;font-size:13px;font-weight:700">✅ ${inc.fotoNombre}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Toca para cambiar</div>`
+              : `<div style="font-size:24px;margin-bottom:4px">📷</div><div style="font-size:13px;color:var(--accent2);font-weight:700">Subir foto de incapacidad</div><div style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG o PDF</div>`
+            }
+          </div>
+          <input type="file" id="foto-input-${idx}-${i}" accept="image/*,application/pdf" style="display:none" onchange="handleFoto(${idx},${i},this)">
+        </div>` : ''}
         <div class="inc-row">
           <div class="field">
-            <label>Cantidad / Días / Monto</label>
-            <input type="text" placeholder="Ej: 2 días, $500" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
+            <label>Cantidad / Días <span style="color:var(--accent2);font-weight:700">*</span></label>
+            <input type="text" placeholder="Ej: 3 días" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
           </div>
           <div class="field">
             <label>Observaciones</label>
             <input type="text" placeholder="Notas opcionales" value="${inc.observaciones||''}" oninput="updateInc(${idx},${i},'observaciones',this.value)">
           </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   const statusEl = document.getElementById('emp-status-' + idx);
   const card     = document.getElementById('emp-card-' + idx);
   if (statusEl) {
@@ -451,6 +497,19 @@ function delInc(idx, i) {
 function updateInc(idx, i, field, value) {
   if (incidencias[idx]) incidencias[idx][i][field] = value;
 }
+function handleFoto(idx, i, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if (incidencias[idx]) {
+      incidencias[idx][i].fotoBase64  = e.target.result;
+      incidencias[idx][i].fotoNombre  = file.name;
+    }
+    renderIncList(idx);
+  };
+  reader.readAsDataURL(file);
+}
 // ── Paso 4: Resumen ──────────────────────────────────
 function renderResumen() {
   const empleados = getEmpleados();
@@ -468,7 +527,7 @@ function renderResumen() {
     return `<div class="resumen-item">
       <div class="resumen-emp">${emp.nombre}</div>
       <div class="resumen-puesto">${emp.puesto}</div>
-      ${incs.map(inc=>`<div class="resumen-inc">${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}</div>${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
+      ${incs.map(inc=>`<div class="resumen-inc">${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}${inc.tipo==='Incapacidad IMSS'?` <span style='color:#2d6a4f'>📎 ${inc.fotoNombre||''}</span>`:''}</div>${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
     </div>`;
   }).join('');
 }

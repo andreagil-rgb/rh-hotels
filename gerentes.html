@@ -166,7 +166,6 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     <div class="progress-step" id="prog2"></div>
     <div class="progress-step" id="prog3"></div>
     <div class="progress-step" id="prog4"></div>
-    <div class="progress-step" id="prog5"></div>
   </div>
   <!-- CARGANDO -->
   <div class="step active" id="step-loading">
@@ -182,61 +181,15 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
       <button class="btn btn-secondary" onclick="cargarCatalogo()">🔄 Reintentar</button>
     </div>
   </div>
-  <!-- PASO 1: TIPO DE NÓMINA -->
-  <div class="step" id="step1">
+
+  <!-- PASO 1 NUEVO: HOTEL -->
+  <div class="step" id="step0">
     <div class="step-num">Paso 1 de 4</div>
-    <div class="step-title">¿Qué nómina reportas?</div>
-    <div class="step-sub">Selecciona el tipo de nómina para ver la lista de empleados correspondiente.</div>
-    <div class="grupo-grid">
-      <div class="grupo-btn" id="gbtn-A" onclick="selGrupo('A')">
-        <div class="grupo-icon">🏦</div>
-        <div class="grupo-label">Nómina Banco</div>
-        <div class="grupo-desc">Grupo A · CONTPAQi<br>Pago por transferencia</div>
-      </div>
-      <div class="grupo-btn" id="gbtn-B" onclick="selGrupo('B')">
-        <div class="grupo-icon">💵</div>
-        <div class="grupo-label">Nómina Efectivo</div>
-        <div class="grupo-desc">Grupo B · Pago semanal<br>en efectivo</div>
-      </div>
-    </div>
+    <div class="step-title">¿Qué hotel reportas?</div>
+    <div class="step-sub">Selecciona tu hotel para continuar.</div>
+    <div class="hotel-grid" id="hotel-grid-0"></div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>Continuar →</button>
-    </div>
-  </div>
-  <!-- PASO 2: HOTEL -->
-  <div class="step" id="step2">
-    <div class="step-num">Paso 2 de 4</div>
-    <div class="step-title">¿Cuál es tu hotel? <span class="grupo-badge" id="badge-grupo"></span></div>
-    <div class="step-sub">Selecciona el hotel para ver los empleados activos.</div>
-    <div class="hotel-grid" id="hotel-grid"></div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso3()" id="btn-paso3" disabled>Continuar →</button>
-      <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar tipo</button>
-    </div>
-  </div>
-  <!-- PASO 3: INCIDENCIAS -->
-  <div class="step" id="step3">
-    <div class="step-num">Paso 3 de 4</div>
-    <div class="step-title">Incidencias de la semana</div>
-    <div class="semana-display" id="semana-display">Semana —</div>
-    <div class="step-sub">Abre solo los empleados que tienen incidencia. Los demás se reportan automáticamente sin incidencia.</div>
-    <div id="empleados-list"></div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso4()">Ver resumen →</button>
-      <button class="btn btn-secondary" onclick="irPaso2()">← Cambiar hotel</button>
-    </div>
-  </div>
-  <!-- PASO 4: RESUMEN -->
-  <div class="step" id="step4">
-    <div class="step-num">Paso 4 de 4</div>
-    <div class="step-title">Confirma y envía</div>
-    <div class="step-sub">Revisa las incidencias antes de enviar.</div>
-    <div class="resumen-hotel" id="resumen-hotel-nombre"></div>
-    <div class="resumen-sub" id="resumen-semana"></div>
-    <div id="resumen-lista"></div>
-    <div class="btn-row">
-      <button class="btn btn-danger" onclick="enviarReporte()" id="btn-enviar">📤 Enviar reporte</button>
-      <button class="btn btn-secondary" onclick="irPaso3()">← Editar</button>
+      <button class="btn btn-primary" onclick="irMenuDesdeHotel()" id="btn-paso-menu" disabled>Continuar →</button>
     </div>
   </div>
 
@@ -256,6 +209,9 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
         <div class="menu-desc">Personal cubierto por puesto y bajas de la semana</div>
       </div>
     </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="irCambiarHotel()">← Cambiar hotel</button>
+    </div>
   </div>
 
   <!-- HC PASO 1: puestos -->
@@ -271,7 +227,7 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     </div>
   </div>
 
-  <!-- HC PASO 2: bajas + resumen -->
+  <!-- HC PASO 2: resumen + bajas -->
   <div class="step" id="hc-step2">
     <div class="step-num">Headcount · Paso 2 de 2</div>
     <div class="step-title">Confirma tu reporte</div>
@@ -305,6 +261,64 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     </div>
   </div>
 
+  <!-- PASO 1: TIPO DE NÓMINA -->
+  <div class="step" id="step1">
+    <div class="step-num">Paso 2 de 4</div>
+    <div class="step-title">¿Qué nómina reportas?</div>
+    <div class="step-sub">Selecciona el tipo de nómina para ver la lista de empleados correspondiente.</div>
+    <div class="grupo-grid">
+      <div class="grupo-btn" id="gbtn-A" onclick="selGrupo('A')">
+        <div class="grupo-icon">🏦</div>
+        <div class="grupo-label">Nómina Banco</div>
+        <div class="grupo-desc">Grupo A · CONTPAQi<br>Pago por transferencia</div>
+      </div>
+      <div class="grupo-btn" id="gbtn-B" onclick="selGrupo('B')">
+        <div class="grupo-icon">💵</div>
+        <div class="grupo-label">Nómina Efectivo</div>
+        <div class="grupo-desc">Grupo B · Pago semanal<br>en efectivo</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>Continuar →</button>
+      <button class="btn btn-secondary" onclick="irCambiarHotel()">← Cambiar hotel</button>
+    </div>
+  </div>
+  <!-- PASO 2: HOTEL -->
+  <div class="step" id="step2">
+    <div class="step-num">Paso 2 de 4</div>
+    <div class="step-title">¿Cuál es tu hotel? <span class="grupo-badge" id="badge-grupo"></span></div>
+    <div class="step-sub">Selecciona el hotel para ver los empleados activos.</div>
+    <div class="hotel-grid" id="hotel-grid"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irPaso3()" id="btn-paso3" disabled>Continuar →</button>
+      <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar tipo</button>
+    </div>
+  </div>
+  <!-- PASO 3: INCIDENCIAS -->
+  <div class="step" id="step3">
+    <div class="step-num">Paso 3 de 4</div>
+    <div class="step-title">Incidencias de la semana</div>
+    <div class="semana-display" id="semana-display">Semana —</div>
+    <div class="step-sub">Abre solo los empleados que tienen incidencia. Los demás se reportan automáticamente sin incidencia.</div>
+    <div id="empleados-list"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irPaso4()">Ver resumen →</button>
+      <button class="btn btn-secondary" onclick="irCambiarHotel()">← Cambiar hotel</button>
+    </div>
+  </div>
+  <!-- PASO 4: RESUMEN -->
+  <div class="step" id="step4">
+    <div class="step-num">Paso 4 de 4</div>
+    <div class="step-title">Confirma y envía</div>
+    <div class="step-sub">Revisa las incidencias antes de enviar.</div>
+    <div class="resumen-hotel" id="resumen-hotel-nombre"></div>
+    <div class="resumen-sub" id="resumen-semana"></div>
+    <div id="resumen-lista"></div>
+    <div class="btn-row">
+      <button class="btn btn-danger" onclick="enviarReporte()" id="btn-enviar">📤 Enviar reporte</button>
+      <button class="btn btn-secondary" onclick="irPaso3()">← Editar</button>
+    </div>
+  </div>
   <!-- ENVIADO -->
   <div class="step" id="step5">
     <div class="success-box">
@@ -393,7 +407,8 @@ async function cargarCatalogo() {
 
       console.log(`Catálogo cargado desde pestaña "${tab}":`, catalogo.length, 'empleados ACTIVOS');
       loaded = true;
-      mostrarStep('step1');
+      renderHotelesStep0();
+      mostrarStep('step0');
       break;
 
     } catch(e) {
@@ -422,26 +437,9 @@ function irPaso1() { mostrarStep('step1'); }
 // ── Paso 2: Hotel ────────────────────────────────────
 function irPaso2() {
   if (!grupoActivo) { showToast('⚠ Selecciona el tipo de nómina'); return; }
-  const badge = document.getElementById('badge-grupo');
-  badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo === 'A' ? 'Banco' : 'Efectivo');
-  badge.className   = 'grupo-badge badge-' + grupoActivo.toLowerCase();
-  const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
-  const hotelesMap = {};
-  catalogo.filter(e => gruposValidos.includes(e.grupo)).forEach(e => {
-    if (e.hotel) hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
-  });
-  const grid = document.getElementById('hotel-grid');
-  grid.innerHTML = '';
-  Object.entries(hotelesMap).sort(([a],[b]) => a.localeCompare(b)).forEach(([nombre, count]) => {
-    const btn = document.createElement('div');
-    btn.className = 'hotel-btn';
-    btn.id = 'hbtn-' + nombre;
-    btn.innerHTML = `<div class="hname">${nombre}</div><div class="hcount">${count} empleado${count !== 1 ? 's' : ''}</div>`;
-    btn.onclick = () => selHotel(nombre);
-    grid.appendChild(btn);
-  });
-  document.getElementById('btn-paso3').disabled = true;
-  mostrarStep('step2');
+  // Hotel ya fue elegido en step0 — ir directo a incidencias
+  mostrarStep('step3');
+  renderEmpleados();
 }
 function selHotel(nombre) {
   hotelActivo = nombre;
@@ -453,8 +451,8 @@ function selHotel(nombre) {
 // ── Paso 3: Incidencias ──────────────────────────────
 function irPaso3() {
   if (!hotelActivo) { showToast('⚠ Selecciona un hotel'); return; }
-  document.getElementById('menu-hotel-display').textContent = hotelActivo;
-  mostrarStep('step-menu');
+  mostrarStep('step3');
+  renderEmpleados();
 }
 function irPaso4() {
   // Validar que incapacidades IMSS tengan foto
@@ -766,6 +764,21 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ── Mapeo TRACKER → clave headcount ─────────────────
+const HOTEL_MAP = {
+  'CARRILLO PUERTO':      'ELITE',
+  'OPERADORA BRUESAL':    'NARVARTE',
+  'TALISMAN':             'ESLA',
+  'PROMOTORA ANTONIO CASO': 'BELICES',
+  'PLAZA DEL REY L':      'LAVANDERIA',
+  'PLAZA CAMARONES':      'CAMARONES',
+  'TEPEYAC INSURGENTES':  'INSURGENTES',
+  'TEPEYAC LA VILLA':     'LA VILLA',
+  'PLAZA DEL REY':        'PLAZA DEL REY',
+  'NAYARIT':              'NAYARIT',
+  'VALLEJO':              'VALLEJO',
+};
+
 // ── Puestos por hotel ────────────────────────────────
 const PUESTOS_HOTEL = {
   'PLAZA DEL REY':  [['CAJERAS',3],['CORREDORES',6],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',8],['RECAMARISTA TARDE',5],['RECAMARISTA NOCHE',5],['COCINERO',3],['MANTENIMIENTO',2],['MESERA',3]],
@@ -780,40 +793,88 @@ const PUESTOS_HOTEL = {
   'LAVANDERIA':     [['AYUDANTE GENERAL',20],['RUTA',7],['MANTENIMIENTO',1]],
   'ESLA':           [['CAJERAS',3],['CUBRE TURNOS',1],['RECAMARISTA DIA',2],['RECAMARISTA TARDE',1],['RECAMARISTA NOCHE',2],['MANTENIMIENTO',1]],
 };
+
 let hcVals  = {};
 let hcBajas = 0;
 
+// ── Renderizar hoteles en paso 0 (todos, sin filtro de grupo) ────────────────
+function renderHotelesStep0() {
+  if (!catalogo || catalogo.length === 0) return;
+  const hotelesMap = {};
+  catalogo.forEach(e => { if (e.hotel) hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1; });
+  const grid = document.getElementById('hotel-grid-0');
+  if (!grid) return;
+  grid.innerHTML = '';
+  Object.entries(hotelesMap).sort(([a],[b]) => a.localeCompare(b)).forEach(([nombre, count]) => {
+    const btn = document.createElement('div');
+    btn.className = 'hotel-btn';
+    btn.id = 'hbtn0-' + nombre;
+    btn.innerHTML = `<div class="hname">${nombre}</div><div class="hcount">${count} empleado${count!==1?'s':''}</div>`;
+    btn.onclick = () => selHotelStep0(nombre);
+    grid.appendChild(btn);
+  });
+}
+
+function selHotelStep0(nombre) {
+  hotelActivo = nombre;
+  document.querySelectorAll('#hotel-grid-0 .hotel-btn').forEach(b => b.classList.remove('selected'));
+  const btn = document.getElementById('hbtn0-' + nombre);
+  if (btn) btn.classList.add('selected');
+  document.getElementById('btn-paso-menu').disabled = false;
+}
+
+function irCambiarHotel() {
+  hotelActivo = null;
+  grupoActivo = null;
+  document.getElementById('btn-paso-menu').disabled = true;
+  document.querySelectorAll('#hotel-grid-0 .hotel-btn').forEach(b => b.classList.remove('selected'));
+  mostrarStep('step0');
+}
+
+function irMenuDesdeHotel() {
+  if (!hotelActivo) { showToast('⚠ Selecciona un hotel'); return; }
+  document.getElementById('menu-hotel-display').textContent = hotelActivo;
+  mostrarStep('step-menu');
+}
+
 // ── Menú ─────────────────────────────────────────────
 function irIncidencias() {
-  mostrarStep('step3');
-  renderEmpleados();
+  // Necesitamos grupo para filtrar empleados — si no está, pedir tipo de nómina
+  if (!grupoActivo) {
+    mostrarStep('step1');
+  } else {
+    mostrarStep('step3');
+    renderEmpleados();
+  }
 }
+
 function irHeadcount() {
-  // Buscar puestos del hotel activo
-  const hotel = hotelActivo ? hotelActivo.toUpperCase() : '';
-  const key   = Object.keys(PUESTOS_HOTEL).find(k => hotel.includes(k) || k.includes(hotel)) || hotel;
-  const puestos = PUESTOS_HOTEL[key] || [];
+  const hkey    = HOTEL_MAP[hotelActivo] || hotelActivo.toUpperCase();
+  const puestos = PUESTOS_HOTEL[hkey] || [];
   hcVals  = {};
   hcBajas = 0;
   puestos.forEach(([n,a]) => hcVals[n] = a);
   document.getElementById('hc-semana-lbl').innerHTML = '📅 <strong>' + semanaStr + '</strong>';
   document.getElementById('hc-bajas-num').textContent = '0';
-
   let html = '';
-  puestos.forEach(([nombre, auth]) => {
-    html += `<div class="puesto-row">
-      <div class="puesto-info">
-        <div class="puesto-n">${nombre}</div>
-        <div class="puesto-a">Autorizado: ${auth}</div>
-      </div>
-      <div class="cnt-wrap">
-        <button class="cbtn" onclick="chHc('${nombre}',${auth},-1)">−</button>
-        <div class="cval cval-ok" id="hcv-${nombre.replace(/ /g,'_')}">${auth}</div>
-        <button class="cbtn" onclick="chHc('${nombre}',${auth},1)">+</button>
-      </div>
-    </div>`;
-  });
-  document.getElementById('hc-puestos-list').innerHTML = html || '<p style="color:var(--muted);font-size:13px;padding:12px 0">No hay puestos configurados para este hotel.</p>';
+  if (puestos.length === 0) {
+    html = '<p style="color:var(--muted);font-size:13px;padding:12px 0">No hay puestos configurados para este hotel.</p>';
+  } else {
+    puestos.forEach(([nombre, auth]) => {
+      html += `<div class="puesto-row">
+        <div class="puesto-info">
+          <div class="puesto-n">${nombre}</div>
+          <div class="puesto-a">Autorizado: ${auth}</div>
+        </div>
+        <div class="cnt-wrap">
+          <button class="cbtn" onclick="chHc('${nombre}',${auth},-1)">−</button>
+          <div class="cval cval-ok" id="hcv-${nombre.replace(/ /g,'_')}">${auth}</div>
+          <button class="cbtn" onclick="chHc('${nombre}',${auth},1)">+</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('hc-puestos-list').innerHTML = html;
   mostrarStep('hc-step1');
 }
 
@@ -834,13 +895,12 @@ function changeBajas(d) {
 }
 
 function irHcResumen() {
-  const hotel   = hotelActivo ? hotelActivo.toUpperCase() : '';
-  const key     = Object.keys(PUESTOS_HOTEL).find(k => hotel.includes(k) || k.includes(hotel)) || hotel;
-  const puestos = PUESTOS_HOTEL[key] || [];
+  const hkey    = HOTEL_MAP[hotelActivo] || hotelActivo.toUpperCase();
+  const puestos = PUESTOS_HOTEL[hkey] || [];
   let totalA = 0, totalC = 0, rows = '';
   puestos.forEach(([n, auth]) => {
-    const c = hcVals[n] ?? auth;
-    totalA += auth; totalC += c;
+    const c  = hcVals[n] ?? auth;
+    totalA  += auth; totalC += c;
     const p  = Math.round(c / auth * 100);
     const col = p >= 90 ? 'var(--green)' : p >= 70 ? '#e67e22' : 'var(--accent2)';
     rows += `<div class="hc-res-row"><span>${n}</span><span class="hc-pct" style="color:${col}">${c}/${auth} · ${p}%</span></div>`;
@@ -858,7 +918,7 @@ function irHcResumen() {
 
 async function enviarHeadcount() {
   const payload = JSON.stringify({
-    type: 'headcount', hotel: hotelActivo, grupo: grupoActivo,
+    type: 'headcount', hotel: hotelActivo, grupo: grupoActivo || 'A',
     semana: semanaNum, semanaStr: semanaStr,
     timestamp: new Date().toISOString(),
     puestos: hcVals, bajas: hcBajas
@@ -868,18 +928,15 @@ async function enviarHeadcount() {
     fetch(APPS_SCRIPT, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
     mostrarStep('hc-step3');
     document.getElementById('hc-success-msg').innerHTML =
-      `<strong>${hotelActivo}</strong> · Grupo ${grupoActivo}<br>${semanaStr}<br><br>
+      `<strong>${hotelActivo}</strong> · ${semanaStr}<br><br>
        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">
          ${hcBajas} baja${hcBajas !== 1 ? 's' : ''} esta semana
        </span>`;
-  } catch(e) {
-    showToast('⚠ Error al enviar. Intenta de nuevo.');
-  }
+  } catch(e) { showToast('⚠ Error al enviar. Intenta de nuevo.'); }
 }
 
 function reiniciarHc() {
-  hcVals = {}; hcBajas = 0;
-  reiniciar();
+  hcVals = {}; hcBajas = 0; reiniciar();
 }
 
 init();

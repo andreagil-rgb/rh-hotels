@@ -3,664 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporte de Incidencias · Gerentes</title>
+<title>DEMO · Plataforma Gerentes</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f5f0e8;
-  --surface: #ffffff;
-  --border: #e0d8cc;
-  --accent: #1a1a2e;
-  --accent2: #c8533a;
-  --text: #1a1a2e;
-  --muted: #8a8070;
-  --green: #2d6a4f;
-  --blue: #2c5f8a;
+  --bg:#f5f0e8;--surface:#fff;--border:#e0d8cc;--accent:#1a1a2e;
+  --accent2:#c8533a;--text:#1a1a2e;--muted:#8a8070;--green:#2d6a4f;--blue:#2c5f8a;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-.header { background: var(--accent); color: white; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
-.header-logo { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: .02em; }
-.header-logo span { color: #e8b87a; }
-.header-badge { font-family: 'DM Mono', monospace; font-size: 11px; background: rgba(255,255,255,.1); padding: 4px 12px; border-radius: 20px; color: rgba(255,255,255,.7); }
-.main { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
-.step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 20px; display: none; }
-.step.active { display: block; animation: fadeUp .3s ease; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-.step-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
-.step-title { font-family: 'Instrument Serif', serif; font-size: 26px; margin-bottom: 6px; }
-.step-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
-.loading-box { text-align: center; padding: 48px 24px; }
-.loading-spinner { font-size: 40px; animation: spin 1s linear infinite; display: inline-block; margin-bottom: 16px; }
-@keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-.loading-text { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); }
-.error-box { background: #fff0ed; border: 1px solid #f5c6bc; border-radius: 12px; padding: 20px; text-align: center; }
-.error-box p { font-size: 13px; color: var(--accent2); margin-bottom: 12px; }
-.grupo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.grupo-btn { border: 2px solid var(--border); border-radius: 14px; padding: 24px 20px; cursor: pointer; transition: all .2s; background: var(--bg); text-align: center; }
-.grupo-btn:hover { border-color: var(--accent); background: white; transform: translateY(-2px); }
-.grupo-btn.selected-a { border-color: var(--accent); background: white; }
-.grupo-btn.selected-b { border-color: var(--blue); background: white; }
-.grupo-icon { font-size: 32px; margin-bottom: 10px; }
-.grupo-label { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-.grupo-desc { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.5; }
-.grupo-badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
-.badge-a { background: var(--accent); color: white; }
-.badge-b { background: var(--blue); color: white; }
-.hotel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-.hotel-btn { border: 2px solid var(--border); border-radius: 12px; padding: 16px; cursor: pointer; transition: all .2s; background: var(--bg); text-align: left; }
-.hotel-btn:hover { border-color: var(--accent); background: white; }
-.hotel-btn.selected { border-color: var(--accent2); background: white; }
-.hotel-btn .hname { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-.hotel-btn .hcount { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
-.semana-display { font-family: 'DM Mono', monospace; font-size: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; color: var(--muted); }
-.semana-display strong { color: var(--text); }
-.empleado-card { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; transition: border-color .2s; }
-.empleado-card.tiene-inc { border-color: var(--accent2); }
-.empleado-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--bg); gap: 12px; }
-.empleado-header:hover { background: #ede8e0; }
-.empleado-nombre { font-size: 13px; font-weight: 600; flex: 1; }
-.empleado-puesto { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; flex-shrink: 0; max-width: 160px; text-align: right; }
-.empleado-status { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); flex-shrink: 0; }
-.empleado-status.ok { color: var(--accent2); font-weight: 700; }
-.chevron { width: 16px; height: 16px; flex-shrink: 0; transition: transform .2s; color: var(--muted); }
-.empleado-card.open .chevron { transform: rotate(180deg); }
-.empleado-body { display: none; padding: 16px; border-top: 1px solid var(--border); background: white; }
-.empleado-card.open .empleado-body { display: block; }
-.field { margin-bottom: 14px; }
-.field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
-.field select, .field input { width: 100%; font-family: 'DM Mono', monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; outline: none; transition: border-color .2s; }
-.field select:focus, .field input:focus { border-color: var(--accent); }
-.inc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.btn-add-inc { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; background: none; border: 1px dashed var(--border); color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; width: 100%; transition: all .2s; margin-top: 4px; }
-.btn-add-inc:hover { border-color: var(--accent2); color: var(--accent2); }
-.btn-del-inc { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; transition: color .2s; }
-.btn-del-inc:hover { color: var(--accent2); }
-.inc-block { background: var(--bg); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-.inc-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.inc-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 500; }
-.resumen-hotel { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 4px; }
-.resumen-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-.resumen-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; background: var(--bg); }
-.resumen-item.sin { opacity: .5; }
-.resumen-emp { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-.resumen-puesto { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
-.resumen-inc { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent2); }
-.resumen-obs { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.btn { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; }
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #2d2d4a; transform: translateY(-1px); }
-.btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-.btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { border-color: var(--accent); }
-.btn-danger { background: var(--accent2); color: white; }
-.btn-danger:hover { background: #a8432a; }
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-.success-box { text-align: center; padding: 48px 24px; }
-.success-icon { font-size: 64px; margin-bottom: 16px; }
-.success-title { font-family: 'Instrument Serif', serif; font-size: 28px; margin-bottom: 8px; }
-.success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
-.progress { display: flex; gap: 8px; margin-bottom: 28px; }
-.progress-step { flex: 1; height: 4px; background: var(--border); border-radius: 2px; transition: background .3s; }
-.progress-step.active { background: var(--accent2); }
-.progress-step.done { background: var(--accent); }
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--accent); color: white; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 12px 24px; border-radius: 100px; opacity: 0; transition: all .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; white-space: nowrap; }
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.sin-inc-label { font-size: 12px; color: var(--muted); font-style: italic; padding: 8px 0; }
-@media (max-width: 480px) {
-  .grupo-grid { grid-template-columns: 1fr; }
-  .hotel-grid { grid-template-columns: 1fr 1fr; }
-  .inc-row { grid-template-columns: 1fr; }
-  .header { padding: 16px 20px; }
-  .main { padding: 20px 16px 80px; }
-  .empleado-puesto { display: none; }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.demo-banner{background:#e8b87a;color:#1a1a2e;text-align:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:6px;letter-spacing:.08em}
+.header{background:var(--accent);color:white;padding:20px 28px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-family:'Instrument Serif',serif;font-size:20px}
+.header-logo span{color:#e8b87a}
+.header-badge{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,.1);padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.7)}
+.main{max-width:680px;margin:0 auto;padding:28px 20px 80px}
+.progress{display:flex;gap:8px;margin-bottom:24px}
+.prog-step{flex:1;height:4px;background:var(--border);border-radius:2px;transition:background .3s}
+.prog-step.active{background:var(--accent2)}
+.prog-step.done{background:var(--accent)}
+.screen{display:none;animation:fadeUp .25s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;margin-bottom:14px}
+.step-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.step-title{font-family:'Instrument Serif',serif;font-size:26px;margin-bottom:6px}
+.step-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+/* Menú */
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.menu-card{border:2px solid var(--border);border-radius:16px;padding:28px 20px;cursor:pointer;background:var(--bg);text-align:center;transition:all .2s}
+.menu-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.menu-card.inc:hover{border-color:var(--accent2);background:white}
+.menu-card.hc:hover{border-color:var(--blue);background:white}
+.menu-icon{font-size:36px;margin-bottom:12px}
+.menu-label{font-size:15px;font-weight:700;margin-bottom:6px}
+.menu-desc{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.5}
+.hotel-name-big{font-family:'Instrument Serif',serif;font-size:30px;margin-bottom:4px}
+.hotel-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+/* Incidencias */
+.emp-card{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.emp-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--bg);cursor:pointer;gap:12px}
+.emp-header:hover{background:#ede8e0}
+.emp-name{font-size:13px;font-weight:600;flex:1}
+.emp-puesto{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.emp-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.emp-badge.ok{color:var(--accent2);font-weight:700}
+.emp-body{display:none;padding:16px;border-top:1px solid var(--border);background:white}
+.emp-card.open .emp-body{display:block}
+.inc-tipo{width:100%;font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);padding:10px 12px;border-radius:8px;margin-bottom:8px;color:var(--text)}
+.inc-obs{width:100%;font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);padding:10px 12px;border-radius:8px;color:var(--text)}
+/* Headcount */
+.semana-pill{font-family:'DM Mono',monospace;font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;display:inline-block;color:var(--muted);margin-bottom:18px}
+.semana-pill strong{color:var(--text)}
+.puesto-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:12px}
+.puesto-row:last-child{border-bottom:none}
+.puesto-info{flex:1}
+.puesto-n{font-size:13px;font-weight:600;margin-bottom:2px}
+.puesto-a{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.counter{display:flex;align-items:center;gap:10px}
+.cbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;line-height:1}
+.cbtn:hover{background:var(--accent);color:white;border-color:var(--accent)}
+.cval{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;min-width:28px;text-align:center}
+.cval.ok{color:var(--green)}.cval.warn{color:#e67e22}.cval.low{color:var(--accent2)}
+/* Bajas */
+.bajas-box{background:#fff8f0;border:1px solid #f5d5bc;border-radius:14px;padding:22px 24px}
+.bajas-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.bajas-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.bajas-row{display:flex;align-items:center;gap:18px}
+.bajas-num{font-family:'DM Mono',monospace;font-size:42px;font-weight:700;min-width:56px;text-align:center;color:var(--accent2)}
+.cbtn-lg{width:48px;height:48px;border-radius:12px;border:1px solid var(--border);background:white;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;line-height:1}
+.cbtn-lg:hover{background:var(--accent2);color:white;border-color:var(--accent2)}
+/* Resumen */
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.res-row:last-child{border-bottom:none}
+.res-pct{font-family:'DM Mono',monospace;font-weight:700;font-size:12px}
+.res-bajas-box{background:#fff8f0;border:1px solid #f5d5bc;border-radius:10px;padding:14px 18px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}
+.notice{background:#f0f4ff;border:1px solid #c5d3f0;border-radius:10px;padding:12px 16px;font-size:12px;color:var(--blue);margin-top:14px;line-height:1.6}
+/* Resumen incidencias */
+.res-emp{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;background:var(--bg)}
+.res-emp-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.res-emp-puesto{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px}
+.res-inc{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2)}
+/* Success */
+.success{text-align:center;padding:44px 20px}
+.s-icon{font-size:64px;margin-bottom:16px}
+.s-title{font-family:'Instrument Serif',serif;font-size:28px;margin-bottom:8px}
+.s-sub{font-size:14px;color:var(--muted);line-height:1.6}
+/* Buttons */
+.btn{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;padding:13px 26px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-p{background:var(--accent);color:white}.btn-p:hover{background:#2d2d4a;transform:translateY(-1px)}
+.btn-s{background:white;color:var(--text);border:1px solid var(--border)}.btn-s:hover{border-color:var(--accent)}
+.btn-d{background:var(--accent2);color:white}.btn-d:hover{background:#a8432a}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+@media(max-width:480px){.menu-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
+<div class="demo-banner">✦ DEMO VISUAL · Hotel pre-asignado: CAMARONES ✦</div>
+
 <div class="header">
-  <div class="header-logo">RH <span>Hotels</span> · Reporte de Incidencias</div>
-  <div class="header-badge" id="semana-header">Cargando...</div>
+  <div class="header-logo">RH <span>Hotels</span> · Reporte Semanal</div>
+  <div class="header-badge">Semana 26 · 16–22 jun</div>
 </div>
+
 <div class="main">
   <div class="progress">
-    <div class="progress-step active" id="prog1"></div>
-    <div class="progress-step" id="prog2"></div>
-    <div class="progress-step" id="prog3"></div>
-    <div class="progress-step" id="prog4"></div>
+    <div class="prog-step active" id="p1"></div>
+    <div class="prog-step" id="p2"></div>
+    <div class="prog-step" id="p3"></div>
+    <div class="prog-step" id="p4"></div>
   </div>
-  <!-- CARGANDO -->
-  <div class="step active" id="step-loading">
-    <div class="loading-box">
-      <div class="loading-spinner">⟳</div>
-      <div class="loading-text">Cargando lista de personal...</div>
-    </div>
-  </div>
-  <!-- ERROR -->
-  <div class="step" id="step-error">
-    <div class="error-box">
-      <p id="error-msg">No se pudo cargar la lista de personal.</p>
-      <button class="btn btn-secondary" onclick="cargarCatalogo()">🔄 Reintentar</button>
-    </div>
-  </div>
-  <!-- PASO 1: TIPO DE NÓMINA -->
-  <div class="step" id="step1">
-    <div class="step-num">Paso 1 de 4</div>
-    <div class="step-title">¿Qué nómina reportas?</div>
-    <div class="step-sub">Selecciona el tipo de nómina para ver la lista de empleados correspondiente.</div>
-    <div class="grupo-grid">
-      <div class="grupo-btn" id="gbtn-A" onclick="selGrupo('A')">
-        <div class="grupo-icon">🏦</div>
-        <div class="grupo-label">Nómina Banco</div>
-        <div class="grupo-desc">Grupo A · CONTPAQi<br>Pago por transferencia</div>
-      </div>
-      <div class="grupo-btn" id="gbtn-B" onclick="selGrupo('B')">
-        <div class="grupo-icon">💵</div>
-        <div class="grupo-label">Nómina Efectivo</div>
-        <div class="grupo-desc">Grupo B · Pago semanal<br>en efectivo</div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso2()" id="btn-paso2" disabled>Continuar →</button>
-    </div>
-  </div>
-  <!-- PASO 2: HOTEL -->
-  <div class="step" id="step2">
-    <div class="step-num">Paso 2 de 4</div>
-    <div class="step-title">¿Cuál es tu hotel? <span class="grupo-badge" id="badge-grupo"></span></div>
-    <div class="step-sub">Selecciona el hotel para ver los empleados activos.</div>
-    <div class="hotel-grid" id="hotel-grid"></div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso3()" id="btn-paso3" disabled>Continuar →</button>
-      <button class="btn btn-secondary" onclick="irPaso1()">← Cambiar tipo</button>
-    </div>
-  </div>
-  <!-- PASO 3: INCIDENCIAS -->
-  <div class="step" id="step3">
-    <div class="step-num">Paso 3 de 4</div>
-    <div class="step-title">Incidencias de la semana</div>
-    <div class="semana-display" id="semana-display">Semana —</div>
-    <div class="step-sub">Abre solo los empleados que tienen incidencia. Los demás se reportan automáticamente sin incidencia.</div>
-    <div id="empleados-list"></div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="irPaso4()">Ver resumen →</button>
-      <button class="btn btn-secondary" onclick="irPaso2()">← Cambiar hotel</button>
-    </div>
-  </div>
-  <!-- PASO 4: RESUMEN -->
-  <div class="step" id="step4">
-    <div class="step-num">Paso 4 de 4</div>
-    <div class="step-title">Confirma y envía</div>
-    <div class="step-sub">Revisa las incidencias antes de enviar.</div>
-    <div class="resumen-hotel" id="resumen-hotel-nombre"></div>
-    <div class="resumen-sub" id="resumen-semana"></div>
-    <div id="resumen-lista"></div>
-    <div class="btn-row">
-      <button class="btn btn-danger" onclick="enviarReporte()" id="btn-enviar">📤 Enviar reporte</button>
-      <button class="btn btn-secondary" onclick="irPaso3()">← Editar</button>
-    </div>
-  </div>
-  <!-- ENVIADO -->
-  <div class="step" id="step5">
-    <div class="success-box">
-      <div class="success-icon">✅</div>
-      <div class="success-title">¡Reporte enviado!</div>
-      <div class="success-sub" id="success-msg"></div>
-      <div class="btn-row" style="justify-content:center;margin-top:28px">
-        <button class="btn btn-secondary" onclick="reiniciar()">Enviar otro reporte</button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-// ── Config ──────────────────────────────────────────
-const SHEET_ID    = '1eKrw_gD8SX9xEk3_7LB2ubnye8dkN7ERWx8KT4pI2_k';
-const SHEET_TAB   = 'TRACKER';
-const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
-const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
-const TIPOS_INC = [
-  'Incapacidad IMSS','Falta','Baja','Turno extra','Día festivo laborado'
-];
-const TIPOS_INC_GRUPO_B = [
-  'Falta','Baja','Turno extra','Día festivo laborado'
-];
-// ── Estado ──────────────────────────────────────────
-let catalogo    = [];
-let grupoActivo = null;
-let hotelActivo = null;
-let incidencias = {};
-let semanaNum   = 0;
-let semanaStr   = '';
-// ── Init ────────────────────────────────────────────
-function init() {
-  const now = new Date();
-  const day = now.getDay();
-  const sun = new Date(now); sun.setDate(now.getDate() - day);
-  const sat = new Date(sun); sat.setDate(sun.getDate() + 6);
-  const soy = new Date(now.getFullYear(), 0, 1);
-  semanaNum = Math.ceil((sun - soy) / 604800000) + 1;
-  const fmt = d => d.toLocaleDateString('es-MX', {day:'2-digit', month:'short'});
-  semanaStr = `Semana ${semanaNum} · ${fmt(sun)} al ${fmt(sat)}`;
-  document.getElementById('semana-header').textContent = semanaStr;
-  document.getElementById('semana-display').innerHTML  = `<strong>${semanaStr}</strong>`;
-  cargarCatalogo();
-}
-// ── Cargar catálogo — SOLO ACTIVOS ──────────────────
-async function cargarCatalogo() {
-  mostrarStep('step-loading');
-  // Nota: el nombre de pestaña puede tener mayúsculas/minúsculas variables;
-  // probamos ambas versiones
-  const tabs = ['TRACKER', 'tracker', 'Tracker'];
-  let loaded = false;
 
-  for (const tab of tabs) {
-    try {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
-      const res  = await fetch(url);
-      const text = await res.text();
-      const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
-      const rows = json?.table?.rows || [];
-
-      if (rows.length === 0) continue;
-
-      // Mapeo de columnas del TRACKER:
-      // Col 0: OPCIÓN, Col 1: GRUPO, Col 2: STATUS, Col 3: HOTEL,
-      // Col 4: FECHA INGRESO, Col 5: FECHA BAJA, Col 6: BAJA OP2, Col 7: ALTA OP2,
-      // Col 8: NOMBRE, Col 9: (vacío/apellido separado en algunos), Col 10: SALARIO DIARIO
-      // PUESTO está en col 9 en algunos registros — lo detectamos dinámicamente
-      catalogo = rows.map(r => {
-        const grupo  = (r.c[1]?.v || '').toString().trim();
-        const status = (r.c[2]?.v || '').toString().trim().toUpperCase();
-        const hotel  = (r.c[3]?.v || '').toString().trim();
-        const nombre = (r.c[8]?.v || '').toString().trim();
-        // El puesto en el TRACKER está en la col después del nombre (col 9)
-        // pero en algunos registros está vacío; intentamos cols 9 y el header lo confirma
-        const puesto = (r.c[9]?.v || '').toString().trim();
-
-        return { hotel, grupo, nombre, puesto, status };
-      }).filter(e => {
-        // ✅ CORRECCIÓN PRINCIPAL: solo empleados con nombre Y status ACTIVO
-        return e.nombre && e.status === 'ACTIVO';
-      });
-
-      if (catalogo.length === 0) continue;
-
-      console.log(`Catálogo cargado desde pestaña "${tab}":`, catalogo.length, 'empleados ACTIVOS');
-      loaded = true;
-      mostrarStep('step1');
-      break;
-
-    } catch(e) {
-      console.warn(`Error cargando pestaña "${tab}":`, e.message);
-      continue;
-    }
-  }
-
-  if (!loaded) {
-    document.getElementById('error-msg').textContent =
-      '⚠ No se pudo cargar el catálogo. Verifica que el Sheet sea público y la pestaña TRACKER exista.';
-    mostrarStep('step-error');
-  }
-}
-// ── Paso 1: Grupo ────────────────────────────────────
-function selGrupo(g) {
-  grupoActivo = g;
-  hotelActivo = null;
-  incidencias = {};
-  document.getElementById('gbtn-A').classList.remove('selected-a');
-  document.getElementById('gbtn-B').classList.remove('selected-b');
-  document.getElementById('gbtn-' + g).classList.add('selected-' + g.toLowerCase());
-  document.getElementById('btn-paso2').disabled = false;
-}
-function irPaso1() { mostrarStep('step1'); }
-// ── Paso 2: Hotel ────────────────────────────────────
-function irPaso2() {
-  if (!grupoActivo) { showToast('⚠ Selecciona el tipo de nómina'); return; }
-  const badge = document.getElementById('badge-grupo');
-  badge.textContent = 'Grupo ' + grupoActivo + ' · ' + (grupoActivo === 'A' ? 'Banco' : 'Efectivo');
-  badge.className   = 'grupo-badge badge-' + grupoActivo.toLowerCase();
-  const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
-  const hotelesMap = {};
-  catalogo.filter(e => gruposValidos.includes(e.grupo)).forEach(e => {
-    if (e.hotel) hotelesMap[e.hotel] = (hotelesMap[e.hotel] || 0) + 1;
-  });
-  const grid = document.getElementById('hotel-grid');
-  grid.innerHTML = '';
-  Object.entries(hotelesMap).sort(([a],[b]) => a.localeCompare(b)).forEach(([nombre, count]) => {
-    const btn = document.createElement('div');
-    btn.className = 'hotel-btn';
-    btn.id = 'hbtn-' + nombre;
-    btn.innerHTML = `<div class="hname">${nombre}</div><div class="hcount">${count} empleado${count !== 1 ? 's' : ''}</div>`;
-    btn.onclick = () => selHotel(nombre);
-    grid.appendChild(btn);
-  });
-  document.getElementById('btn-paso3').disabled = true;
-  mostrarStep('step2');
-}
-function selHotel(nombre) {
-  hotelActivo = nombre;
-  incidencias = {};
-  document.querySelectorAll('.hotel-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('hbtn-' + nombre).classList.add('selected');
-  document.getElementById('btn-paso3').disabled = false;
-}
-// ── Paso 3: Incidencias ──────────────────────────────
-function irPaso3() {
-  if (!hotelActivo) { showToast('⚠ Selecciona un hotel'); return; }
-  mostrarStep('step3');
-  renderEmpleados();
-}
-function irPaso4() {
-  // Validar que incapacidades IMSS tengan foto
-  const faltanFotos = [];
-  const empleados = getEmpleados();
-  Object.entries(incidencias).forEach(([empIdx, incs]) => {
-    incs.forEach((inc, i) => {
-      if (inc.tipo === 'Incapacidad IMSS' && !inc.fotoBase64) {
-        faltanFotos.push(empleados[parseInt(empIdx)]?.nombre || 'Empleado');
-      }
-    });
-  });
-  if (faltanFotos.length > 0) {
-    showToast('⚠ Falta foto de incapacidad: ' + faltanFotos.join(', '));
-    return;
-  }
-  // Validar cantidad en Falta y Turno extra
-  const faltanCantidad = [];
-  Object.entries(incidencias).forEach(([empIdx, incs]) => {
-    incs.forEach((inc) => {
-      if (['Falta','Turno extra'].includes(inc.tipo) && (!inc.cantidad || inc.cantidad.trim() === '')) {
-        const nombre = empleados[parseInt(empIdx)]?.nombre || 'Empleado';
-        if (!faltanCantidad.includes(nombre)) faltanCantidad.push(nombre);
-      }
-    });
-  });
-  if (faltanCantidad.length > 0) {
-    showToast('⚠ Falta cantidad en: ' + faltanCantidad.join(', '));
-    return;
-  }
-  // Validar último día en Baja
-  const faltanUltimoDia = [];
-  Object.entries(incidencias).forEach(([empIdx, incs]) => {
-    incs.forEach((inc) => {
-      if (inc.tipo === 'Baja' && (!inc.ultimoDia || inc.ultimoDia.trim() === '')) {
-        const nombre = empleados[parseInt(empIdx)]?.nombre || 'Empleado';
-        if (!faltanUltimoDia.includes(nombre)) faltanUltimoDia.push(nombre);
-      }
-    });
-  });
-  if (faltanUltimoDia.length > 0) {
-    showToast('⚠ Falta último día trabajado en: ' + faltanUltimoDia.join(', '));
-    return;
-  }
-  mostrarStep('step4');
-  renderResumen();
-}
-function getEmpleados() {
-  const gruposValidos = grupoActivo === 'A' ? ['A', 'AB'] : [grupoActivo];
-  return catalogo.filter(e => gruposValidos.includes(e.grupo) && e.hotel === hotelActivo);
-}
-function renderEmpleados() {
-  const empleados = getEmpleados();
-  const list = document.getElementById('empleados-list');
-  list.innerHTML = '';
-  if (empleados.length === 0) {
-    list.innerHTML = '<div class="sin-inc-label">No hay empleados activos para este hotel y grupo.</div>';
-    return;
-  }
-  empleados.forEach((emp, idx) => {
-    const incs = incidencias[idx] || [];
-    const tieneInc = incs.length > 0;
-    const card = document.createElement('div');
-    card.className = 'empleado-card' + (tieneInc ? ' tiene-inc' : '');
-    card.id = 'emp-card-' + idx;
-    card.innerHTML = `
-      <div class="empleado-header" onclick="toggleEmp(${idx})">
-        <div class="empleado-nombre">${emp.nombre}</div>
-        <div class="empleado-puesto">${emp.puesto}</div>
-        <div class="empleado-status ${tieneInc?'ok':''}" id="emp-status-${idx}">
-          ${tieneInc ? incs.length + ' inc.' : 'Sin incidencia'}
+  <!-- ── MENÚ ───────────────────────────────── -->
+  <div class="screen active" id="s-menu">
+    <div class="card">
+      <div class="hotel-name-big">Plaza Camarones</div>
+      <div class="hotel-sub">¿Qué deseas reportar esta semana?</div>
+      <div class="menu-grid">
+        <div class="menu-card inc" onclick="go('s-inc1')">
+          <div class="menu-icon">📋</div>
+          <div class="menu-label">Incidencias</div>
+          <div class="menu-desc">Faltas, bajas, incapacidades y días festivos de nómina</div>
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
-      <div class="empleado-body" id="emp-body-${idx}">
-        <div id="inc-list-${idx}"></div>
-        <button class="btn-add-inc" onclick="addInc(${idx})">+ Agregar incidencia</button>
-      </div>`;
-    list.appendChild(card);
-    renderIncList(idx);
-  });
-}
-function toggleEmp(idx) {
-  document.getElementById('emp-card-' + idx).classList.toggle('open');
-}
-function renderIncList(idx) {
-  const container = document.getElementById('inc-list-' + idx);
-  if (!container) return;
-  const incs = incidencias[idx] || [];
-  container.innerHTML = incs.length === 0
-    ? '<div class="sin-inc-label">Sin incidencias — trabajó normalmente.</div>'
-    : incs.map((inc, i) => {
-      const esImss = inc.tipo === 'Incapacidad IMSS';
-      const fotoOk = inc.fotoNombre ? true : false;
-      return `
-      <div class="inc-block">
-        <div class="inc-block-header">
-          <div class="inc-num">Incidencia ${i+1}</div>
-          <button class="btn-del-inc" onclick="delInc(${idx},${i})">×</button>
+        <div class="menu-card hc" onclick="go('s-hc1')">
+          <div class="menu-icon">👥</div>
+          <div class="menu-label">Headcount</div>
+          <div class="menu-desc">Personal cubierto por puesto y bajas de la semana</div>
         </div>
-        <div class="field">
-          <label>Tipo de incidencia</label>
-          <select onchange="updateInc(${idx},${i},'tipo',this.value);renderIncList(${idx})">
-            ${(grupoActivo === 'B' ? TIPOS_INC_GRUPO_B : TIPOS_INC).map(t=>`<option value="${t}" ${inc.tipo===t?'selected':''}>${t}</option>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INCIDENCIAS: lista empleados ──────── -->
+  <div class="screen" id="s-inc1">
+    <div class="card">
+      <div class="step-tag">Incidencias · Paso 1 de 2</div>
+      <div class="step-title">Incidencias de la semana</div>
+      <div style="font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;color:var(--muted)"><strong style="color:var(--text)">Semana 26 · 16–22 jun 2026</strong></div>
+      <div class="step-sub" style="margin-bottom:12px">Abre solo los empleados que tienen incidencia esta semana.</div>
+
+      <div class="emp-card" id="ec1">
+        <div class="emp-header" onclick="toggleEmp('ec1','eb1')">
+          <div class="emp-name">García López Martín</div>
+          <div class="emp-puesto">CAJERAS</div>
+          <div class="emp-badge" id="eb1-badge">Sin incidencia</div>
+        </div>
+        <div class="emp-body" id="eb1">
+          <select class="inc-tipo" onchange="markInc('eb1-badge',this.value)">
+            <option>Falta</option><option>Baja</option><option>Incapacidad IMSS</option><option>Turno extra</option><option>Día festivo laborado</option>
           </select>
+          <input class="inc-obs" placeholder="Observaciones (opcional)">
         </div>
-        ${esImss ? `
-        <div class="field">
-          <label>📎 Foto de incapacidad <span style="color:var(--accent2);font-weight:700">* obligatorio</span></label>
-          <div style="border:2px dashed ${fotoOk ? '#2d6a4f' : 'var(--accent2)'}; border-radius:8px; padding:14px; text-align:center; cursor:pointer; background:${fotoOk ? '#f0faf4' : '#fff8f7'};" onclick="document.getElementById('foto-input-${idx}-${i}').click()">
-            ${fotoOk
-              ? `<div style="color:#2d6a4f;font-size:13px;font-weight:700">✅ ${inc.fotoNombre}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Toca para cambiar</div>`
-              : `<div style="font-size:24px;margin-bottom:4px">📷</div><div style="font-size:13px;color:var(--accent2);font-weight:700">Subir foto de incapacidad</div><div style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG o PDF</div>`
-            }
-          </div>
-          <input type="file" id="foto-input-${idx}-${i}" accept="image/*,application/pdf" style="display:none" onchange="handleFoto(${idx},${i},this)">
-        </div>` : ''}
-        ${inc.tipo === 'Baja' ? `
-        <div class="field">
-          <label>Último día trabajado <span style="color:var(--accent2);font-weight:700">* obligatorio</span></label>
-          <input type="date" value="${inc.ultimoDia||''}" oninput="updateInc(${idx},${i},'ultimoDia',this.value)" style="font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;width:100%;outline:none;">
+      </div>
+
+      <div class="emp-card">
+        <div class="emp-header" onclick="toggleEmp('ec2','eb2')">
+          <div class="emp-name">Ramírez Torres Ana</div>
+          <div class="emp-puesto">RECAMARISTA DIA</div>
+          <div class="emp-badge">Sin incidencia</div>
         </div>
-        <div class="field">
-          <label>Observaciones</label>
-          <input type="text" placeholder="Notas opcionales" value="${inc.observaciones||''}" oninput="updateInc(${idx},${i},'observaciones',this.value)">
+        <div class="emp-body" id="eb2">
+          <select class="inc-tipo"><option>Falta</option><option>Baja</option><option>Incapacidad IMSS</option><option>Turno extra</option></select>
+          <input class="inc-obs" placeholder="Observaciones (opcional)" style="margin-top:8px">
         </div>
-        ` : `
-        <div class="inc-row">
-          ${['Falta','Turno extra'].includes(inc.tipo) ? `
-          <div class="field">
-            <label>Cantidad / Días <span style="color:var(--accent2);font-weight:700">*</span></label>
-            <input type="text" placeholder="Ej: 3 días" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
-          </div>` : `
-          <div class="field">
-            <label>Cantidad / Días</label>
-            <input type="text" placeholder="Ej: 3 días" value="${inc.cantidad||''}" oninput="updateInc(${idx},${i},'cantidad',this.value)">
-          </div>`}
-          <div class="field">
-            <label>Observaciones</label>
-            <input type="text" placeholder="Notas opcionales" value="${inc.observaciones||''}" oninput="updateInc(${idx},${i},'observaciones',this.value)">
-          </div>
+      </div>
+
+      <div class="emp-card">
+        <div class="emp-header" onclick="toggleEmp('ec3','eb3')">
+          <div class="emp-name">Pérez Mendoza Luis</div>
+          <div class="emp-puesto">COCINERO</div>
+          <div class="emp-badge">Sin incidencia</div>
         </div>
-        `}
-      </div>`;
-    }).join('');
-  const statusEl = document.getElementById('emp-status-' + idx);
-  const card     = document.getElementById('emp-card-' + idx);
-  if (statusEl) {
-    if (incs.length > 0) {
-      statusEl.textContent = incs.length + ' inc.';
-      statusEl.className   = 'empleado-status ok';
-      card.classList.add('tiene-inc');
-    } else {
-      statusEl.textContent = 'Sin incidencia';
-      statusEl.className   = 'empleado-status';
-      card.classList.remove('tiene-inc');
-    }
-  }
-}
-function addInc(idx) {
-  if (!incidencias[idx]) incidencias[idx] = [];
-  const defaultType = grupoActivo === 'B' ? 'Falta' : 'Falta';
-  incidencias[idx].push({tipo:defaultType, cantidad:'', observaciones:''});
-  const card = document.getElementById('emp-card-' + idx);
-  if (!card.classList.contains('open')) card.classList.add('open');
-  renderIncList(idx);
-}
-function delInc(idx, i) {
-  incidencias[idx].splice(i, 1);
-  if (incidencias[idx].length === 0) delete incidencias[idx];
-  renderIncList(idx);
-}
-function updateInc(idx, i, field, value) {
-  if (incidencias[idx]) incidencias[idx][i][field] = value;
-}
-function handleFoto(idx, i, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    if (incidencias[idx]) {
-      incidencias[idx][i].fotoBase64  = e.target.result;
-      incidencias[idx][i].fotoNombre  = file.name;
-    }
-    renderIncList(idx);
-  };
-  reader.readAsDataURL(file);
-}
-// ── Paso 4: Resumen ──────────────────────────────────
-function renderResumen() {
-  const empleados = getEmpleados();
-  document.getElementById('resumen-hotel-nombre').textContent = hotelActivo + ' · Grupo ' + grupoActivo;
-  document.getElementById('resumen-semana').textContent       = semanaStr;
-  const lista  = document.getElementById('resumen-lista');
-  const conInc = Object.keys(incidencias);
-  if (conInc.length === 0) {
-    lista.innerHTML = '<div class="resumen-item sin"><div class="resumen-emp">Sin incidencias esta semana</div><div class="resumen-obs">Todos los empleados trabajaron normalmente.</div></div>';
-    return;
-  }
-  lista.innerHTML = conInc.map(idx => {
-    const emp  = empleados[parseInt(idx)];
-    const incs = incidencias[idx];
-    return `<div class="resumen-item">
-      <div class="resumen-emp">${emp.nombre}</div>
-      <div class="resumen-puesto">${emp.puesto}</div>
-      ${incs.map(inc=>`
-        <div class="resumen-inc">
-          ${inc.tipo}
-          ${inc.tipo==='Baja' && inc.ultimoDia ? ' · Último día: '+inc.ultimoDia : ''}
-          ${['Falta','Turno extra'].includes(inc.tipo) && inc.cantidad ? ' · '+inc.cantidad : ''}
-          ${!['Falta','Turno extra','Baja'].includes(inc.tipo) && inc.cantidad ? ' · '+inc.cantidad : ''}
-          ${inc.tipo==='Incapacidad IMSS' && inc.fotoNombre ? `<span style='color:#2d6a4f'> 📎 ${inc.fotoNombre}</span>` : ''}
+        <div class="emp-body" id="eb3">
+          <select class="inc-tipo"><option>Falta</option><option>Baja</option><option>Incapacidad IMSS</option><option>Turno extra</option></select>
+          <input class="inc-obs" placeholder="Observaciones (opcional)" style="margin-top:8px">
         </div>
-        ${inc.observaciones?`<div class="resumen-obs">${inc.observaciones}</div>`:''}`).join('')}
+      </div>
+
+      <div class="emp-card" id="ec4">
+        <div class="emp-header" onclick="toggleEmp('ec4','eb4')">
+          <div class="emp-name">Hernández Cruz Rosa</div>
+          <div class="emp-puesto">VALET PARKING TARDE</div>
+          <div class="emp-badge ok" id="eb4-badge">1 inc.</div>
+        </div>
+        <div class="emp-body" id="eb4" style="display:block">
+          <select class="inc-tipo"><option>Falta</option><option selected>Baja</option><option>Incapacidad IMSS</option><option>Turno extra</option></select>
+          <input class="inc-obs" placeholder="Último día trabajado" style="margin-top:8px" value="14/jun/2026">
+        </div>
+      </div>
+      <div id="ec4" style="border-left:2px solid var(--accent2);border-radius:0 0 0 0"></div>
+
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="go('s-menu')">← Menú</button>
+      <button class="btn btn-p" onclick="go('s-inc2')">Ver resumen →</button>
+    </div>
+  </div>
+
+  <!-- ── INCIDENCIAS: resumen ───────────────── -->
+  <div class="screen" id="s-inc2">
+    <div class="card">
+      <div class="step-tag">Incidencias · Paso 2 de 2</div>
+      <div class="step-title">Confirma y envía</div>
+      <div style="font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:2px">Plaza Camarones · Grupo A</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Semana 26 · 16–22 jun 2026</div>
+      <div class="res-emp">
+        <div class="res-emp-name">Hernández Cruz Rosa</div>
+        <div class="res-emp-puesto">VALET PARKING TARDE</div>
+        <div class="res-inc">Baja · Último día: 14/jun/2026</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--bg);opacity:.5">
+        <div class="res-emp-name">Resto del personal</div>
+        <div class="res-inc" style="color:var(--muted)">Sin incidencias esta semana</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="go('s-inc1')">← Editar</button>
+      <button class="btn btn-d" onclick="go('s-inc-ok')">📤 Enviar reporte</button>
+    </div>
+  </div>
+
+  <!-- ── INCIDENCIAS: éxito ─────────────────── -->
+  <div class="screen" id="s-inc-ok">
+    <div class="card">
+      <div class="success">
+        <div class="s-icon">✅</div>
+        <div class="s-title">¡Reporte enviado!</div>
+        <div class="s-sub"><strong>Plaza Camarones</strong> · Grupo A<br>Semana 26 · enviado correctamente a RH.<br><br><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">1 empleado con incidencia</span></div>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-s" onclick="go('s-menu')">← Volver al menú</button>
+    </div>
+  </div>
+
+  <!-- ── HEADCOUNT: puestos ─────────────────── -->
+  <div class="screen" id="s-hc1">
+    <div class="card">
+      <div class="step-tag">Headcount · Paso 1 de 2</div>
+      <div class="step-title">Personal por puesto</div>
+      <div class="step-sub">Indica cuántas personas tienes <strong>trabajando hoy</strong> en cada puesto.</div>
+      <div class="semana-pill">📅 <strong>Semana 26</strong> · 16–22 jun 2026</div>
+      <div id="puestos"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="go('s-menu')">← Menú</button>
+      <button class="btn btn-p" onclick="goResumen()">Ver resumen →</button>
+    </div>
+  </div>
+
+  <!-- ── HEADCOUNT: resumen + bajas ────────── -->
+  <div class="screen" id="s-hc2">
+    <div class="card">
+      <div class="step-tag">Headcount · Paso 2 de 2</div>
+      <div class="step-title">Confirma tu reporte</div>
+      <div id="hc-resumen"></div>
+    </div>
+    <div class="bajas-box">
+      <div class="bajas-title">¿Cuántas bajas tuviste esta semana?</div>
+      <div class="bajas-sub">Renuncias, finiquitos y abandono de empleo.</div>
+      <div class="bajas-row">
+        <button class="cbtn-lg" onclick="changeBajas(-1)">−</button>
+        <div class="bajas-num" id="bajas-n">0</div>
+        <button class="cbtn-lg" onclick="changeBajas(1)">+</button>
+      </div>
+    </div>
+    <div class="notice">ℹ️ Al enviar, estos datos se guardan automáticamente en el sheet de headcount. El reporte del lunes se generará con esta información.</div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="go('s-hc1')">← Editar</button>
+      <button class="btn btn-p" onclick="go('s-hc-ok')">✓ Enviar headcount</button>
+    </div>
+  </div>
+
+  <!-- ── HEADCOUNT: éxito ───────────────────── -->
+  <div class="screen" id="s-hc-ok">
+    <div class="card">
+      <div class="success">
+        <div class="s-icon">✅</div>
+        <div class="s-title">¡Headcount enviado!</div>
+        <div class="s-sub" id="hc-ok-msg"></div>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-s" onclick="go('s-menu')">← Volver al menú</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// Puestos Camarones
+const PUESTOS = [
+  ['CAJERAS',5],['CORREDORES',4],['CUBRE TURNOS',1],['AMA DE LLAVES',1],
+  ['RECAMARISTA DIA',7],['RECAMARISTA TARDE',5],['RECAMARISTA NOCHE',6],
+  ['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',1],
+  ['VALET PARKING TARDE',2],['VALET PARKING NOCHE',1],['MESERA',2]
+];
+let vals = {};
+let bajas = 0;
+PUESTOS.forEach(([n,a]) => vals[n] = a);
+
+// Render puestos
+(function(){
+  let h = '';
+  PUESTOS.forEach(([nombre,auth]) => {
+    h += `<div class="puesto-row">
+      <div class="puesto-info">
+        <div class="puesto-n">${nombre}</div>
+        <div class="puesto-a">Autorizado: ${auth}</div>
+      </div>
+      <div class="counter">
+        <button class="cbtn" onclick="chv('${nombre}',${auth},-1)">−</button>
+        <div class="cval ok" id="v${nombre.replace(/ /g,'_')}">${auth}</div>
+        <button class="cbtn" onclick="chv('${nombre}',${auth},1)">+</button>
+      </div>
     </div>`;
-  }).join('');
-}
-// ── Envío ────────────────────────────────────────────
-async function enviarReporte() {
-  const btn = document.getElementById('btn-enviar');
-  btn.disabled    = true;
-  btn.textContent = '⏳ Enviando...';
-  const empleados = getEmpleados();
-  const conInc    = Object.keys(incidencias);
-  const jsonData = {
-    hotel:     hotelActivo,
-    grupo:     grupoActivo,
-    semana:    semanaNum,
-    semanaStr: semanaStr,
-    timestamp: new Date().toISOString(),
-    incidencias: conInc.map(idx => ({
-      empleado:    empleados[parseInt(idx)].nombre,
-      puesto:      empleados[parseInt(idx)].puesto,
-      incidencias: incidencias[idx]
-    }))
-  };
-  let texto = `REPORTE GRUPO ${grupoActivo} · ${hotelActivo}\n${'═'.repeat(45)}\n`;
-  texto += `${semanaStr}\nEnviado: ${new Date().toLocaleString('es-MX')}\n${'═'.repeat(45)}\n\n`;
-  if (conInc.length === 0) {
-    texto += 'Sin incidencias esta semana.\n';
-  } else {
-    conInc.forEach(idx => {
-      const emp = empleados[parseInt(idx)];
-      texto += `● ${emp.nombre} (${emp.puesto})\n`;
-      incidencias[idx].forEach((inc, i) => {
-        texto += `  ${i+1}. ${inc.tipo}${inc.cantidad?' · '+inc.cantidad:''}`;
-        if (inc.observaciones) texto += `\n     Obs: ${inc.observaciones}`;
-        texto += '\n';
-      });
-      texto += '\n';
-    });
-  }
-  try {
-    const payload = JSON.stringify({
-      hotel:             hotelActivo,
-      grupo:             grupoActivo,
-      semana:            semanaStr,
-      total_incidencias: conInc.length,
-      reporte:           texto,
-      tracker_json:      JSON.stringify(jsonData)
-    });
-    const resp = await fetch(FORMSPREE, {
-      method: 'POST', headers: {'Content-Type':'application/json'}, body: payload
-    });
-    if (!resp.ok) throw new Error('Error Formspree');
-    const fd = new FormData(); fd.append('data', payload);
-    fetch(APPS_SCRIPT, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
-    mostrarStep('step5');
-    document.getElementById('success-msg').innerHTML = `
-      <strong>${hotelActivo}</strong> · Grupo ${grupoActivo}<br>
-      <strong>${semanaStr}</strong> enviado correctamente a RH.<br><br>
-      <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:12px">
-        ${conInc.length} empleado${conInc.length!==1?'s':''} con incidencia${conInc.length!==1?'s':''}
-      </span>`;
-    [1,2,3,4].forEach(i => {
-      document.getElementById('prog'+i).classList.add('done');
-      document.getElementById('prog'+i).classList.remove('active');
-    });
-  } catch(err) {
-    btn.disabled    = false;
-    btn.textContent = '📤 Enviar reporte';
-    showToast('⚠ Error al enviar. Intenta de nuevo.');
-  }
-}
-// ── Utilidades ───────────────────────────────────────
-function mostrarStep(id) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const n = {'step1':1,'step2':2,'step3':3,'step4':4,'step5':5}[id] || 0;
-  [1,2,3,4].forEach(i => {
-    const el = document.getElementById('prog'+i);
-    if (!el) return;
-    el.classList.toggle('done',   i < n);
-    el.classList.toggle('active', i === n);
   });
+  document.getElementById('puestos').innerHTML = h;
+})();
+
+function chv(n,auth,d){
+  let v = (vals[n]??auth)+d;
+  if(v<0)v=0; if(v>auth)v=auth;
+  vals[n]=v;
+  const el=document.getElementById('v'+n.replace(/ /g,'_'));
+  if(!el)return;
+  el.textContent=v;
+  const p=v/auth*100;
+  el.className='cval '+(p>=90?'ok':p>=70?'warn':'low');
 }
-function reiniciar() {
-  grupoActivo = null; hotelActivo = null; incidencias = {};
-  document.getElementById('gbtn-A').classList.remove('selected-a');
-  document.getElementById('gbtn-B').classList.remove('selected-b');
-  document.getElementById('btn-paso2').disabled = true;
-  mostrarStep('step1');
+
+function changeBajas(d){ bajas=Math.max(0,bajas+d); document.getElementById('bajas-n').textContent=bajas; }
+
+function goResumen(){
+  go('s-hc2');
+  let totalA=0,totalC=0,rows='';
+  PUESTOS.forEach(([n,auth])=>{
+    const c=vals[n]??auth; totalA+=auth; totalC+=c;
+    const p=Math.round(c/auth*100);
+    const cl=p>=90?'ok':p>=70?'warn':'low';
+    rows+=`<div class="res-row"><span>${n}</span><span class="res-pct" style="color:${p>=90?'var(--green)':p>=70?'#e67e22':'var(--accent2)'};">${c}/${auth} · ${p}%</span></div>`;
+  });
+  const pct=Math.round(totalC/totalA*100);
+  const col=pct>=90?'var(--green)':pct>=80?'#e67e22':'var(--accent2)';
+  const lbl=pct>=90?'VERDE':pct>=80?'AMARILLO':'NARANJA';
+  document.getElementById('hc-resumen').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-family:'Instrument Serif',serif;font-size:20px;">Plaza Camarones</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#f0fdf4;color:${col};">${lbl} · ${pct}%</div>
+    </div>${rows}`;
+  // hc-ok message
+  document.getElementById('hc-ok-msg').innerHTML=`<strong>Plaza Camarones</strong> · Semana 26<br>Headcount y bajas registrados correctamente.<br><br><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">${bajas} baja${bajas!==1?'s':''} esta semana</span>`;
 }
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+
+// Navegación y progress
+const PROG={'s-menu':1,'s-inc1':2,'s-inc2':3,'s-inc-ok':4,'s-hc1':2,'s-hc2':3,'s-hc-ok':4};
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const n=PROG[id]||1;
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('p'+i);
+    if(!el)return;
+    el.className='prog-step'+(i<n?' done':i===n?' active':'');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-init();
+
+// Toggle empleado incidencias
+function toggleEmp(cardId, bodyId){
+  document.getElementById(cardId).classList.toggle('open');
+}
+function markInc(badgeId, val){
+  const el=document.getElementById(badgeId);
+  if(el){el.textContent='1 inc.';el.className='emp-badge ok';}
+}
 </script>
 </body>
 </html>

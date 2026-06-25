@@ -426,7 +426,7 @@ async function cargarCatalogo() {
 // ── Paso 1: Grupo ────────────────────────────────────
 function selGrupo(g) {
   grupoActivo = g;
-  hotelActivo = null;
+  // hotelActivo ya fue elegido en step0 — no resetear
   incidencias = {};
   document.getElementById('gbtn-A').classList.remove('selected-a');
   document.getElementById('gbtn-B').classList.remove('selected-b');

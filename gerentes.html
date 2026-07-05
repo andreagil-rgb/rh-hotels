@@ -386,6 +386,57 @@ function detectarColumnas(headerRow) {
   return map;
 }
 
+// Detecta si un valor de celda gviz es una fecha (gviz las serializa como
+// el string literal "Date(2016,4,9)")
+function esValorFecha(v) {
+  return typeof v === 'string' && /^Date\(/.test(v);
+}
+
+// Heurística: ¿esta celda "parece" un nombre de persona? (texto con letras,
+// normalmente más de una palabra, no es fecha ni número puro)
+function pareceNombre(v) {
+  if (v === null || v === undefined) return false;
+  const s = v.toString().trim();
+  if (!s || esValorFecha(v)) return false;
+  if (/^-?\d+(\.\d+)?$/.test(s)) return false; // número puro
+  return /[a-záéíóúñ]/i.test(s) && s.length >= 3;
+}
+
+// Verifica que la columna mapeada a "nombre" realmente contenga nombres,
+// usando una muestra de filas. Si falla, busca la mejor columna candidata
+// entre todas las disponibles (excluyendo las ya usadas por otros campos).
+function validarYCorregirNombre(dataRows, colMap) {
+  const muestra = dataRows.slice(0, Math.min(10, dataRows.length));
+  const colActual = colMap.nombre;
+  const okActual = muestra.every(r => {
+    const v = r.c[colActual]?.v;
+    return v === null || v === undefined || v === '' || pareceNombre(v);
+  }) && muestra.some(r => pareceNombre(r.c[colActual]?.v));
+
+  if (okActual) return colMap;
+
+  console.warn('⚠ La columna NOMBRE detectada por encabezado no contiene nombres válidos. Buscando columna correcta por contenido...');
+
+  const usadas = new Set(Object.values(colMap).filter(i => i !== -1));
+  const numCols = muestra[0]?.c?.length || 0;
+  let mejorCol = -1, mejorScore = 0;
+
+  for (let c = 0; c < numCols; c++) {
+    if (usadas.has(c)) continue;
+    let score = 0;
+    muestra.forEach(r => { if (pareceNombre(r.c[c]?.v)) score++; });
+    if (score > mejorScore) { mejorScore = score; mejorCol = c; }
+  }
+
+  if (mejorCol !== -1 && mejorScore >= Math.ceil(muestra.length * 0.6)) {
+    console.warn(`✔ Columna NOMBRE corregida automáticamente: índice ${colActual} → ${mejorCol}`);
+    return { ...colMap, nombre: mejorCol };
+  }
+
+  console.warn('⚠ No se encontró una columna alterna confiable para NOMBRE. Se mantiene la detección original.');
+  return colMap;
+}
+
 // ── Estado ──────────────────────────────────────────
 let catalogo    = [];
 let grupoActivo = null;
@@ -417,7 +468,11 @@ async function cargarCatalogo() {
 
   for (const tab of tabs) {
     try {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+      // headers=1 le indica explícitamente a Google que la fila 1 es el
+      // encabezado. Sin esto, gviz "adivina" cuál fila es encabezado según
+      // el tipo de dato de cada columna, y con columnas frozen (A-D) suele
+      // adivinar mal, generando un desfase de columnas.
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}&headers=1`;
       const res  = await fetch(url);
       const text = await res.text();
       const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
@@ -427,23 +482,31 @@ async function cargarCatalogo() {
       if (rows.length === 0) continue;
 
       // ── Detección dinámica de columnas ──
-      // Preferimos los "labels" de columna que gviz ya trae (cols[i].label),
-      // que corresponden al encabezado real de la fila 1 del Sheet.
-      // Si vienen vacíos (a veces pasa), usamos la primera fila como encabezado.
+      // Con headers=1, cols[i].label ya viene poblado correctamente desde
+      // la fila 1 real del Sheet, y "rows" ya NO incluye esa fila de
+      // encabezado (Google la separa automáticamente).
       let headerCells = cols.map(c => ({ v: c.label }));
       const headerVacio = headerCells.every(c => !normTxt(c.v));
       let dataRows = rows;
       if (headerVacio) {
+        // Fallback de seguridad por si headers=1 no aplicara (pestaña sin
+        // encabezados formales): usamos la primera fila como encabezado.
         headerCells = rows[0].c;
         dataRows = rows.slice(1);
       }
-      const colMap = detectarColumnas(headerCells);
+      let colMap = detectarColumnas(headerCells);
+      console.log(`[${tab}] Encabezados leídos:`, headerCells.map(c => c?.v));
 
       // Validación: si no encontramos NOMBRE o HOTEL, esta pestaña no sirve
       if (colMap.nombre === -1 || colMap.hotel === -1) {
         console.warn(`Pestaña "${tab}": no se detectaron columnas NOMBRE/HOTEL en el encabezado.`, colMap);
         continue;
       }
+
+      // Segunda capa de seguridad: verificar que la columna NOMBRE
+      // realmente contenga nombres (y no fechas u otro dato desalineado)
+      colMap = validarYCorregirNombre(dataRows, colMap);
+      console.log(`[${tab}] Columnas finales:`, colMap);
 
       catalogo = dataRows.map(r => {
         const grupo  = colMap.grupo  !== -1 ? (r.c[colMap.grupo]?.v  || '').toString().trim() : '';

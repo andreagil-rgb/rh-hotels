@@ -344,6 +344,48 @@ const TIPOS_INC = [
 const TIPOS_INC_GRUPO_B = [
   'Falta','Baja','Turno extra','Día festivo laborado'
 ];
+
+// ── Alias de encabezados aceptados por columna lógica ─────────────
+// Si en el Tracker cambias el texto exacto del encabezado, agrega
+// la variante aquí (todo en minúsculas, sin acentos) y seguirá funcionando.
+const HEADER_ALIASES = {
+  grupo:  ['grupo'],
+  status: ['status', 'estatus', 'activo'],
+  hotel:  ['hotel'],
+  nombre: ['nombre'],
+  puesto: ['puesto'],
+};
+
+// Normaliza texto: minúsculas, sin acentos, sin espacios extra
+function normTxt(s) {
+  return (s || '').toString()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().trim();
+}
+
+// Dado el arreglo de encabezados (fila 1 del Sheet), regresa un mapa
+// { grupo: idx, status: idx, hotel: idx, nombre: idx, puesto: idx }
+function detectarColumnas(headerRow) {
+  const headers = (headerRow || []).map(c => normTxt(c?.v));
+  const map = {};
+  Object.entries(HEADER_ALIASES).forEach(([campo, alias]) => {
+    let idx = -1;
+    for (const a of alias) {
+      idx = headers.findIndex(h => h === a);
+      if (idx !== -1) break;
+    }
+    // fallback: coincidencia parcial si no hubo match exacto
+    if (idx === -1) {
+      for (const a of alias) {
+        idx = headers.findIndex(h => h.includes(a));
+        if (idx !== -1) break;
+      }
+    }
+    map[campo] = idx;
+  });
+  return map;
+}
+
 // ── Estado ──────────────────────────────────────────
 let catalogo    = [];
 let grupoActivo = null;
@@ -380,32 +422,46 @@ async function cargarCatalogo() {
       const text = await res.text();
       const json = JSON.parse(text.replace(/^[^\{]+/, '').replace(/[^\}]+$/, ''));
       const rows = json?.table?.rows || [];
+      const cols = json?.table?.cols || [];
 
       if (rows.length === 0) continue;
 
-      // Mapeo de columnas del TRACKER:
-      // Col 0: OPCIÓN, Col 1: GRUPO, Col 2: STATUS, Col 3: HOTEL,
-      // Col 4: FECHA INGRESO, Col 5: FECHA BAJA, Col 6: BAJA OP2, Col 7: ALTA OP2,
-      // Col 8: NOMBRE, Col 9: (vacío/apellido separado en algunos), Col 10: SALARIO DIARIO
-      // PUESTO está en col 9 en algunos registros — lo detectamos dinámicamente
-      catalogo = rows.map(r => {
-        const grupo  = (r.c[1]?.v || '').toString().trim();
-        const status = (r.c[2]?.v || '').toString().trim().toUpperCase();
-        const hotel  = (r.c[3]?.v || '').toString().trim();
-        const nombre = (r.c[8]?.v || '').toString().trim();
-        // El puesto en el TRACKER está en la col después del nombre (col 9)
-        // pero en algunos registros está vacío; intentamos cols 9 y el header lo confirma
-        const puesto = (r.c[9]?.v || '').toString().trim();
+      // ── Detección dinámica de columnas ──
+      // Preferimos los "labels" de columna que gviz ya trae (cols[i].label),
+      // que corresponden al encabezado real de la fila 1 del Sheet.
+      // Si vienen vacíos (a veces pasa), usamos la primera fila como encabezado.
+      let headerCells = cols.map(c => ({ v: c.label }));
+      const headerVacio = headerCells.every(c => !normTxt(c.v));
+      let dataRows = rows;
+      if (headerVacio) {
+        headerCells = rows[0].c;
+        dataRows = rows.slice(1);
+      }
+      const colMap = detectarColumnas(headerCells);
+
+      // Validación: si no encontramos NOMBRE o HOTEL, esta pestaña no sirve
+      if (colMap.nombre === -1 || colMap.hotel === -1) {
+        console.warn(`Pestaña "${tab}": no se detectaron columnas NOMBRE/HOTEL en el encabezado.`, colMap);
+        continue;
+      }
+
+      catalogo = dataRows.map(r => {
+        const grupo  = colMap.grupo  !== -1 ? (r.c[colMap.grupo]?.v  || '').toString().trim() : '';
+        const status = colMap.status !== -1 ? (r.c[colMap.status]?.v || '').toString().trim().toUpperCase() : '';
+        const hotel  = (r.c[colMap.hotel]?.v  || '').toString().trim();
+        const nombre = (r.c[colMap.nombre]?.v || '').toString().trim();
+        const puesto = colMap.puesto !== -1 ? (r.c[colMap.puesto]?.v || '').toString().trim() : '';
 
         return { hotel, grupo, nombre, puesto, status };
       }).filter(e => {
-        // ✅ CORRECCIÓN PRINCIPAL: solo empleados con nombre Y status ACTIVO
+        // ✅ solo empleados con nombre Y status ACTIVO
         return e.nombre && e.status === 'ACTIVO';
       });
 
       if (catalogo.length === 0) continue;
 
       console.log(`Catálogo cargado desde pestaña "${tab}":`, catalogo.length, 'empleados ACTIVOS');
+      console.log('Columnas detectadas:', colMap);
       loaded = true;
       renderHotelesStep0();
       mostrarStep('step0');
@@ -419,7 +475,7 @@ async function cargarCatalogo() {
 
   if (!loaded) {
     document.getElementById('error-msg').textContent =
-      '⚠ No se pudo cargar el catálogo. Verifica que el Sheet sea público y la pestaña TRACKER exista.';
+      '⚠ No se pudo cargar el catálogo. Verifica que el Sheet sea público, que la pestaña TRACKER exista, y que tenga columnas HOTEL y NOMBRE en el encabezado.';
     mostrarStep('step-error');
   }
 }

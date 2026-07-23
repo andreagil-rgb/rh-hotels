@@ -127,31 +127,24 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
 .menu-desc{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.5}
 .menu-hotel-name{font-family:'Instrument Serif',serif;font-size:26px;margin-bottom:4px}
 .menu-hotel-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
-/* ── Headcount ──────────────────── */
+/* ── Reporte de Vacantes ──────────── */
 .semana-pill{font-family:'DM Mono',monospace;font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;display:inline-block;color:var(--muted);margin-bottom:18px}
 .semana-pill strong{color:var(--text)}
-.puesto-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:12px}
-.puesto-row:last-child{border-bottom:none}
-.puesto-info{flex:1}
-.puesto-n{font-size:13px;font-weight:600;margin-bottom:2px}
-.puesto-a{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
-.cnt-wrap{display:flex;align-items:center;gap:10px}
-.cbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;line-height:1}
-.cbtn:hover{background:var(--accent);color:white;border-color:var(--accent)}
-.cval{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;min-width:28px;text-align:center}
-.cval-ok{color:var(--green)}.cval-warn{color:#e67e22}.cval-low{color:var(--accent2)}
-.bajas-card{background:#fff8f0;border:1px solid #f5d5bc;border-radius:14px;padding:22px 24px;margin-top:14px}
-.bajas-title{font-size:15px;font-weight:700;margin-bottom:4px}
-.bajas-sub-lbl{font-size:12px;color:var(--muted);margin-bottom:18px}
-.bajas-row{display:flex;align-items:center;gap:18px}
-.bajas-num{font-family:'DM Mono',monospace;font-size:42px;font-weight:700;min-width:56px;text-align:center;color:var(--accent2)}
-.cbtn-lg{width:48px;height:48px;border-radius:12px;border:1px solid var(--border);background:white;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;line-height:1}
-.cbtn-lg:hover{background:var(--accent2);color:white;border-color:var(--accent2)}
-.hc-res-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.hc-res-row:last-child{border-bottom:none}
-.hc-pct{font-family:'DM Mono',monospace;font-weight:700;font-size:12px}
-.hc-notice{background:#f0f4ff;border:1px solid #c5d3f0;border-radius:10px;padding:12px 16px;font-size:12px;color:var(--blue);margin-top:14px;line-height:1.6}
-@media(max-width:480px){.menu-grid{grid-template-columns:1fr}}
+.vac-card{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.vac-card.marcada{border-color:var(--accent2)}
+.vac-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg);gap:12px}
+.vac-nombre{font-size:13px;font-weight:600;flex:1}
+.vac-puesto{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex-shrink:0;max-width:160px;text-align:right}
+.vac-toggle{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:white;cursor:pointer;transition:all .2s;flex-shrink:0}
+.vac-toggle.on{background:var(--accent2);color:white;border-color:var(--accent2)}
+.vac-body{display:none;padding:14px 16px;border-top:1px solid var(--border);background:white}
+.vac-card.marcada .vac-body{display:block}
+.vac-resumen-item{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;background:var(--bg)}
+.vac-resumen-nombre{font-size:13px;font-weight:700;margin-bottom:2px}
+.vac-resumen-puesto{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px}
+.vac-resumen-fecha{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2)}
+.vac-notice{background:#f0f4ff;border:1px solid #c5d3f0;border-radius:10px;padding:12px 16px;font-size:12px;color:var(--blue);margin-top:14px;line-height:1.6}
+@media(max-width:480px){.menu-grid{grid-template-columns:1fr}.vac-puesto{display:none}}
 
 </style>
 </head>
@@ -203,10 +196,10 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
         <div class="menu-label">Incidencias</div>
         <div class="menu-desc">Faltas, bajas, incapacidades y días festivos de nómina</div>
       </div>
-      <div class="menu-card hc" onclick="irHeadcount()">
-        <div class="menu-icon">👥</div>
-        <div class="menu-label">Headcount</div>
-        <div class="menu-desc">Personal cubierto por puesto y bajas de la semana</div>
+      <div class="menu-card hc" onclick="irVacantes()">
+        <div class="menu-icon">🧾</div>
+        <div class="menu-label">Reporte de Vacantes</div>
+        <div class="menu-desc">Marca las bajas de la semana para actualizar el tracker y el headcount</div>
       </div>
     </div>
     <div class="btn-row">
@@ -214,49 +207,40 @@ body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text
     </div>
   </div>
 
-  <!-- HC PASO 1: puestos -->
-  <div class="step" id="hc-step1">
-    <div class="step-num">Headcount · Paso 1 de 2</div>
-    <div class="step-title">Personal por puesto</div>
-    <div class="step-sub">Indica cuántas personas tienes <strong>trabajando hoy</strong> en cada puesto.</div>
-    <div class="semana-pill" id="hc-semana-lbl">📅 <strong>—</strong></div>
-    <div id="hc-puestos-list"></div>
+  <!-- VAC PASO 1: seleccionar bajas -->
+  <div class="step" id="vac-step1">
+    <div class="step-num">Reporte de Vacantes</div>
+    <div class="step-title">Bajas de la semana</div>
+    <div class="step-sub">Marca únicamente a los colaboradores que causaron baja. Se muestra <strong>todo el personal activo</strong> (grupos A, AB y B).</div>
+    <div class="semana-pill" id="vac-semana-lbl">📅 <strong>—</strong></div>
+    <div id="vac-list"></div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="mostrarStep('step-menu')">← Menú</button>
-      <button class="btn btn-primary" onclick="irHcResumen()">Ver resumen →</button>
+      <button class="btn btn-primary" onclick="irVacResumen()">Ver resumen →</button>
     </div>
   </div>
 
-  <!-- HC PASO 2: resumen + bajas -->
-  <div class="step" id="hc-step2">
-    <div class="step-num">Headcount · Paso 2 de 2</div>
-    <div class="step-title">Confirma tu reporte</div>
-    <div class="step-sub">Revisa el headcount y captura las bajas antes de enviar.</div>
-    <div id="hc-resumen-body"></div>
-    <div class="bajas-card">
-      <div class="bajas-title">¿Cuántas bajas tuviste esta semana?</div>
-      <div class="bajas-sub-lbl">Renuncias, finiquitos y abandono de empleo.</div>
-      <div class="bajas-row">
-        <button class="cbtn-lg" onclick="changeBajas(-1)">−</button>
-        <div class="bajas-num" id="hc-bajas-num">0</div>
-        <button class="cbtn-lg" onclick="changeBajas(1)">+</button>
-      </div>
-    </div>
-    <div class="hc-notice">ℹ️ Al enviar, estos datos se guardan automáticamente. El reporte del lunes se generará con esta información.</div>
+  <!-- VAC PASO 2: resumen -->
+  <div class="step" id="vac-step2">
+    <div class="step-num">Reporte de Vacantes</div>
+    <div class="step-title">Confirma las bajas</div>
+    <div class="step-sub">Revisa antes de enviar.</div>
+    <div id="vac-resumen-body"></div>
+    <div class="vac-notice">ℹ️ Al enviar, el STATUS y la FECHA DE BAJA de cada colaborador se actualizan directo en el tracker, y el headcount se recalcula automáticamente.</div>
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="mostrarStep('hc-step1')">← Editar</button>
-      <button class="btn btn-primary" onclick="enviarHeadcount()">✓ Enviar headcount</button>
+      <button class="btn btn-secondary" onclick="mostrarStep('vac-step1')">← Editar</button>
+      <button class="btn btn-primary" onclick="enviarVacantes()" id="btn-enviar-vac">✓ Enviar reporte de vacantes</button>
     </div>
   </div>
 
-  <!-- HC ÉXITO -->
-  <div class="step" id="hc-step3">
+  <!-- VAC ÉXITO -->
+  <div class="step" id="vac-step3">
     <div class="success-box">
       <div class="success-icon">✅</div>
-      <div class="success-title">¡Headcount enviado!</div>
-      <div class="success-sub" id="hc-success-msg"></div>
+      <div class="success-title">¡Reporte enviado!</div>
+      <div class="success-sub" id="vac-success-msg"></div>
       <div class="btn-row" style="justify-content:center;margin-top:28px">
-        <button class="btn btn-secondary" onclick="reiniciarHc()">Enviar otro reporte</button>
+        <button class="btn btn-secondary" onclick="reiniciarVac()">Enviar otro reporte</button>
       </div>
     </div>
   </div>
@@ -338,6 +322,8 @@ const SHEET_ID    = '1eKrw_gD8SX9xEk3_7LB2ubnye8dkN7ERWx8KT4pI2_k';
 const SHEET_TAB   = 'TRACKER';
 const FORMSPREE   = 'https://formspree.io/f/mjgajoqa';
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwtBqROvBf6gf9vK1s6zTrV2Pb-RWEVN5rqWtNYmIuIgVg1avSY5yWNWe-recSars0/exec';
+const APPS_SCRIPT_BAJA = 'https://script.google.com/macros/s/AKfycbxZI1hvVBBS_F5bFBq8WB_k-QUGtXQJs4qynr8EGkpBJqKuUQ7KDuSNYYPWGBcCn2_S4Q/exec';
+const TOKEN_BAJA = 'AISCT501';
 const TIPOS_INC = [
   'Incapacidad IMSS','Falta','Baja','Turno extra','Día festivo laborado'
 ];
@@ -346,8 +332,6 @@ const TIPOS_INC_GRUPO_B = [
 ];
 
 // ── Alias de encabezados aceptados por columna lógica ─────────────
-// Si en el Tracker cambias el texto exacto del encabezado, agrega
-// la variante aquí (todo en minúsculas, sin acentos) y seguirá funcionando.
 const HEADER_ALIASES = {
   grupo:  ['grupo'],
   status: ['status', 'estatus', 'activo'],
@@ -356,15 +340,12 @@ const HEADER_ALIASES = {
   puesto: ['puesto'],
 };
 
-// Normaliza texto: minúsculas, sin acentos, sin espacios extra
 function normTxt(s) {
   return (s || '').toString()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().trim();
 }
 
-// Dado el arreglo de encabezados (fila 1 del Sheet), regresa un mapa
-// { grupo: idx, status: idx, hotel: idx, nombre: idx, puesto: idx }
 function detectarColumnas(headerRow) {
   const headers = (headerRow || []).map(c => normTxt(c?.v));
   const map = {};
@@ -374,7 +355,6 @@ function detectarColumnas(headerRow) {
       idx = headers.findIndex(h => h === a);
       if (idx !== -1) break;
     }
-    // fallback: coincidencia parcial si no hubo match exacto
     if (idx === -1) {
       for (const a of alias) {
         idx = headers.findIndex(h => h.includes(a));
@@ -386,25 +366,18 @@ function detectarColumnas(headerRow) {
   return map;
 }
 
-// Detecta si un valor de celda gviz es una fecha (gviz las serializa como
-// el string literal "Date(2016,4,9)")
 function esValorFecha(v) {
   return typeof v === 'string' && /^Date\(/.test(v);
 }
 
-// Heurística: ¿esta celda "parece" un nombre de persona? (texto con letras,
-// normalmente más de una palabra, no es fecha ni número puro)
 function pareceNombre(v) {
   if (v === null || v === undefined) return false;
   const s = v.toString().trim();
   if (!s || esValorFecha(v)) return false;
-  if (/^-?\d+(\.\d+)?$/.test(s)) return false; // número puro
+  if (/^-?\d+(\.\d+)?$/.test(s)) return false;
   return /[a-záéíóúñ]/i.test(s) && s.length >= 3;
 }
 
-// Verifica que la columna mapeada a "nombre" realmente contenga nombres,
-// usando una muestra de filas. Si falla, busca la mejor columna candidata
-// entre todas las disponibles (excluyendo las ya usadas por otros campos).
 function validarYCorregirNombre(dataRows, colMap) {
   const muestra = dataRows.slice(0, Math.min(10, dataRows.length));
   const colActual = colMap.nombre;
@@ -461,17 +434,11 @@ function init() {
 // ── Cargar catálogo — SOLO ACTIVOS ──────────────────
 async function cargarCatalogo() {
   mostrarStep('step-loading');
-  // Nota: el nombre de pestaña puede tener mayúsculas/minúsculas variables;
-  // probamos ambas versiones
   const tabs = ['TRACKER', 'tracker', 'Tracker'];
   let loaded = false;
 
   for (const tab of tabs) {
     try {
-      // headers=1 le indica explícitamente a Google que la fila 1 es el
-      // encabezado. Sin esto, gviz "adivina" cuál fila es encabezado según
-      // el tipo de dato de cada columna, y con columnas frozen (A-D) suele
-      // adivinar mal, generando un desfase de columnas.
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}&headers=1`;
       const res  = await fetch(url);
       const text = await res.text();
@@ -481,30 +448,21 @@ async function cargarCatalogo() {
 
       if (rows.length === 0) continue;
 
-      // ── Detección dinámica de columnas ──
-      // Con headers=1, cols[i].label ya viene poblado correctamente desde
-      // la fila 1 real del Sheet, y "rows" ya NO incluye esa fila de
-      // encabezado (Google la separa automáticamente).
       let headerCells = cols.map(c => ({ v: c.label }));
       const headerVacio = headerCells.every(c => !normTxt(c.v));
       let dataRows = rows;
       if (headerVacio) {
-        // Fallback de seguridad por si headers=1 no aplicara (pestaña sin
-        // encabezados formales): usamos la primera fila como encabezado.
         headerCells = rows[0].c;
         dataRows = rows.slice(1);
       }
       let colMap = detectarColumnas(headerCells);
       console.log(`[${tab}] Encabezados leídos:`, headerCells.map(c => c?.v));
 
-      // Validación: si no encontramos NOMBRE o HOTEL, esta pestaña no sirve
       if (colMap.nombre === -1 || colMap.hotel === -1) {
         console.warn(`Pestaña "${tab}": no se detectaron columnas NOMBRE/HOTEL en el encabezado.`, colMap);
         continue;
       }
 
-      // Segunda capa de seguridad: verificar que la columna NOMBRE
-      // realmente contenga nombres (y no fechas u otro dato desalineado)
       colMap = validarYCorregirNombre(dataRows, colMap);
       console.log(`[${tab}] Columnas finales:`, colMap);
 
@@ -517,7 +475,6 @@ async function cargarCatalogo() {
 
         return { hotel, grupo, nombre, puesto, status };
       }).filter(e => {
-        // ✅ solo empleados con nombre Y status ACTIVO
         return e.nombre && e.status === 'ACTIVO';
       });
 
@@ -545,7 +502,6 @@ async function cargarCatalogo() {
 // ── Paso 1: Grupo ────────────────────────────────────
 function selGrupo(g) {
   grupoActivo = g;
-  // hotelActivo ya fue elegido en step0 — no resetear
   incidencias = {};
   document.getElementById('gbtn-A').classList.remove('selected-a');
   document.getElementById('gbtn-B').classList.remove('selected-b');
@@ -556,7 +512,6 @@ function irPaso1() { mostrarStep('step1'); }
 // ── Paso 2: Hotel ────────────────────────────────────
 function irPaso2() {
   if (!grupoActivo) { showToast('⚠ Selecciona el tipo de nómina'); return; }
-  // Hotel ya fue elegido en step0 — ir directo a incidencias
   mostrarStep('step3');
   renderEmpleados();
 }
@@ -574,7 +529,6 @@ function irPaso3() {
   renderEmpleados();
 }
 function irPaso4() {
-  // Validar que incapacidades IMSS tengan foto
   const faltanFotos = [];
   const empleados = getEmpleados();
   Object.entries(incidencias).forEach(([empIdx, incs]) => {
@@ -588,7 +542,6 @@ function irPaso4() {
     showToast('⚠ Falta foto de incapacidad: ' + faltanFotos.join(', '));
     return;
   }
-  // Validar cantidad en Falta y Turno extra
   const faltanCantidad = [];
   Object.entries(incidencias).forEach(([empIdx, incs]) => {
     incs.forEach((inc) => {
@@ -602,7 +555,6 @@ function irPaso4() {
     showToast('⚠ Falta cantidad en: ' + faltanCantidad.join(', '));
     return;
   }
-  // Validar último día en Baja
   const faltanUltimoDia = [];
   Object.entries(incidencias).forEach(([empIdx, incs]) => {
     incs.forEach((inc) => {
@@ -883,39 +835,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Mapeo TRACKER → clave headcount ─────────────────
-const HOTEL_MAP = {
-  'CARRILLO PUERTO':      'ELITE',
-  'OPERADORA BRUESAL':    'NARVARTE',
-  'TALISMAN':             'ESLA',
-  'PROMOTORA ANTONIO CASO': 'BELICES',
-  'PLAZA DEL REY L':      'LAVANDERIA',
-  'PLAZA CAMARONES':      'CAMARONES',
-  'TEPEYAC INSURGENTES':  'INSURGENTES',
-  'TEPEYAC LA VILLA':     'LA VILLA',
-  'PLAZA DEL REY':        'PLAZA DEL REY',
-  'NAYARIT':              'NAYARIT',
-  'VALLEJO':              'VALLEJO',
-};
-
-// ── Puestos por hotel ────────────────────────────────
-const PUESTOS_HOTEL = {
-  'PLAZA DEL REY':  [['CAJERAS',3],['CORREDORES',6],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',8],['RECAMARISTA TARDE',5],['RECAMARISTA NOCHE',5],['COCINERO',3],['MANTENIMIENTO',2],['MESERA',3]],
-  'CAMARONES':      [['CAJERAS',5],['CORREDORES',4],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',7],['RECAMARISTA TARDE',5],['RECAMARISTA NOCHE',6],['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',1],['VALET PARKING TARDE',2],['VALET PARKING NOCHE',1],['MESERA',2]],
-  'VALLEJO':        [['CAJERAS',3],['CORREDORES',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',5],['RECAMARISTA TARDE',4],['RECAMARISTA NOCHE',4],['COCINERO',3],['MANTENIMIENTO',1]],
-  'NAYARIT':        [['CAJERAS',3],['CORREDORES',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',7],['RECAMARISTA TARDE',4],['RECAMARISTA NOCHE',5],['COCINERO',3],['MANTENIMIENTO',1],['MESERA',1]],
-  'INSURGENTES':    [['CAJERAS',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',6],['RECAMARISTA TARDE',3],['RECAMARISTA NOCHE',4],['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',1],['VALET PARKING TARDE',1],['VALET PARKING NOCHE',1]],
-  'LA VILLA':       [['CAJERAS',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',6],['RECAMARISTA TARDE',3],['RECAMARISTA NOCHE',4],['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',1],['VALET PARKING TARDE',1],['VALET PARKING NOCHE',1]],
-  'ELITE':          [['CAJERAS',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',7],['RECAMARISTA TARDE',4],['RECAMARISTA NOCHE',5],['COCINERO',4],['MANTENIMIENTO',1],['VALET PARKING DIA',3],['VALET PARKING TARDE',3],['VALET PARKING NOCHE',2],['MESERA',7]],
-  'NARVARTE':       [['CAJERAS',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',5],['RECAMARISTA TARDE',4],['RECAMARISTA NOCHE',4],['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',2],['VALET PARKING TARDE',2],['VALET PARKING NOCHE',2]],
-  'BELICES':        [['CAJERAS',3],['CUBRE TURNOS',1],['AMA DE LLAVES',1],['RECAMARISTA DIA',8],['RECAMARISTA TARDE',2],['RECAMARISTA NOCHE',4],['COCINERO',3],['MANTENIMIENTO',1],['VALET PARKING DIA',1],['VALET PARKING NOCHE',1],['MESERA',4]],
-  'LAVANDERIA':     [['AYUDANTE GENERAL',20],['RUTA',7],['MANTENIMIENTO',1]],
-  'ESLA':           [['CAJERAS',3],['CUBRE TURNOS',1],['RECAMARISTA DIA',2],['RECAMARISTA TARDE',1],['RECAMARISTA NOCHE',2],['MANTENIMIENTO',1]],
-};
-
-let hcVals  = {};
-let hcBajas = 0;
-
 // ── Renderizar hoteles en paso 0 (todos, sin filtro de grupo) ────────────────
 function renderHotelesStep0() {
   if (!catalogo || catalogo.length === 0) return;
@@ -958,7 +877,6 @@ function irMenuDesdeHotel() {
 
 // ── Menú ─────────────────────────────────────────────
 function irIncidencias() {
-  // Necesitamos grupo para filtrar empleados — si no está, pedir tipo de nómina
   if (!grupoActivo) {
     mostrarStep('step1');
   } else {
@@ -967,95 +885,127 @@ function irIncidencias() {
   }
 }
 
-function irHeadcount() {
-  const hkey    = HOTEL_MAP[hotelActivo] || hotelActivo.toUpperCase();
-  const puestos = PUESTOS_HOTEL[hkey] || [];
-  hcVals  = {};
-  hcBajas = 0;
-  puestos.forEach(([n,a]) => hcVals[n] = a);
-  document.getElementById('hc-semana-lbl').innerHTML = '📅 <strong>' + semanaStr + '</strong>';
-  document.getElementById('hc-bajas-num').textContent = '0';
-  let html = '';
-  if (puestos.length === 0) {
-    html = '<p style="color:var(--muted);font-size:13px;padding:12px 0">No hay puestos configurados para este hotel.</p>';
-  } else {
-    puestos.forEach(([nombre, auth]) => {
-      html += `<div class="puesto-row">
-        <div class="puesto-info">
-          <div class="puesto-n">${nombre}</div>
-          <div class="puesto-a">Autorizado: ${auth}</div>
-        </div>
-        <div class="cnt-wrap">
-          <button class="cbtn" onclick="chHc('${nombre}',${auth},-1)">−</button>
-          <div class="cval cval-ok" id="hcv-${nombre.replace(/ /g,'_')}">${auth}</div>
-          <button class="cbtn" onclick="chHc('${nombre}',${auth},1)">+</button>
+// ── Reporte de Vacantes ──────────────────────────────
+let vacBajas = {}; // idx -> {fecha}
+
+function irVacantes() {
+  vacBajas = {};
+  document.getElementById('vac-semana-lbl').innerHTML = '📅 <strong>' + semanaStr + '</strong>';
+  renderVacantes();
+  mostrarStep('vac-step1');
+}
+
+// Todo el personal ACTIVO del hotel, sin filtrar por grupo (incluye A, AB y B)
+function getEmpleadosVacantes() {
+  return catalogo.filter(e => e.hotel === hotelActivo);
+}
+
+function renderVacantes() {
+  const empleados = getEmpleadosVacantes();
+  const list = document.getElementById('vac-list');
+  list.innerHTML = '';
+  if (empleados.length === 0) {
+    list.innerHTML = '<div class="sin-inc-label">No hay empleados activos registrados para este hotel.</div>';
+    return;
+  }
+  empleados.forEach((emp, idx) => {
+    const marcada = !!vacBajas[idx];
+    const card = document.createElement('div');
+    card.className = 'vac-card' + (marcada ? ' marcada' : '');
+    card.id = 'vac-card-' + idx;
+    card.innerHTML = `
+      <div class="vac-header">
+        <div class="vac-nombre">${emp.nombre}</div>
+        <div class="vac-puesto">${emp.puesto}</div>
+        <button class="vac-toggle ${marcada?'on':''}" onclick="toggleVacBaja(${idx})">${marcada?'✕ Baja marcada':'Marcar baja'}</button>
+      </div>
+      <div class="vac-body">
+        <div class="field">
+          <label>Último día trabajado</label>
+          <input type="date" value="${vacBajas[idx]?.fecha||''}" oninput="updateVacFecha(${idx},this.value)">
         </div>
       </div>`;
-    });
+    list.appendChild(card);
+  });
+}
+
+function toggleVacBaja(idx) {
+  if (vacBajas[idx]) {
+    delete vacBajas[idx];
+  } else {
+    vacBajas[idx] = { fecha: '' };
   }
-  document.getElementById('hc-puestos-list').innerHTML = html;
-  mostrarStep('hc-step1');
+  renderVacantes();
 }
 
-function chHc(nombre, auth, delta) {
-  let v = (hcVals[nombre] ?? auth) + delta;
-  if (v < 0) v = 0; if (v > auth) v = auth;
-  hcVals[nombre] = v;
-  const el = document.getElementById('hcv-' + nombre.replace(/ /g,'_'));
-  if (!el) return;
-  el.textContent = v;
-  const p = v / auth * 100;
-  el.className = 'cval ' + (p >= 90 ? 'cval-ok' : p >= 70 ? 'cval-warn' : 'cval-low');
+function updateVacFecha(idx, val) {
+  if (vacBajas[idx]) vacBajas[idx].fecha = val;
 }
 
-function changeBajas(d) {
-  hcBajas = Math.max(0, hcBajas + d);
-  document.getElementById('hc-bajas-num').textContent = hcBajas;
+function irVacResumen() {
+  const empleados = getEmpleadosVacantes();
+  const marcados  = Object.keys(vacBajas);
+  const faltanFecha = marcados
+    .filter(idx => !vacBajas[idx].fecha)
+    .map(idx => empleados[idx]?.nombre || 'Empleado');
+  if (faltanFecha.length > 0) {
+    showToast('⚠ Falta último día trabajado en: ' + faltanFecha.join(', '));
+    return;
+  }
+  const body = document.getElementById('vac-resumen-body');
+  if (marcados.length === 0) {
+    body.innerHTML = '<div class="vac-resumen-item"><div class="vac-resumen-nombre">Sin bajas esta semana</div></div>';
+  } else {
+    body.innerHTML = marcados.map(idx => {
+      const emp = empleados[idx];
+      return `<div class="vac-resumen-item">
+        <div class="vac-resumen-nombre">${emp.nombre}</div>
+        <div class="vac-resumen-puesto">${emp.puesto}</div>
+        <div class="vac-resumen-fecha">Último día: ${vacBajas[idx].fecha}</div>
+      </div>`;
+    }).join('');
+  }
+  mostrarStep('vac-step2');
 }
 
-function irHcResumen() {
-  const hkey    = HOTEL_MAP[hotelActivo] || hotelActivo.toUpperCase();
-  const puestos = PUESTOS_HOTEL[hkey] || [];
-  let totalA = 0, totalC = 0, rows = '';
-  puestos.forEach(([n, auth]) => {
-    const c  = hcVals[n] ?? auth;
-    totalA  += auth; totalC += c;
-    const p  = Math.round(c / auth * 100);
-    const col = p >= 90 ? 'var(--green)' : p >= 70 ? '#e67e22' : 'var(--accent2)';
-    rows += `<div class="hc-res-row"><span>${n}</span><span class="hc-pct" style="color:${col}">${c}/${auth} · ${p}%</span></div>`;
-  });
-  const pct = totalA > 0 ? Math.round(totalC / totalA * 100) : 0;
-  const col = pct >= 90 ? 'var(--green)' : pct >= 80 ? '#e67e22' : 'var(--accent2)';
-  const lbl = pct >= 90 ? 'VERDE' : pct >= 80 ? 'AMARILLO' : pct >= 70 ? 'NARANJA' : 'ROJO';
-  document.getElementById('hc-resumen-body').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div style="font-family:'Instrument Serif',serif;font-size:20px;">${hotelActivo}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#f0fdf4;color:${col};">${lbl} · ${pct}%</div>
-    </div>${rows}`;
-  mostrarStep('hc-step2');
-}
-
-async function enviarHeadcount() {
-  const payload = JSON.stringify({
-    type: 'headcount', hotel: hotelActivo, grupo: grupoActivo || 'A',
-    semana: semanaNum, semanaStr: semanaStr,
-    timestamp: new Date().toISOString(),
-    puestos: hcVals, bajas: hcBajas
-  });
+async function enviarVacantes() {
+  const btn = document.getElementById('btn-enviar-vac');
+  btn.disabled    = true;
+  btn.textContent = '⏳ Enviando...';
+  const empleados = getEmpleadosVacantes();
+  const marcados  = Object.keys(vacBajas);
   try {
-    const fd = new FormData(); fd.append('data', payload);
-    fetch(APPS_SCRIPT, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
-    mostrarStep('hc-step3');
-    document.getElementById('hc-success-msg').innerHTML =
-      `<strong>${hotelActivo}</strong> · ${semanaStr}<br><br>
-       <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">
-         ${hcBajas} baja${hcBajas !== 1 ? 's' : ''} esta semana
-       </span>`;
-  } catch(e) { showToast('⚠ Error al enviar. Intenta de nuevo.'); }
+    for (const idx of marcados) {
+      const emp = empleados[idx];
+      const payload = JSON.stringify({
+        token:  TOKEN_BAJA,
+        nombre: emp.nombre,
+        hotel:  emp.hotel,
+        fecha:  vacBajas[idx].fecha
+      });
+      await fetch(APPS_SCRIPT_BAJA, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: payload
+      });
+    }
+    mostrarStep('vac-step3');
+    document.getElementById('vac-success-msg').innerHTML = `
+      <strong>${hotelActivo}</strong><br><br>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">
+        ${marcados.length} baja${marcados.length!==1?'s':''} enviada${marcados.length!==1?'s':''} al tracker
+      </span>`;
+  } catch(e) {
+    btn.disabled    = false;
+    btn.textContent = '✓ Enviar reporte de vacantes';
+    showToast('⚠ Error al enviar. Intenta de nuevo.');
+  }
 }
 
-function reiniciarHc() {
-  hcVals = {}; hcBajas = 0; reiniciar();
+function reiniciarVac() {
+  vacBajas = {};
+  irCambiarHotel();
 }
 
 init();
